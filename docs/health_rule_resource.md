@@ -9,6 +9,6 @@
 
 #### Examples
 
-```hcl-terraform
+```terraform
 
 ```

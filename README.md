@@ -9,7 +9,7 @@ To use the AppD Teraform provider you must configure it with the controller base
 A secret can be generated in the AppD UI as documented [here](https://docs.appdynamics.com/display/PRO45/API+Clients).
 
 ###### Example
-```hcl-terraform
+```terraform
 provider "appd" {
   secret = "<your secret>"
   controller_base_url = "https://example.saas.appdynamics.com"

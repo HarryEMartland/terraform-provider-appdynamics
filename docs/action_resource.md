@@ -22,7 +22,7 @@
 #### Examples
 
 ###### Email
-```hcl-terraform
+```terraform
 resource "appd_action" "my_first_email_action" {
   application_id = var.application_id
   action_type = "EMAIL"
