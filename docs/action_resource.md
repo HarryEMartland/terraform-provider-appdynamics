@@ -32,3 +32,12 @@ resource "appd_action" "my_first_email_action" {
   ]
 }
 ```
+
+###### SMS
+```hcl
+resource "appd_action" "my-first-sms-action" {
+  application_id = var.application_id
+  action_type = "SMS"
+  phone_number = "07421365896"
+}
+```

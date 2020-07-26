@@ -52,10 +52,14 @@ func resourceAction() *schema.Resource {
 			},
 			"emails": {
 				Type:     schema.TypeList,
-				Required: true, //required untill we do other types
+				Optional: true,
 				Elem: &schema.Schema{
 					Type: schema.TypeString,
 				},
+			},
+			"phone_number": {
+				Type:     schema.TypeString,
+				Optional: true,
 			},
 		},
 	}
@@ -83,9 +87,10 @@ func createAction(d *schema.ResourceData) client.Action {
 	emails := d.Get("emails").([]interface{})
 
 	healthRule := client.Action{
-		Name:       name,
-		ActionType: actionType,
-		Emails:     emails,
+		Name:        name,
+		ActionType:  actionType,
+		Emails:      emails,
+		PhoneNumber: d.Get("phone_number").(string),
 	}
 	return healthRule
 }
@@ -94,6 +99,7 @@ func updateAction(d *schema.ResourceData, action client.Action) {
 	d.Set("name", action.Name)
 	d.Set("action_type", action.ActionType)
 	d.Set("emails", trimSpaceA(action.Emails))
+	d.Set("phone_number", action.PhoneNumber)
 }
 
 func trimSpaceA(array []interface{}) []interface{} {

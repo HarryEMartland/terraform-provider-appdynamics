@@ -57,7 +57,7 @@ func (c *AppDClient) DeleteAction(applicationId int, actionId int) error {
 
 	if resp.Response().StatusCode != 204 {
 		respString, _ := resp.ToString()
-		 errors.New(fmt.Sprintf("Error deleting Action: %d, %s", resp.Response().StatusCode, respString))
+		errors.New(fmt.Sprintf("Error deleting Action: %d, %s", resp.Response().StatusCode, respString))
 	}
 
 	return nil
@@ -88,8 +88,9 @@ func (c *AppDClient) createActionUrl(actionId int, applicationId int) string {
 }
 
 type Action struct {
-	ID         int      `json:"id"`
-	ActionType string   `json:"actionType"`
-	Name       string   `json:"name"`
-	Emails     []interface{} `json:"emails"`
+	ID          int           `json:"id"`
+	ActionType  string        `json:"actionType"`
+	Name        string        `json:"name"`
+	Emails      []interface{} `json:"emails"`
+	PhoneNumber string        `json:"phoneNumber"`
 }
