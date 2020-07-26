@@ -35,7 +35,7 @@ jobs:
 
     - uses: actions/upload-artifact@v2
       with:
-        name: terraform-provider-appd
+        name: terraform-provider-appd-linux
         path: terraform-provider-appd
   build-mac:
     name: Build Mac
@@ -66,5 +66,5 @@ jobs:
 
       - uses: actions/upload-artifact@v2
         with:
-          name: terraform-provider-appd
+          name: terraform-provider-appd-mac
           path: terraform-provider-appd
