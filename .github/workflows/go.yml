@@ -31,4 +31,9 @@ jobs:
         fi
 
     - name: Build
-      run: go build -v .
+      run: go build -v . -o terraform-provider-appd
+
+    - uses: actions/upload-artifact@v2
+      with:
+        name: terraform-provider-appd
+        path: terraform-provider-appd
