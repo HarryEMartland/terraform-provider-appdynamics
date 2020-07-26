@@ -61,6 +61,14 @@ func resourceAction() *schema.Resource {
 				Type:     schema.TypeString,
 				Optional: true,
 			},
+			"http_request_template_name": {
+				Type:     schema.TypeString,
+				Optional: true,
+			},
+			"custom_template_variables": {
+				Type:     schema.TypeMap,
+				Optional: true,
+			},
 		},
 	}
 }
@@ -86,11 +94,23 @@ func createAction(d *schema.ResourceData) client.Action {
 	actionType := d.Get("action_type").(string)
 	emails := d.Get("emails").([]interface{})
 
+	varialbesMap := d.Get("custom_template_variables").(map[string]interface{})
+	var varialbesList []*client.ActionVariable
+
+	for k, v := range varialbesMap {
+		varialbesList = append(varialbesList, &client.ActionVariable{
+			Key:   k,
+			Value: v.(string),
+		})
+	}
+
 	healthRule := client.Action{
-		Name:        name,
-		ActionType:  actionType,
-		Emails:      emails,
-		PhoneNumber: d.Get("phone_number").(string),
+		Name:                    name,
+		ActionType:              actionType,
+		Emails:                  emails,
+		PhoneNumber:             d.Get("phone_number").(string),
+		HttpRequestTemplateName: d.Get("http_request_template_name").(string),
+		CustomTemplateVariables: varialbesList,
 	}
 	return healthRule
 }
@@ -100,6 +120,8 @@ func updateAction(d *schema.ResourceData, action client.Action) {
 	d.Set("action_type", action.ActionType)
 	d.Set("emails", trimSpaceA(action.Emails))
 	d.Set("phone_number", action.PhoneNumber)
+	d.Set("http_request_template_name", action.HttpRequestTemplateName)
+	d.Set("custom_template_variables", action.CustomTemplateVariables)
 }
 
 func trimSpaceA(array []interface{}) []interface{} {

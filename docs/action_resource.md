@@ -5,8 +5,11 @@
 |Name|Required|Type|Description|Example|
 |----|--------|----|-----------|-------|
 |`application_id`|yes|number|The application to add the action to|`32423`|
+|`name`|no|string|The name for the action|`"My Action"`|
 |`action_type`|yes|string|The type of the action|`"EMAIL"`|
 |`emails`|no|string[]|The email addresses to be notified when he action is performed|`["bob@example.com"]`|
+|`http_request_template_name`|no|string|The name of the request template to use|`"Slack Template"`
+|`custom_template_variables`|no|map{string:string}|The names and values of variables to pass into the template|`{channel: "#alert-channel"}`
 
 ###### Action Types
 - SMS
@@ -39,5 +42,18 @@ resource "appd_action" "my-first-sms-action" {
   application_id = var.application_id
   action_type = "SMS"
   phone_number = "07421365896"
+}
+```
+
+###### HTTP Request
+```hcl
+resource "appd_action" "my-first-http-action" {
+  application_id = var.application_id
+  name = "My First HTTP Action"
+  action_type = "HTTP_REQUEST"
+  http_request_template_name = "Slack Alert - Any Channel"
+  custom_template_variables = {
+    channel: "#alert-channel"
+  }
 }
 ```

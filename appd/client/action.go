@@ -87,10 +87,17 @@ func (c *AppDClient) createActionUrl(actionId int, applicationId int) string {
 	return fmt.Sprintf("%s/%d", c.createActionsUrl(applicationId), actionId)
 }
 
+type ActionVariable struct {
+	Key   string `json:"key"`
+	Value string `json:"value"`
+}
+
 type Action struct {
-	ID          int           `json:"id"`
-	ActionType  string        `json:"actionType"`
-	Name        string        `json:"name"`
-	Emails      []interface{} `json:"emails"`
-	PhoneNumber string        `json:"phoneNumber"`
+	ID                      int               `json:"id"`
+	ActionType              string            `json:"actionType"`
+	Name                    string            `json:"name"`
+	Emails                  []interface{}     `json:"emails"`
+	PhoneNumber             string            `json:"phoneNumber"`
+	HttpRequestTemplateName string            `json:"httpRequestTemplateName"`
+	CustomTemplateVariables []*ActionVariable `json:"customTemplateVariables"`
 }
