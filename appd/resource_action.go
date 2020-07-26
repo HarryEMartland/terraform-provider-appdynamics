@@ -5,6 +5,7 @@ import (
 	"github.com/HarryEMartland/appd-terraform-provider/appd/client"
 	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
 	"strconv"
+	"strings"
 )
 
 func resourceAction() *schema.Resource {
@@ -89,10 +90,17 @@ func createAction(d *schema.ResourceData) client.Action {
 	return healthRule
 }
 
-func updateAction(d *schema.ResourceData, action client.Action)  {
+func updateAction(d *schema.ResourceData, action client.Action) {
 	d.Set("name", action.Name)
 	d.Set("action_type", action.ActionType)
-	d.Set("emails", action.Emails)
+	d.Set("emails", trimSpaceA(action.Emails))
+}
+
+func trimSpaceA(array []interface{}) []interface{} {
+	for i, str := range array {
+		array[i] = strings.TrimSpace(str.(string))
+	}
+	return array
 }
 
 func resourceActionRead(d *schema.ResourceData, m interface{}) error {
