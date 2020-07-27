@@ -91,7 +91,7 @@ func resourcePolicy() *schema.Resource {
 			},
 			"health_rules": {
 				Type:     schema.TypeList,
-				Required: true,
+				Optional: true,
 				Elem: &schema.Schema{
 					Type: schema.TypeString,
 				},
