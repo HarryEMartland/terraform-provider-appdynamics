@@ -1,7 +1,6 @@
 package appd
 
 import (
-	"fmt"
 	"github.com/HarryEMartland/appd-terraform-provider/appd/client"
 	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
 	"strconv"
@@ -40,28 +39,17 @@ func resourcePolicy() *schema.Resource {
 			"action_type": {
 				Type:     schema.TypeString,
 				Required: true,
-				ValidateFunc: func(val interface{}, key string) (warns []string, errs []error) {
-
-					validValues := []string{
-						"SMS",
-						"EMAIL",
-						"CUSTOM_EMAIL",
-						"THREAD_DUMP",
-						"HTTP_REQUEST",
-						"CUSTOM",
-						"RUN_SCRIPT_ON_NODES",
-						"DIAGNOSE_BUSINESS_TRANSACTIONS",
-						"CREATE_UPDATE_JIRA",
-					}
-
-					strVal := val.(string)
-
-					if !contains(validValues, strVal) {
-						errs = append(errs, fmt.Errorf("%s is not a valid value for %s (%v)", strVal, key, validValues))
-					}
-
-					return
-				},
+				ValidateFunc: validateList([]string{
+					"SMS",
+					"EMAIL",
+					"CUSTOM_EMAIL",
+					"THREAD_DUMP",
+					"HTTP_REQUEST",
+					"CUSTOM",
+					"RUN_SCRIPT_ON_NODES",
+					"DIAGNOSE_BUSINESS_TRANSACTIONS",
+					"CREATE_UPDATE_JIRA",
+				}),
 			},
 			"health_rule_event_types": {
 				Type:     schema.TypeList,
@@ -73,21 +61,10 @@ func resourcePolicy() *schema.Resource {
 			"health_rule_scope_type": {
 				Type:     schema.TypeString,
 				Required: true,
-				ValidateFunc: func(val interface{}, key string) (warns []string, errs []error) {
-
-					validValues := []string{
-						"ALL_HEALTH_RULES",
-						"SPECIFIC_HEALTH_RULES",
-					}
-
-					strVal := val.(string)
-
-					if !contains(validValues, strVal) {
-						errs = append(errs, fmt.Errorf("%s is not a valid value for %s (%v)", strVal, key, validValues))
-					}
-
-					return
-				},
+				ValidateFunc: validateList([]string{
+					"ALL_HEALTH_RULES",
+					"SPECIFIC_HEALTH_RULES",
+				}),
 			},
 			"health_rules": {
 				Type:     schema.TypeList,

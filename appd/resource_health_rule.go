@@ -1,7 +1,6 @@
 package appd
 
 import (
-	"fmt"
 	"github.com/HarryEMartland/appd-terraform-provider/appd/client"
 	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
 	"strconv"
@@ -36,38 +35,47 @@ func resourceHealthRule() *schema.Resource {
 			"type": {
 				Type:     schema.TypeString,
 				Required: true,
-				ValidateFunc: func(val interface{}, key string) (warns []string, errs []error) {
-
-					validValues := []string{"OVERALL_APPLICATION_PERFORMANCE",
-						"BUSINESS_TRANSACTION_PERFORMANCE",
-						"TIER_NODE_TRANSACTION_PERFORMANCE",
-						"TIER_NODE_HARDWARE",
-						"SERVERS_IN_APPLICATION",
-						"BACKENDS",
-						"ERRORS",
-						"SERVICE_ENDPOINTS",
-						"INFORMATION_POINTS",
-						"CUSTOM",
-						"DATABASES",
-
-						"SERVERS"}
-
-					strVal := val.(string)
-
-					if !contains(validValues, strVal) {
-						errs = append(errs, fmt.Errorf("%s is not a valid value for %s (%v)", strVal, key, validValues))
-					}
-
-					return
-				},
+				ValidateFunc: validateList([]string{
+					"OVERALL_APPLICATION_PERFORMANCE",
+					"BUSINESS_TRANSACTION_PERFORMANCE",
+					"TIER_NODE_TRANSACTION_PERFORMANCE",
+					"TIER_NODE_HARDWARE",
+					"SERVERS_IN_APPLICATION",
+					"BACKENDS",
+					"ERRORS",
+					"SERVICE_ENDPOINTS",
+					"INFORMATION_POINTS",
+					"CUSTOM",
+					"DATABASES",
+					"SERVERS"}),
 			},
 			"affected_entity_type": {
 				Type:     schema.TypeString,
 				Required: true,
+				ValidateFunc: validateList([]string{
+					"OVERALL_APPLICATION_PERFORMANCE",
+					"BUSINESS_TRANSACTION_PERFORMANCE",
+					"TIER_NODE_TRANSACTION_PERFORMANCE",
+					"TIER_NODE_HARDWARE",
+					"SERVERS_IN_APPLICATION",
+					"BACKENDS",
+					"ERRORS",
+					"SERVICE_ENDPOINTS",
+					"INFORMATION_POINTS",
+					"CUSTOM",
+					"DATABASES",
+					"SERVERS",
+				}),
 			},
 			"business_transaction_scope": {
 				Type:     schema.TypeString,
 				Required: true,
+				ValidateFunc: validateList([]string{
+					"ALL_BUSINESS_TRANSACTIONS",
+					"SPECIFIC_BUSINESS_TRANSACTIONS",
+					"BUSINESS_TRANSACTIONS_IN_SPECIFIC_TIERS",
+					"BUSINESS_TRANSACTIONS_MATCHING_PATTERN",
+				}),
 			},
 			"evaluate_to_true_on_no_data": {
 				Type:     schema.TypeBool,
@@ -97,10 +105,22 @@ func resourceHealthRule() *schema.Resource {
 			"metric_eval_detail_type": {
 				Type:     schema.TypeString,
 				Required: true,
+				ValidateFunc: validateList([]string{
+					"SINGLE_METRIC",
+					"METRIC_EXPRESSION",
+					"BASELINE_TYPE",
+					"SPECIFIC_TYPE",
+				}),
 			},
 			"baseline_condition": {
 				Type:     schema.TypeString,
 				Required: true,
+				ValidateFunc: validateList([]string{
+					"WITHIN_BASELINE",
+					"NOT_WITHIN_BASELINE",
+					"GREATER_THAN_BASELINE",
+					"LESS_THAN_BASELINE",
+				}),
 			},
 			"baseline_name": {
 				Type:     schema.TypeString,
@@ -109,6 +129,10 @@ func resourceHealthRule() *schema.Resource {
 			"baseline_unit": {
 				Type:     schema.TypeString,
 				Required: true,
+				ValidateFunc: validateList([]string{
+					"STANDARD_DEVIATIONS",
+					"PERCENTAGE",
+				}),
 			},
 		},
 	}
