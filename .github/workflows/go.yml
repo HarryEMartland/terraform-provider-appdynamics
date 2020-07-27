@@ -38,29 +38,29 @@ jobs:
         name: terraform-provider-appd-linux
         path: terraform-provider-appd
 
-        - name: Zip
-          run: zip  terraform-provider-appd.zip ./terraform-provider-appd
+    - name: Zip
+      run: zip  terraform-provider-appd.zip ./terraform-provider-appd
 
-        - uses: actions/upload-artifact@v2
-          with:
-            name: terraform-provider-appd.linux.zip
-            path: terraform-provider-appd.zip
+    - uses: actions/upload-artifact@v2
+      with:
+        name: terraform-provider-appd.linux.zip
+        path: terraform-provider-appd.zip
 
-        - name: Get upload URL
-          id: geturl
-          run:   |
-            upload_url=$(curl -sL https://api.github.com/repos/${{github.repository}}/releases/tags/latest?access_token=${{ secrets.GITHUB_TOKEN }} | jq -r '.upload_url')
-            echo ::set-output name=upload_url::$upload_url
-        - name: Upload Release Asset
-          id: upload-release-asset
-          uses: actions/upload-release-asset@v1
-          env:
-            GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          with:
-            upload_url: ${{ steps.geturl.outputs.upload_url }}
-            asset_path: ./terraform-provider-appd.zip
-            asset_name: terraform-provider-appd.linux.zip
-            asset_content_type: application/zip
+    - name: Get upload URL
+      id: geturl
+      run:   |
+        upload_url=$(curl -sL https://api.github.com/repos/${{github.repository}}/releases/tags/latest?access_token=${{ secrets.GITHUB_TOKEN }} | jq -r '.upload_url')
+        echo ::set-output name=upload_url::$upload_url
+    - name: Upload Release Asset
+      id: upload-release-asset
+      uses: actions/upload-release-asset@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        upload_url: ${{ steps.geturl.outputs.upload_url }}
+        asset_path: ./terraform-provider-appd.zip
+        asset_name: terraform-provider-appd.linux.zip
+        asset_content_type: application/zip
 
 
   build-mac:
