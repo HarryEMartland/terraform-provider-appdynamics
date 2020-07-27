@@ -38,6 +38,19 @@ jobs:
         name: terraform-provider-appd-linux
         path: terraform-provider-appd
 
+    - name: Get Release ID
+      id: getid
+      run:   |
+        rel_id=$(curl -sL https://api.github.com/repos/${{github.repository}}/releases/tags/latest?access_token=${{ secrets.GITHUB_TOKEN }} | jq -r '.id')
+        echo ::set-output name=rel_id::$rel_id
+    - name: Remove Release Asset
+      uses: flcdrg/remove-release-asset-action@v1.0.3
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        release_id: ${{ steps.getid.outputs.rel_id }}
+        asset_name: terraform-provider-appd.linux.zip
+
     - name: Zip
       run: zip  terraform-provider-appd.zip ./terraform-provider-appd
 
@@ -102,6 +115,19 @@ jobs:
         with:
           name: terraform-provider-appd.mac.zip
           path: terraform-provider-appd.zip
+
+      - name: Get Release ID
+        id: getid
+        run:   |
+          rel_id=$(curl -sL https://api.github.com/repos/${{github.repository}}/releases/tags/latest?access_token=${{ secrets.GITHUB_TOKEN }} | jq -r '.id')
+          echo ::set-output name=rel_id::$rel_id
+      - name: Remove Release Asset
+        uses: flcdrg/remove-release-asset-action@v1.0.3
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          release_id: ${{ steps.getid.outputs.rel_id }}
+          asset_name: terraform-provider-appd.mac.zip
 
       - name: Get upload URL
         id: geturl
