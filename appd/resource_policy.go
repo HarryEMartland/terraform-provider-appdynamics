@@ -52,7 +52,7 @@ func resourcePolicy() *schema.Resource {
 				}),
 			},
 			"health_rule_event_types": {
-				Type:     schema.TypeList,
+				Type:     schema.TypeSet,
 				Required: true,
 				Elem: &schema.Schema{
 					Type: schema.TypeString,
@@ -67,14 +67,14 @@ func resourcePolicy() *schema.Resource {
 				}),
 			},
 			"health_rules": {
-				Type:     schema.TypeList,
+				Type:     schema.TypeSet,
 				Optional: true,
 				Elem: &schema.Schema{
 					Type: schema.TypeString,
 				},
 			},
 			"other_events": {
-				Type:     schema.TypeList,
+				Type:     schema.TypeSet,
 				Optional: true,
 				Elem: &schema.Schema{
 					Type: schema.TypeString,
