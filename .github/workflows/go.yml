@@ -69,6 +69,9 @@ jobs:
           name: terraform-provider-appd-mac
           path: terraform-provider-appd
 
+      - name: Zip
+        run: zip  terraform-provider-appd.zip ./terraform-provider-appd
+
       - name: Get upload URL
         id: geturl
         run:   |
@@ -81,6 +84,6 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           upload_url: ${{ steps.geturl.outputs.upload_url }}
-          asset_path: ./terraform-provider-appd
-          asset_name: terraform-provider-appd-mac
-          asset_content_type: application/octet-stream
+          asset_path: ./terraform-provider-appd.zip
+          asset_name: terraform-provider-appd Mac
+          asset_content_type: application/zip
