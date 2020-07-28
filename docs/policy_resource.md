@@ -15,11 +15,11 @@
 |`execute_actions_in_batch`|no (default `true`)|boolean|Other events to trigger the action on|`true`|
 |`enabled`|no (default `true`)|boolean|Triggers the action when enabled|`true`|
 
-###### Health Rule Scope
+###### health_rule_scope_type
 - ALL_HEALTH_RULES
 - SPECIFIC_HEALTH_RULES
 
-###### Health Rule Event Types
+###### health_rule_event_types
 - HEALTH_RULE_CONTINUES_CRITICAL
 - HEALTH_RULE_OPEN_CRITICAL
 - HEALTH_RULE_OPEN_WARNING
@@ -31,7 +31,7 @@
 - HEALTH_RULE_CANCELED_WARNING
 - HEALTH_RULE_CANCELED_CRITICAL
 
-###### Other Events
+###### other_events
 - CLR_CRASH
 - APPLICATION_CRASH
 - DEADLOCK

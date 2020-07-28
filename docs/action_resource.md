@@ -11,7 +11,7 @@
 |`http_request_template_name`|no|string|The name of the request template to use|`"Slack Template"`
 |`custom_template_variables`|no|map{string:string}|The names and values of variables to pass into the template|`{channel: "#alert-channel"}`
 
-###### Action Types
+###### action_type
 - SMS
 - EMAIL
 - CUSTOM_EMAIL
