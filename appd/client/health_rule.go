@@ -139,4 +139,5 @@ type Affects struct {
 type Transaction struct {
 	BusinessTransactionScope string         `json:"businessTransactionScope"`
 	BusinessTransactions     *[]interface{} `json:"businessTransactions"`
+	SpecificTiers            *[]interface{} `json:"specificTiers"`
 }

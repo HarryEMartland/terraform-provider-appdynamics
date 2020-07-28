@@ -132,6 +132,13 @@ func resourceHealthRule() *schema.Resource {
 					Type: schema.TypeString,
 				},
 			},
+			"specific_tiers": {
+				Type:     schema.TypeSet,
+				Optional: true,
+				Elem: &schema.Schema{
+					Type: schema.TypeString,
+				},
+			},
 		},
 	}
 }
@@ -203,6 +210,7 @@ func createHealthRule(d *schema.ResourceData) client.HealthRule {
 			AffectedBusinessTransactions: &client.Transaction{
 				BusinessTransactionScope: businessTransactionScope,
 				BusinessTransactions:     GetOrNilL(d, "business_transactions"),
+				SpecificTiers:            GetOrNilL(d, "specific_tiers"),
 			},
 		},
 		Criterias: &client.Criterias{

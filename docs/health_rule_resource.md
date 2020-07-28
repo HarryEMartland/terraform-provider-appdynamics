@@ -130,3 +130,24 @@ resource "appd_health_rule" "specific_bts_rule" {
   critical_compare_value = 200
 }
 ```
+
+###### Specific Tiers Value
+```hcl
+resource "appd_health_rule" "specific_tiers_rule" {
+  name = "My Specific Tiers Rule"
+  application_id = var.application_id
+  metric_aggregation_function = "VALUE"
+  eval_detail_type = "SINGLE_METRIC"
+  affected_entity_type = "BUSINESS_TRANSACTION_PERFORMANCE"
+  business_transaction_scope = "BUSINESS_TRANSACTIONS_IN_SPECIFIC_TIERS"
+  specific_tiers = [
+    "tier1",
+    "tier2"
+  ]
+  metric_eval_detail_type = "SPECIFIC_TYPE"
+  metric_path = "95th Percentile Response Time (ms)"
+  compare_condition = "GREATER_THAN_SPECIFIC_VALUE"
+  warn_compare_value = 100
+  critical_compare_value = 200
+}
+```
