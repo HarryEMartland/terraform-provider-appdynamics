@@ -80,7 +80,7 @@ func createAction(d *schema.ResourceData) client.Action {
 
 	name := d.Get("name").(string)
 	actionType := d.Get("action_type").(string)
-	emails := d.Get("emails").([]interface{})
+	emails := d.Get("emails").(*schema.Set).List()
 
 	varialbesMap := d.Get("custom_template_variables").(map[string]interface{})
 	var varialbesList []*client.ActionVariable

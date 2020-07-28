@@ -111,13 +111,13 @@ func createPolicy(d *schema.ResourceData) client.Policy {
 		}},
 		Events: &client.Events{
 			HealthRuleEvents: &client.HealthRuleEvents{
-				HealthRuleEventTypes: d.Get("health_rule_event_types").([]interface{}),
+				HealthRuleEventTypes: d.Get("health_rule_event_types").(*schema.Set).List(),
 				HealthRuleScope: &client.HealthRuleScope{
 					HealthRuleScopeType: d.Get("health_rule_scope_type").(string),
-					HealthRules:         d.Get("health_rules").([]interface{}),
+					HealthRules:         d.Get("health_rules").(*schema.Set).List(),
 				},
 			},
-			OtherEvents: d.Get("other_events").([]interface{}),
+			OtherEvents: d.Get("other_events").(*schema.Set).List(),
 		},
 	}
 	return policy
