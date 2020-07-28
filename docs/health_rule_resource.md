@@ -9,11 +9,12 @@
 |`eval_detail_type`|yes|string|What to evaluate the metric against|`"SINGLE_METRIC"`|
 |`affected_entity_type`|yes|string|The entity type for the health rule|`"OVERALL_APPLICATION_PERFORMANCE"`|
 |`business_transaction_scope`|yes|string|Which business transaction are applicable for the health rule|`"ALL_BUSINESS_TRANSACTIONS"`|
-|`baseline_condition`|yes|string|How to compare to the baseline|`"WITHIN_BASELINE"`|
+|`baseline_condition`|no|string|How to compare to the baseline|`"WITHIN_BASELINE"`|
 |`metric_eval_detail_type`|yes|string|The type of comparison|`"BASELINE_TYPE"`|
-|`baseline_name`|yes|string|Which baseline to use|`"All data - Last 15 days"`|
-|`baseline_unit`|yes|string|What unit to compare the baseline with|`"PERCENTAGE"`|
+|`baseline_name`|no|string|Which baseline to use|`"All data - Last 15 days"`|
+|`baseline_unit`|no|string|What unit to compare the baseline with|`"PERCENTAGE"`|
 |`metric_path`|yes|string|Which metric to use|`"95th Percentile Response Time (ms)"`|
+|`compare_condition`|no|string|How to compare the values to the metric|`"GREATER_THAN_SPECIFIC_VALUE"`|
 |`warn_compare_value`|yes|number|The value at which the health rule should trigger a warning|`1`|
 |`critical_compare_value`|yes|number|The value at which the health rule should trigger an error|`2`|
 
@@ -64,7 +65,7 @@
 - CURRENT
 - GROUP_COUNT
 
-##### match_type
+####### match_type
 - AVERAGE
 - ANY_NODE
 - PERCENTAGE_NODES
@@ -72,10 +73,10 @@
 
 #### Examples
 
-###### Single Baseline 
+###### All BT Baseline 
 ```hcl
-resource "appd_health_rule" "my_health_rule" {
-  name = "My Health Rule"
+resource "appd_health_rule" "my_baseline_rule" {
+  name = "My Baseline Health Rule"
   application_id = var.application_id
   metric_aggregation_function = "VALUE"
   eval_detail_type = "SINGLE_METRIC"
@@ -88,5 +89,22 @@ resource "appd_health_rule" "my_health_rule" {
   metric_path = "95th Percentile Response Time (ms)"
   warn_compare_value = 1
   critical_compare_value = 2
+}
+```
+
+###### All BT Value
+```hcl
+resource "appd_health_rule" "my_single_metric_rule" {
+  name = "My Single Metring Health Rule"
+  application_id = var.application_id
+  metric_aggregation_function = "VALUE"
+  eval_detail_type = "SINGLE_METRIC"
+  affected_entity_type = "BUSINESS_TRANSACTION_PERFORMANCE"
+  business_transaction_scope = "ALL_BUSINESS_TRANSACTIONS"
+  metric_eval_detail_type = "SPECIFIC_TYPE"
+  metric_path = "95th Percentile Response Time (ms)"
+  compare_condition="GREATER_THAN_SPECIFIC_VALUE"
+  warn_compare_value = 100
+  critical_compare_value = 200
 }
 ```

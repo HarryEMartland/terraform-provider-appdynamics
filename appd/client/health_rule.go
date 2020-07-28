@@ -1,6 +1,7 @@
 package client
 
 import (
+	"encoding/json"
 	"errors"
 	"fmt"
 	"github.com/imroc/req"
@@ -15,7 +16,11 @@ func (c *AppDClient) CreateHealthRule(healthRule *HealthRule, applicationId int)
 
 	if resp.Response().StatusCode != 201 {
 		respString, _ := resp.ToString()
-		return nil, errors.New(fmt.Sprintf("Error creating Health Rule: %d, %s", resp.Response().StatusCode, respString))
+
+		json, _ := json.Marshal(healthRule)
+		fmt.Println(string(json))
+
+		return nil, errors.New(fmt.Sprintf("Error creating Health Rule: %d, %s, %s", resp.Response().StatusCode, respString, string(json)))
 	}
 
 	updated := HealthRule{}
@@ -80,11 +85,11 @@ func (c *AppDClient) GetHealthRule(healthRuleId int, applicationId int) (*Health
 }
 
 func (c *AppDClient) createHealthRulesUrl(applicationId int) string {
-	return fmt.Sprintf("%s/%s", c.createUrl( applicationId), "health-rules")
+	return fmt.Sprintf("%s/%s", c.createUrl(applicationId), "health-rules")
 }
 
 func (c *AppDClient) createHealthRuleUrl(healthRuleId int, applicationId int) string {
-	return fmt.Sprintf("%s/%d", c.createHealthRulesUrl( applicationId), healthRuleId)
+	return fmt.Sprintf("%s/%d", c.createHealthRulesUrl(applicationId), healthRuleId)
 }
 
 type HealthRule struct {
@@ -108,10 +113,10 @@ type Criteria struct {
 }
 
 type Condition struct {
-	Name                   string `json:"name"`
-	ShortName              string `json:"shortName"`
-	EvaluateToTrueOnNoData bool   `json:"evaluateToTrueOnNoData"`
-	EvalDetail *EvalDetail `json:"evalDetail"`
+	Name                   string      `json:"name"`
+	ShortName              string      `json:"shortName"`
+	EvaluateToTrueOnNoData bool        `json:"evaluateToTrueOnNoData"`
+	EvalDetail             *EvalDetail `json:"evalDetail"`
 }
 
 type EvalDetail struct {
@@ -122,11 +127,12 @@ type EvalDetail struct {
 }
 
 type MetricEvalDetail struct {
-	MetricEvalDetailType string `json:"metricEvalDetailType"`
-	BaselineCondition    string `json:"baselineCondition"`
-	BaselineName         string `json:"baselineName"`
-	BaselineUnit         string `json:"baselineUnit"`
-	CompareValue         float64    `json:"compareValue"`
+	MetricEvalDetailType string  `json:"metricEvalDetailType"`
+	BaselineCondition    *string `json:"baselineCondition"`
+	BaselineName         *string `json:"baselineName"`
+	BaselineUnit         *string `json:"baselineUnit"`
+	CompareValue         float64 `json:"compareValue"`
+	CompareCondition     *string `json:"compareCondition"`
 }
 
 type Affects struct {

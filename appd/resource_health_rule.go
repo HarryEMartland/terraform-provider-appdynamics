@@ -97,7 +97,7 @@ func resourceHealthRule() *schema.Resource {
 			},
 			"baseline_condition": {
 				Type:     schema.TypeString,
-				Required: true,
+				Optional: true,
 				ValidateFunc: validateList([]string{
 					"WITHIN_BASELINE",
 					"NOT_WITHIN_BASELINE",
@@ -107,14 +107,22 @@ func resourceHealthRule() *schema.Resource {
 			},
 			"baseline_name": {
 				Type:     schema.TypeString,
-				Required: true,
+				Optional: true,
 			},
 			"baseline_unit": {
 				Type:     schema.TypeString,
-				Required: true,
+				Optional: true,
 				ValidateFunc: validateList([]string{
 					"STANDARD_DEVIATIONS",
 					"PERCENTAGE",
+				}),
+			},
+			"compare_condition": {
+				Type:     schema.TypeString,
+				Optional: true,
+				ValidateFunc: validateList([]string{
+					"GREATER_THAN_SPECIFIC_VALUE",
+					"LESS_THAN_SPECIFIC_VALUE",
 				}),
 			},
 		},
@@ -137,6 +145,15 @@ func resourceHealthRuleCreate(d *schema.ResourceData, m interface{}) error {
 	return resourceHealthRuleRead(d, m)
 }
 
+func GetOrNil(d *schema.ResourceData, key string) *string {
+	value, set := d.GetOk(key)
+	if set {
+		strValue := value.(string)
+		return &strValue
+	}
+	return nil
+}
+
 func createHealthRule(d *schema.ResourceData) client.HealthRule {
 
 	name := d.Get("name").(string)
@@ -152,12 +169,13 @@ func createHealthRule(d *schema.ResourceData) client.HealthRule {
 	metricAggregationFunction := d.Get("metric_aggregation_function").(string)
 	metricPath := d.Get("metric_path").(string)
 	criticalCompareValue := d.Get("critical_compare_value").(float64)
+	compareCondition := GetOrNil(d, "compare_condition")
 	warnCompareValue := d.Get("warn_compare_value").(float64)
 	metricEvalDetailType := d.Get("metric_eval_detail_type").(string)
 
-	baselineCondition := d.Get("baseline_condition").(string)
-	baselineName := d.Get("baseline_name").(string)
-	baselineUnit := d.Get("baseline_unit").(string)
+	baselineCondition := GetOrNil(d, "baseline_condition")
+	baselineName := GetOrNil(d, "baseline_name")
+	baselineUnit := GetOrNil(d, "baseline_unit")
 
 	healthRule := client.HealthRule{
 		Name:                    name,
@@ -187,6 +205,7 @@ func createHealthRule(d *schema.ResourceData) client.HealthRule {
 							BaselineName:         baselineName,
 							BaselineUnit:         baselineUnit,
 							CompareValue:         criticalCompareValue,
+							CompareCondition:     compareCondition,
 						},
 					},
 				}},
@@ -207,6 +226,7 @@ func createHealthRule(d *schema.ResourceData) client.HealthRule {
 							BaselineName:         baselineName,
 							BaselineUnit:         baselineUnit,
 							CompareValue:         warnCompareValue,
+							CompareCondition:     compareCondition,
 						},
 					},
 				}},
