@@ -65,7 +65,7 @@
 - CURRENT
 - GROUP_COUNT
 
-####### match_type
+###### match_type
 - AVERAGE
 - ANY_NODE
 - PERCENTAGE_NODES
