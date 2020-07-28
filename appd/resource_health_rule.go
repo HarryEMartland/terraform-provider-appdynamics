@@ -125,6 +125,13 @@ func resourceHealthRule() *schema.Resource {
 					"LESS_THAN_SPECIFIC_VALUE",
 				}),
 			},
+			"business_transactions": {
+				Type:     schema.TypeSet,
+				Optional: true,
+				Elem: &schema.Schema{
+					Type: schema.TypeString,
+				},
+			},
 		},
 	}
 }
@@ -145,11 +152,20 @@ func resourceHealthRuleCreate(d *schema.ResourceData, m interface{}) error {
 	return resourceHealthRuleRead(d, m)
 }
 
-func GetOrNil(d *schema.ResourceData, key string) *string {
+func GetOrNilS(d *schema.ResourceData, key string) *string {
 	value, set := d.GetOk(key)
 	if set {
 		strValue := value.(string)
 		return &strValue
+	}
+	return nil
+}
+
+func GetOrNilL(d *schema.ResourceData, key string) *[]interface{} {
+	value, set := d.GetOk(key)
+	if set {
+		listValue := value.(*schema.Set).List()
+		return &listValue
 	}
 	return nil
 }
@@ -169,13 +185,13 @@ func createHealthRule(d *schema.ResourceData) client.HealthRule {
 	metricAggregationFunction := d.Get("metric_aggregation_function").(string)
 	metricPath := d.Get("metric_path").(string)
 	criticalCompareValue := d.Get("critical_compare_value").(float64)
-	compareCondition := GetOrNil(d, "compare_condition")
+	compareCondition := GetOrNilS(d, "compare_condition")
 	warnCompareValue := d.Get("warn_compare_value").(float64)
 	metricEvalDetailType := d.Get("metric_eval_detail_type").(string)
 
-	baselineCondition := GetOrNil(d, "baseline_condition")
-	baselineName := GetOrNil(d, "baseline_name")
-	baselineUnit := GetOrNil(d, "baseline_unit")
+	baselineCondition := GetOrNilS(d, "baseline_condition")
+	baselineName := GetOrNilS(d, "baseline_name")
+	baselineUnit := GetOrNilS(d, "baseline_unit")
 
 	healthRule := client.HealthRule{
 		Name:                    name,
@@ -186,6 +202,7 @@ func createHealthRule(d *schema.ResourceData) client.HealthRule {
 			AffectedEntityType: affectedEntityType,
 			AffectedBusinessTransactions: &client.Transaction{
 				BusinessTransactionScope: businessTransactionScope,
+				BusinessTransactions:     GetOrNilL(d, "business_transactions"),
 			},
 		},
 		Criterias: &client.Criterias{

@@ -15,6 +15,7 @@
 |`baseline_unit`|no|string|What unit to compare the baseline with|`"PERCENTAGE"`|
 |`metric_path`|yes|string|Which metric to use|`"95th Percentile Response Time (ms)"`|
 |`compare_condition`|no|string|How to compare the values to the metric|`"GREATER_THAN_SPECIFIC_VALUE"`|
+|`business_transactions`|no|number|A list of transactions to trigger the health rule for|`["/endpoint"]`|
 |`warn_compare_value`|yes|number|The value at which the health rule should trigger a warning|`1`|
 |`critical_compare_value`|yes|number|The value at which the health rule should trigger an error|`2`|
 
@@ -73,7 +74,7 @@
 
 #### Examples
 
-###### All BT Baseline 
+###### All BTs Baseline 
 ```hcl
 resource "appd_health_rule" "my_baseline_rule" {
   name = "My Baseline Health Rule"
@@ -92,7 +93,7 @@ resource "appd_health_rule" "my_baseline_rule" {
 }
 ```
 
-###### All BT Value
+###### All BTs Value
 ```hcl
 resource "appd_health_rule" "my_single_metric_rule" {
   name = "My Single Metring Health Rule"
@@ -104,6 +105,27 @@ resource "appd_health_rule" "my_single_metric_rule" {
   metric_eval_detail_type = "SPECIFIC_TYPE"
   metric_path = "95th Percentile Response Time (ms)"
   compare_condition="GREATER_THAN_SPECIFIC_VALUE"
+  warn_compare_value = 100
+  critical_compare_value = 200
+}
+```
+
+###### Specific BTs Value
+```hcl
+resource "appd_health_rule" "specific_bts_rule" {
+  name = "My Specific BTs Rule"
+  application_id = var.application_id
+  metric_aggregation_function = "VALUE"
+  eval_detail_type = "SINGLE_METRIC"
+  affected_entity_type = "BUSINESS_TRANSACTION_PERFORMANCE"
+  business_transaction_scope = "SPECIFIC_BUSINESS_TRANSACTIONS"
+  business_transactions = [
+    "/route/one",
+    "/route/two"
+  ]
+  metric_eval_detail_type = "SPECIFIC_TYPE"
+  metric_path = "95th Percentile Response Time (ms)"
+  compare_condition = "GREATER_THAN_SPECIFIC_VALUE"
   warn_compare_value = 100
   critical_compare_value = 200
 }

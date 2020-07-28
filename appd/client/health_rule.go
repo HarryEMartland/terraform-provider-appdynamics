@@ -1,7 +1,6 @@
 package client
 
 import (
-	"encoding/json"
 	"errors"
 	"fmt"
 	"github.com/imroc/req"
@@ -17,10 +16,7 @@ func (c *AppDClient) CreateHealthRule(healthRule *HealthRule, applicationId int)
 	if resp.Response().StatusCode != 201 {
 		respString, _ := resp.ToString()
 
-		json, _ := json.Marshal(healthRule)
-		fmt.Println(string(json))
-
-		return nil, errors.New(fmt.Sprintf("Error creating Health Rule: %d, %s, %s", resp.Response().StatusCode, respString, string(json)))
+		return nil, errors.New(fmt.Sprintf("Error creating Health Rule: %d, %s, %s", resp.Response().StatusCode, respString))
 	}
 
 	updated := HealthRule{}
@@ -141,5 +137,6 @@ type Affects struct {
 }
 
 type Transaction struct {
-	BusinessTransactionScope string `json:"businessTransactionScope"`
+	BusinessTransactionScope string         `json:"businessTransactionScope"`
+	BusinessTransactions     *[]interface{} `json:"businessTransactions"`
 }
