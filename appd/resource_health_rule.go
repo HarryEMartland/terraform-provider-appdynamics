@@ -32,23 +32,6 @@ func resourceHealthRule() *schema.Resource {
 				Default:  5,
 				Optional: true,
 			},
-			"type": {
-				Type:     schema.TypeString,
-				Required: true,
-				ValidateFunc: validateList([]string{
-					"OVERALL_APPLICATION_PERFORMANCE",
-					"BUSINESS_TRANSACTION_PERFORMANCE",
-					"TIER_NODE_TRANSACTION_PERFORMANCE",
-					"TIER_NODE_HARDWARE",
-					"SERVERS_IN_APPLICATION",
-					"BACKENDS",
-					"ERRORS",
-					"SERVICE_ENDPOINTS",
-					"INFORMATION_POINTS",
-					"CUSTOM",
-					"DATABASES",
-					"SERVERS"}),
-			},
 			"affected_entity_type": {
 				Type:     schema.TypeString,
 				Required: true,
