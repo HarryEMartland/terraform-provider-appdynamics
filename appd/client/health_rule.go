@@ -16,7 +16,7 @@ func (c *AppDClient) CreateHealthRule(healthRule *HealthRule, applicationId int)
 	if resp.Response().StatusCode != 201 {
 		respString, _ := resp.ToString()
 
-		return nil, errors.New(fmt.Sprintf("Error creating Health Rule: %d, %s, %s", resp.Response().StatusCode, respString))
+		return nil, errors.New(fmt.Sprintf("Error creating Health Rule: %d, %s", resp.Response().StatusCode, respString))
 	}
 
 	updated := HealthRule{}

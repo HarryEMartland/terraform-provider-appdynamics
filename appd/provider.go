@@ -31,7 +31,7 @@ func validateList(validValues []string) func(val interface{}, key string) (warns
 		strVal := val.(string)
 
 		if !contains(validValues, strVal) {
-			errs = append(errs, fmt.Errorf("%s is not a valid value for %s (%v)", strVal, key, validValues))
+			errs = append(errs, fmt.Errorf("%s is not a valid value for %s %v", strVal, key, validValues))
 		}
 
 		return
