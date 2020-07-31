@@ -40,7 +40,6 @@ func TestAccAppDHealthRule_basicSingleMetricAllBts(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "compare_condition", condition),
 					resource.TestCheckResourceAttr(resourceName, "warn_compare_value", warnValue),
 					resource.TestCheckResourceAttr(resourceName, "critical_compare_value", criticalValue),
-					resource.TestCheckResourceAttr(resourceName, "name", name),
 					resource.TestCheckResourceAttrSet(resourceName, "id"),
 					CheckHealthRuleExists(resourceName),
 				),
@@ -88,7 +87,6 @@ func TestAccAppDHealthRule_updateSingleMetricAllBts(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "compare_condition", condition),
 					resource.TestCheckResourceAttr(resourceName, "warn_compare_value", warnValue),
 					resource.TestCheckResourceAttr(resourceName, "critical_compare_value", criticalValue),
-					resource.TestCheckResourceAttr(resourceName, "name", name),
 					resource.TestCheckResourceAttrSet(resourceName, "id"),
 					CheckHealthRuleExists(resourceName),
 				),
@@ -107,7 +105,71 @@ func TestAccAppDHealthRule_updateSingleMetricAllBts(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "compare_condition", updatedCondition),
 					resource.TestCheckResourceAttr(resourceName, "warn_compare_value", updatedWarnValue),
 					resource.TestCheckResourceAttr(resourceName, "critical_compare_value", updatedCriticalValue),
+					resource.TestCheckResourceAttrSet(resourceName, "id"),
+					CheckHealthRuleExists(resourceName),
+				),
+			},
+		},
+		CheckDestroy: CheckHealthRuleDoesNotExist(resourceName),
+	})
+}
+
+func TestAccAppDHealthRule_basicSpecificBts(t *testing.T) {
+
+	name := acctest.RandStringFromCharSet(11, acctest.CharSetAlphaNum)
+	bts := []string{bt1}
+
+	resourceName := "appd_health_rule.test_specific_bts"
+
+	resource.Test(t, resource.TestCase{
+		Providers: map[string]terraform.ResourceProvider{
+			"appd": Provider(),
+		},
+		Steps: []resource.TestStep{
+			{
+				Config: specificBTsHealthRule(name, bts),
+				Check: resource.ComposeAggregateTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "name", name),
+					resource.TestCheckResourceAttr(resourceName, "business_transactions.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "application_id", applicationIdS),
+					resource.TestCheckResourceAttrSet(resourceName, "id"),
+					CheckHealthRuleExists(resourceName),
+				),
+			},
+		},
+		CheckDestroy: CheckHealthRuleDoesNotExist(resourceName),
+	})
+}
+
+func TestAccAppDHealthRule_updateSpecificBts(t *testing.T) {
+
+	name := acctest.RandStringFromCharSet(11, acctest.CharSetAlphaNum)
+	bts := []string{bt1}
+	updatedBts := []string{bt1, bt2}
+
+	resourceName := "appd_health_rule.test_specific_bts"
+
+	resource.Test(t, resource.TestCase{
+		Providers: map[string]terraform.ResourceProvider{
+			"appd": Provider(),
+		},
+		Steps: []resource.TestStep{
+			{
+				Config: specificBTsHealthRule(name, bts),
+				Check: resource.ComposeAggregateTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "name", name),
+					resource.TestCheckResourceAttr(resourceName, "business_transactions.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "application_id", applicationIdS),
+					resource.TestCheckResourceAttrSet(resourceName, "id"),
+					CheckHealthRuleExists(resourceName),
+				),
+			},
+			{
+				Config: specificBTsHealthRule(name, updatedBts),
+				Check: resource.ComposeAggregateTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "name", name),
+					resource.TestCheckResourceAttr(resourceName, "business_transactions.#", "2"),
+					resource.TestCheckResourceAttr(resourceName, "application_id", applicationIdS),
 					resource.TestCheckResourceAttrSet(resourceName, "id"),
 					CheckHealthRuleExists(resourceName),
 				),
@@ -178,4 +240,24 @@ func allBTsHealthRule(name string, aggregationFunction string, detailType string
 					  critical_compare_value = %s
 					}
 `, configureConfig(), name, aggregationFunction, detailType, entityType, metric, compareCondition, warnValue, criticalValue)
+}
+
+func specificBTsHealthRule(name string, bts []string) string {
+	return fmt.Sprintf(`
+					%s
+					resource "appd_health_rule" "test_specific_bts" {
+					  name = "%s"
+					  application_id = var.application_id
+					  metric_aggregation_function = "VALUE"
+					  eval_detail_type = "SINGLE_METRIC"
+					  affected_entity_type = "BUSINESS_TRANSACTION_PERFORMANCE"
+					  business_transaction_scope = "SPECIFIC_BUSINESS_TRANSACTIONS"
+					  business_transactions = %s
+					  metric_eval_detail_type = "SPECIFIC_TYPE"
+					  metric_path = "95th Percentile Response Time (ms)"
+					  compare_condition = "GREATER_THAN_SPECIFIC_VALUE"
+					  warn_compare_value = 100
+					  critical_compare_value = 200
+					}
+`, configureConfig(), name, arrayToString(bts))
 }
