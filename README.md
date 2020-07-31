@@ -35,6 +35,12 @@ provider "appd" {
 #### Building
 
 ```shell script
-go get
-go build -o terraform-provider-appd && chmod +x ./terraform-provider-appd
+make install build
+```
+
+#### Testing
+
+###### Unit Tests
+```shell script
+make test
 ```
