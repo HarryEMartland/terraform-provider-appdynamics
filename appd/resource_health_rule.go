@@ -294,7 +294,7 @@ func updateHealthRule(d *schema.ResourceData, healthRule *client.HealthRule) {
 	d.Set("metric_path", criticalCondition.EvalDetail.MetricPath)
 	d.Set("critical_compare_value", criticalCondition.EvalDetail.MetricEvalDetail.CompareValue)
 	d.Set("warn_compare_value", healthRule.Criterias.Warning.Conditions[0].EvalDetail.MetricEvalDetail.CompareValue)
-	d.Set("metric_eval_detail_type", criticalCondition.EvalDetail.EvalDetailType)
+	d.Set("metric_eval_detail_type", criticalCondition.EvalDetail.MetricEvalDetail.MetricEvalDetailType)
 	d.Set("baseline_condition", criticalCondition.EvalDetail.MetricEvalDetail.BaselineCondition)
 	d.Set("baseline_name", criticalCondition.EvalDetail.MetricEvalDetail.BaselineName)
 	d.Set("baseline_unit", criticalCondition.EvalDetail.MetricEvalDetail.BaselineUnit)
