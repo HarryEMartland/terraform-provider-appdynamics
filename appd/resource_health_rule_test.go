@@ -5,6 +5,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/helper/acctest"
 	"github.com/hashicorp/terraform-plugin-sdk/helper/resource"
 	"github.com/hashicorp/terraform-plugin-sdk/terraform"
+	"strconv"
 	"testing"
 )
 
@@ -41,11 +42,56 @@ func TestAccAppDHealthRule_basicSMS(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "critical_compare_value", criticalValue),
 					resource.TestCheckResourceAttr(resourceName, "name", name),
 					resource.TestCheckResourceAttrSet(resourceName, "id"),
+					CheckHealthRuleExists(resourceName),
 				),
 			},
 		},
-		CheckDestroy: CheckActionDoesNotExist(resourceName, appDClient, applicationIdI),
+		CheckDestroy: CheckHealthRuleDoesNotExist(resourceName),
 	})
+}
+
+func CheckHealthRuleExists(resourceName string) func(state *terraform.State) error {
+	return func(state *terraform.State) error {
+
+		resourceState, ok := state.RootModule().Resources[resourceName]
+		if !ok {
+			return fmt.Errorf("not found: %s", resourceName)
+		}
+
+		id, err := strconv.Atoi(resourceState.Primary.ID)
+		if err != nil {
+			return err
+		}
+
+		_, err = appDClient.GetHealthRule(id, applicationIdI)
+		if err != nil {
+			return err
+		}
+
+		return nil
+	}
+}
+
+func CheckHealthRuleDoesNotExist(resourceName string) func(state *terraform.State) error {
+	return func(state *terraform.State) error {
+
+		resourceState, ok := state.RootModule().Resources[resourceName]
+		if !ok {
+			return fmt.Errorf("not found: %s", resourceName)
+		}
+
+		id, err := strconv.Atoi(resourceState.Primary.ID)
+		if err != nil {
+			return err
+		}
+
+		_, err = appDClient.GetHealthRule(id, applicationIdI)
+		if err == nil {
+			return fmt.Errorf("action found: %d", id)
+		}
+
+		return nil
+	}
 }
 
 func allBTsHealthRule(name string, aggregationFunction string, detailType string, entityType string, metric string, compareCondition string, warnValue string, criticalValue string) string {
