@@ -2,7 +2,6 @@ package appd
 
 import (
 	"fmt"
-	"github.com/HarryEMartland/appd-terraform-provider/appd/client"
 	"github.com/hashicorp/terraform-plugin-sdk/helper/acctest"
 	"github.com/hashicorp/terraform-plugin-sdk/helper/resource"
 	"github.com/hashicorp/terraform-plugin-sdk/terraform"
@@ -29,11 +28,11 @@ func TestAccAppDAction_basicSMS(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "action_type", "SMS"),
 					resource.TestCheckResourceAttr(resourceName, "application_id", applicationIdS),
 					resource.TestCheckResourceAttrSet(resourceName, "id"),
-					CheckActionExists(resourceName, appDClient, applicationIdI),
+					CheckActionExists(resourceName),
 				),
 			},
 		},
-		CheckDestroy: CheckActionDoesNotExist(resourceName, appDClient, applicationIdI),
+		CheckDestroy: CheckActionDoesNotExist(resourceName),
 	})
 }
 
@@ -55,7 +54,7 @@ func TestAccAppDAction_updateSMS(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "action_type", "SMS"),
 					resource.TestCheckResourceAttr(resourceName, "application_id", applicationIdS),
 					resource.TestCheckResourceAttrSet(resourceName, "id"),
-					CheckActionExists(resourceName, appDClient, applicationIdI),
+					CheckActionExists(resourceName),
 				),
 			},
 			{
@@ -65,11 +64,11 @@ func TestAccAppDAction_updateSMS(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "action_type", "SMS"),
 					resource.TestCheckResourceAttr(resourceName, "application_id", applicationIdS),
 					resource.TestCheckResourceAttrSet(resourceName, "id"),
-					CheckActionExists(resourceName, appDClient, applicationIdI),
+					CheckActionExists(resourceName),
 				),
 			},
 		},
-		CheckDestroy: CheckActionDoesNotExist(resourceName, appDClient, applicationIdI),
+		CheckDestroy: CheckActionDoesNotExist(resourceName),
 	})
 }
 
@@ -92,11 +91,11 @@ func TestAccAppDAction_basicEmail(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "action_type", "EMAIL"),
 					resource.TestCheckResourceAttr(resourceName, "application_id", applicationIdS),
 					resource.TestCheckResourceAttrSet(resourceName, "id"),
-					CheckActionExists(resourceName, appDClient, applicationIdI),
+					CheckActionExists(resourceName),
 				),
 			},
 		},
-		CheckDestroy: CheckActionDoesNotExist(resourceName, appDClient, applicationIdI),
+		CheckDestroy: CheckActionDoesNotExist(resourceName),
 	})
 }
 
@@ -121,7 +120,7 @@ func TestAccAppDAction_updateEmail(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "action_type", "EMAIL"),
 					resource.TestCheckResourceAttr(resourceName, "application_id", applicationIdS),
 					resource.TestCheckResourceAttrSet(resourceName, "id"),
-					CheckActionExists(resourceName, appDClient, applicationIdI),
+					CheckActionExists(resourceName),
 				),
 			},
 			{
@@ -133,11 +132,11 @@ func TestAccAppDAction_updateEmail(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "action_type", "EMAIL"),
 					resource.TestCheckResourceAttr(resourceName, "application_id", applicationIdS),
 					resource.TestCheckResourceAttrSet(resourceName, "id"),
-					CheckActionExists(resourceName, appDClient, applicationIdI),
+					CheckActionExists(resourceName),
 				),
 			},
 		},
-		CheckDestroy: CheckActionDoesNotExist(resourceName, appDClient, applicationIdI),
+		CheckDestroy: CheckActionDoesNotExist(resourceName),
 	})
 }
 
@@ -159,11 +158,11 @@ func TestAccAppDAction_basicHttp(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "http_request_template_name", templateName),
 					resource.TestCheckResourceAttr(resourceName, "action_type", "HTTP_REQUEST"),
 					resource.TestCheckResourceAttr(resourceName, "custom_template_variables.config", "cValue"),
-					CheckActionExists(resourceName, appDClient, applicationIdI),
+					CheckActionExists(resourceName),
 				),
 			},
 		},
-		CheckDestroy: CheckActionDoesNotExist(resourceName, appDClient, applicationIdI),
+		CheckDestroy: CheckActionDoesNotExist(resourceName),
 	})
 }
 
@@ -186,7 +185,7 @@ func TestAccAppDAction_updateHttp(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "http_request_template_name", templateName),
 					resource.TestCheckResourceAttr(resourceName, "action_type", "HTTP_REQUEST"),
 					resource.TestCheckResourceAttr(resourceName, "custom_template_variables.config", "cValue"),
-					CheckActionExists(resourceName, appDClient, applicationIdI),
+					CheckActionExists(resourceName),
 				),
 			},
 			{
@@ -197,15 +196,15 @@ func TestAccAppDAction_updateHttp(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "action_type", "HTTP_REQUEST"),
 					resource.TestCheckResourceAttr(resourceName, "custom_template_variables.config", "cValue"),
 					resource.TestCheckResourceAttr(resourceName, "custom_template_variables.second", "sValue"),
-					CheckActionExists(resourceName, appDClient, applicationIdI),
+					CheckActionExists(resourceName),
 				),
 			},
 		},
-		CheckDestroy: CheckActionDoesNotExist(resourceName, appDClient, applicationIdI),
+		CheckDestroy: CheckActionDoesNotExist(resourceName),
 	})
 }
 
-func CheckActionDoesNotExist(resourceName string, appDClient client.AppDClient, applicationId int) func(state *terraform.State) error {
+func CheckActionDoesNotExist(resourceName string) func(state *terraform.State) error {
 	return func(state *terraform.State) error {
 
 		resourceState, ok := state.RootModule().Resources[resourceName]
@@ -218,7 +217,7 @@ func CheckActionDoesNotExist(resourceName string, appDClient client.AppDClient, 
 			return err
 		}
 
-		_, err = appDClient.GetAction(id, applicationId)
+		_, err = appDClient.GetAction(id, applicationIdI)
 		if err == nil {
 			return fmt.Errorf("action found: %d", id)
 		}
@@ -227,7 +226,7 @@ func CheckActionDoesNotExist(resourceName string, appDClient client.AppDClient, 
 	}
 }
 
-func CheckActionExists(resourceName string, appDClient client.AppDClient, applicationId int) func(state *terraform.State) error {
+func CheckActionExists(resourceName string) func(state *terraform.State) error {
 	return func(state *terraform.State) error {
 
 		resourceState, ok := state.RootModule().Resources[resourceName]
@@ -240,7 +239,7 @@ func CheckActionExists(resourceName string, appDClient client.AppDClient, applic
 			return err
 		}
 
-		_, err = appDClient.GetAction(id, applicationId)
+		_, err = appDClient.GetAction(id, applicationIdI)
 		if err != nil {
 			return err
 		}
