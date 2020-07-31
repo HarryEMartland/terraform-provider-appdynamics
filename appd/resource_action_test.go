@@ -15,21 +15,28 @@ import (
 	"testing"
 )
 
-var appDClient = client.AppDClient{
-	BaseUrl: os.Getenv("APPD_CONTROLLER_BASE_URL"),
-	Secret:  os.Getenv("APPD_SECRET"),
-}
+var appDClient client.AppDClient
 var applicationIdI int
 var applicationIdS string
-var httpActionTemplateName = os.Getenv("APPD_HTTP_ACTION_TEMPLATE_NAME")
+var httpActionTemplateName string
 
 func init() {
+	_, acceptanceTest := os.LookupEnv("TF_ACC")
+	if !acceptanceTest {
+		return
+	}
+
 	applicationId, err := strconv.Atoi(os.Getenv("APPD_APPLICATION_ID"))
 	if err != nil {
 		log.Fatal(fmt.Sprintf("error parsing application id: %s", os.Getenv("APPD_APPLICATION_ID")))
 	}
+	appDClient = client.AppDClient{
+		BaseUrl: os.Getenv("APPD_CONTROLLER_BASE_URL"),
+		Secret:  os.Getenv("APPD_SECRET"),
+	}
 	applicationIdI = applicationId
 	applicationIdS = os.Getenv("APPD_APPLICATION_ID")
+	httpActionTemplateName = os.Getenv("APPD_HTTP_ACTION_TEMPLATE_NAME")
 }
 
 func TestAccAppDAction_basicSMS(t *testing.T) {
