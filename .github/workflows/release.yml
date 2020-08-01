@@ -24,8 +24,14 @@ jobs:
         git config --local user.email "action@github.com"
         git config --local user.name "GitHub Action"
 
-    - name: Create Changelog and Tag
-      run: npx standard-version
+    - name: Version (npx)
+      run: npx -v
 
-    - name: Push
-      run: git push "https://$GITHUB_ACTOR:${{ secrets.GITHUB_TOKEN }}@github.com/$GITHUB_REPOSITORY.git" --follow-tags
+    - name: Version (standard-version)
+      run: npx standard-version -v
+
+    - name: Create Changelog and Tag
+      run: npx standard-version --dry-run
+
+##    - name: Push
+##      run: git push "https://$GITHUB_ACTOR:${{ secrets.GITHUB_TOKEN }}@github.com/$GITHUB_REPOSITORY.git" --follow-tags
