@@ -14,7 +14,9 @@ jobs:
 
     - name: Check out code
       uses: actions/checkout@v2
-      run: git fetch --depth=1 origin +refs/tags/*:refs/tags/*
+
+    - name: Fetch tags
+      run:  git fetch --unshallow --tags
 
     - name: Test
       run: make test
