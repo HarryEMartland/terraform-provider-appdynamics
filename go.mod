@@ -7,6 +7,7 @@ require (
 	github.com/agext/levenshtein v1.2.3 // indirect
 	github.com/apparentlymart/go-cidr v1.1.0 // indirect
 	github.com/aws/aws-sdk-go v1.33.16 // indirect
+	github.com/cenkalti/backoff/v4 v4.0.2
 	github.com/fatih/color v1.9.0 // indirect
 	github.com/google/go-cmp v0.5.1 // indirect
 	github.com/hashicorp/go-getter v1.4.1 // indirect

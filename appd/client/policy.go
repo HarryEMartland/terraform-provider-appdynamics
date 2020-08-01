@@ -70,6 +70,11 @@ func (c *AppDClient) GetPolicy(policyId int, applicationId int) (*Policy, error)
 		return nil, err
 	}
 
+	if resp.Response().StatusCode != 200 {
+		respString, _ := resp.ToString()
+		return nil, errors.New(fmt.Sprintf("Error getting Policy: %d, %s", resp.Response().StatusCode, respString))
+	}
+
 	updated := Policy{}
 	err = resp.ToJSON(&updated)
 	if err != nil {
@@ -87,15 +92,13 @@ func (c *AppDClient) createPolicyUrl(policyId int, applicationId int) string {
 	return fmt.Sprintf("%s/%d", c.createPoliciesUrl(applicationId), policyId)
 }
 
-
 type Policy struct {
-	Id int `json:"id"`
-	Name string `json:"name"`
-	Enabled bool `json:"enabled"`
-	ExecuteActionsInBatch bool `json:"executeActionsInBatch"`
-	Actions []*PolicyAction `json:"actions"`
-	Events *Events `json:"events"`
-
+	Id                    int             `json:"id"`
+	Name                  string          `json:"name"`
+	Enabled               bool            `json:"enabled"`
+	ExecuteActionsInBatch bool            `json:"executeActionsInBatch"`
+	Actions               []*PolicyAction `json:"actions"`
+	Events                *Events         `json:"events"`
 }
 
 type PolicyAction struct {
@@ -105,40 +108,40 @@ type PolicyAction struct {
 
 type Events struct {
 	HealthRuleEvents *HealthRuleEvents `json:"healthRuleEvents"`
-	OtherEvents []interface{} `json:"otherEvents"`
+	OtherEvents      []interface{}     `json:"otherEvents"`
 }
 
 type HealthRuleEvents struct {
-	HealthRuleEventTypes []interface{} `json:"healthRuleEventTypes"`
-	HealthRuleScope *HealthRuleScope `json:"healthRuleScope"`
+	HealthRuleEventTypes []interface{}    `json:"healthRuleEventTypes"`
+	HealthRuleScope      *HealthRuleScope `json:"healthRuleScope"`
 }
 
 type HealthRuleScope struct {
-	HealthRuleScopeType string `json:"healthRuleScopeType"`
-	HealthRules []interface{} `json:"healthRules"`
+	HealthRuleScopeType string        `json:"healthRuleScopeType"`
+	HealthRules         []interface{} `json:"healthRules"`
 }
 
 type SelectedEntities struct {
-	SelectedEntityType string `json:"selectedEntityType"`
-	Entities []*Entity `json:"entities"`
+	SelectedEntityType string    `json:"selectedEntityType"`
+	Entities           []*Entity `json:"entities"`
 }
 
 type Entity struct {
-	EntityType string `json:"entityType"`
+	EntityType                   string                        `json:"entityType"`
 	SelectedBusinessTransactions *SelectedBusinessTransactions `json:"selectedBusinessTransactions"`
 }
 
 type SelectedBusinessTransactions struct {
-	BusinessTransactionScope string `json:"businessTransactionScope"`
-	BusinessTransactions  []interface{} `json:"businessTransactions"`
+	BusinessTransactionScope string        `json:"businessTransactionScope"`
+	BusinessTransactions     []interface{} `json:"businessTransactions"`
 }
 
 type TierOrNode struct {
 	TierOrNodeScope string `json:"tierOrNodeScope"`
-	TypeOfNode string `json:"typeOfNode"`
+	TypeOfNode      string `json:"typeOfNode"`
 }
 
 type SelectedNodes struct {
-	SelectedNodeScope string `json:"selectedNodeScope"`
-	Nodes  []interface{} `json:"nodes"`
+	SelectedNodeScope string        `json:"selectedNodeScope"`
+	Nodes             []interface{} `json:"nodes"`
 }

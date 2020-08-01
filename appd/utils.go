@@ -2,7 +2,10 @@ package appd
 
 import (
 	"fmt"
+	"github.com/cenkalti/backoff/v4"
 	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
+	"github.com/hashicorp/terraform-plugin-sdk/terraform"
+	"time"
 )
 
 func arrayToString(a []string) string {
@@ -40,5 +43,22 @@ func validateList(validValues []string) func(val interface{}, key string) (warns
 		}
 
 		return
+	}
+}
+
+func RetryCheck(check func(state *terraform.State) error) func(state *terraform.State) error {
+	return func(state *terraform.State) error {
+
+		backOff := backoff.NewExponentialBackOff()
+		backOff.MaxElapsedTime = 10 * time.Second
+
+		err := backoff.Retry(func() error {
+			fmt.Println("checking")
+			err := check(state)
+			fmt.Printf("result %s\n", err)
+			return err
+		}, backOff)
+
+		return err
 	}
 }
