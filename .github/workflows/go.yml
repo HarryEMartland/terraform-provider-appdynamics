@@ -101,9 +101,6 @@ jobs:
               dep ensure
           fi
 
-      - name: Test
-        run: make test
-
       - name: Build
         run: go build -v -o terraform-provider-appd
 
