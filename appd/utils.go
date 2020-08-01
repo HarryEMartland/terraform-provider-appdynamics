@@ -53,9 +53,10 @@ func RetryCheck(check func(state *terraform.State) error) func(state *terraform.
 		backOff.MaxElapsedTime = 10 * time.Second
 
 		err := backoff.Retry(func() error {
-			fmt.Println("checking")
 			err := check(state)
-			fmt.Printf("result %s\n", err)
+			if err != nil {
+				fmt.Printf("retry function failed %s\n", err)
+			}
 			return err
 		}, backOff)
 
