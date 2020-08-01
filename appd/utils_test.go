@@ -17,6 +17,8 @@ var applicationIdS string
 var httpActionTemplateName string
 var bt1 string
 var bt2 string
+var tier1 string
+var tier2 string
 
 func init() {
 	_, acceptanceTest := os.LookupEnv("TF_ACC")
@@ -37,6 +39,8 @@ func init() {
 	httpActionTemplateName = os.Getenv("APPD_HTTP_ACTION_TEMPLATE_NAME")
 	bt1 = os.Getenv("APPD_BT1")
 	bt2 = os.Getenv("APPD_BT2")
+	tier1 = os.Getenv("APPD_TIER1")
+	tier2 = os.Getenv("APPD_TIER2")
 }
 
 func TestMapToStringSingle(t *testing.T) {

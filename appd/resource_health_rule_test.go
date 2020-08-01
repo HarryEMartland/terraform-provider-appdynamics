@@ -7,6 +7,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/terraform"
 	"strconv"
 	"testing"
+	"time"
 )
 
 func TestAccAppDHealthRule_basicSingleMetricAllBts(t *testing.T) {
@@ -179,6 +180,71 @@ func TestAccAppDHealthRule_updateSpecificBts(t *testing.T) {
 	})
 }
 
+func TestAccAppDHealthRule_basicSpecificTiers(t *testing.T) {
+
+	name := acctest.RandStringFromCharSet(11, acctest.CharSetAlphaNum)
+	tiers := []string{tier1}
+
+	resourceName := "appd_health_rule.test_specific_tiers"
+
+	resource.Test(t, resource.TestCase{
+		Providers: map[string]terraform.ResourceProvider{
+			"appd": Provider(),
+		},
+		Steps: []resource.TestStep{
+			{
+				Config: specificTiersHealthRule(name, tiers),
+				Check: resource.ComposeAggregateTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "name", name),
+					resource.TestCheckResourceAttr(resourceName, "specific_tiers.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "application_id", applicationIdS),
+					resource.TestCheckResourceAttrSet(resourceName, "id"),
+					CheckHealthRuleExists(resourceName),
+				),
+			},
+		},
+		CheckDestroy: CheckHealthRuleDoesNotExist(resourceName),
+	})
+}
+
+func TestAccAppDHealthRule_updateSpecificTiers(t *testing.T) {
+
+	name := acctest.RandStringFromCharSet(11, acctest.CharSetAlphaNum)
+	tiers := []string{tier1}
+	updatedBts := []string{tier1, tier2}
+
+	resourceName := "appd_health_rule.test_specific_tiers"
+
+	resource.Test(t, resource.TestCase{
+		Providers: map[string]terraform.ResourceProvider{
+			"appd": Provider(),
+		},
+		Steps: []resource.TestStep{
+			{
+				Config: specificTiersHealthRule(name, tiers),
+				Check: resource.ComposeAggregateTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "name", name),
+					resource.TestCheckResourceAttr(resourceName, "specific_tiers.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "application_id", applicationIdS),
+					resource.TestCheckResourceAttrSet(resourceName, "id"),
+					CheckHealthRuleExists(resourceName),
+				),
+			},
+			{
+				Config: specificTiersHealthRule(name, updatedBts),
+				Check: resource.ComposeAggregateTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "name", name),
+					resource.TestCheckResourceAttr(resourceName, "specific_tiers.#", "2"),
+					resource.TestCheckResourceAttr(resourceName, "application_id", applicationIdS),
+					resource.TestCheckResourceAttrSet(resourceName, "id"),
+					CheckHealthRuleExists(resourceName),
+				),
+			},
+		},
+		CheckDestroy: CheckHealthRuleDoesNotExist(resourceName),
+	})
+}
+
 func CheckHealthRuleExists(resourceName string) func(state *terraform.State) error {
 	return func(state *terraform.State) error {
 
@@ -204,6 +270,8 @@ func CheckHealthRuleExists(resourceName string) func(state *terraform.State) err
 func CheckHealthRuleDoesNotExist(resourceName string) func(state *terraform.State) error {
 	return func(state *terraform.State) error {
 
+		time.Sleep(time.Second)
+
 		resourceState, ok := state.RootModule().Resources[resourceName]
 		if !ok {
 			return fmt.Errorf("not found: %s", resourceName)
@@ -216,7 +284,7 @@ func CheckHealthRuleDoesNotExist(resourceName string) func(state *terraform.Stat
 
 		_, err = appDClient.GetHealthRule(id, applicationIdI)
 		if err == nil {
-			return fmt.Errorf("action found: %d", id)
+			return fmt.Errorf("health rule found: %d", id)
 		}
 
 		return nil
@@ -260,4 +328,24 @@ func specificBTsHealthRule(name string, bts []string) string {
 					  critical_compare_value = 200
 					}
 `, configureConfig(), name, arrayToString(bts))
+}
+
+func specificTiersHealthRule(name string, tiers []string) string {
+	return fmt.Sprintf(`
+					%s
+					resource "appd_health_rule" "test_specific_tiers" {
+					  name = "%s"
+					  application_id = var.application_id
+					  metric_aggregation_function = "VALUE"
+					  eval_detail_type = "SINGLE_METRIC"
+					  affected_entity_type = "BUSINESS_TRANSACTION_PERFORMANCE"
+					  business_transaction_scope = "BUSINESS_TRANSACTIONS_IN_SPECIFIC_TIERS"
+					  specific_tiers = %s
+					  metric_eval_detail_type = "SPECIFIC_TYPE"
+					  metric_path = "95th Percentile Response Time (ms)"
+					  compare_condition = "GREATER_THAN_SPECIFIC_VALUE"
+					  warn_compare_value = 100
+					  critical_compare_value = 200
+					}
+`, configureConfig(), name, arrayToString(tiers))
 }
