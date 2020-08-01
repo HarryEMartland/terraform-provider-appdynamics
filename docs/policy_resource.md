@@ -68,7 +68,7 @@
 
 ###### Specific Health Rule
 
-```terraform
+```hcl
 resource "appd_policy" "my_policy" {
   name = "My Policy"
   application_id = var.application_id
