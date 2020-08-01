@@ -2,6 +2,11 @@ name: Release
 
 on:
   workflow_dispatch:
+    inputs:
+      releaseAs:
+        description: 'Release as (major, minor, patch)'
+        required: true
+        default: 'minor'
 
 jobs:
 
@@ -25,7 +30,7 @@ jobs:
         git config --local user.name "GitHub Action"
 
     - name: Create Changelog and Tag
-      run: npx standard-version
+      run: npx standard-version --release-as ${{ github.event.inputs.releaseAs }}
 
     - name: Push
-      run: git push "https://$GITHUB_ACTOR:${{ secrets.GITHUB_TOKEN }}@github.com/$GITHUB_REPOSITORY.git" --follow-tags origin master
+      run: git push "https://$GITHUB_ACTOR:${{ secrets.GITHUB_TOKEN }}@github.com/$GITHUB_REPOSITORY.git" --follow-tags
