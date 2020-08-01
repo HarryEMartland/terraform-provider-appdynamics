@@ -1,7 +1,6 @@
 package appd
 
 import (
-	"fmt"
 	"github.com/HarryEMartland/appd-terraform-provider/appd/client"
 	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
 )
@@ -23,17 +22,5 @@ func Provider() *schema.Provider {
 				Secret:  data.Get("secret").(string),
 			}, nil
 		},
-	}
-}
-
-func validateList(validValues []string) func(val interface{}, key string) (warns []string, errs []error) {
-	return func(val interface{}, key string) (warns []string, errs []error) {
-		strVal := val.(string)
-
-		if !contains(validValues, strVal) {
-			errs = append(errs, fmt.Errorf("%s is not a valid value for %s %v", strVal, key, validValues))
-		}
-
-		return
 	}
 }

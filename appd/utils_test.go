@@ -3,7 +3,6 @@ package appd
 import (
 	"fmt"
 	"github.com/HarryEMartland/appd-terraform-provider/appd/client"
-	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
 	"github.com/stretchr/testify/assert"
 	"log"
 	"os"
@@ -43,6 +42,70 @@ func init() {
 	tier2 = os.Getenv("APPD_TIER2")
 }
 
+func TestValidateListShouldReturnNoErrsOrWarnsWhenIsValid(t *testing.T) {
+
+	warns, errs := validateList([]string{"Valid"})("Valid", "test_key")
+
+	if len(warns) > 0 {
+		t.Errorf("warns should be empty, got %d", len(warns))
+	}
+
+	if len(errs) > 0 {
+		t.Errorf("errs should be empty, got %d", len(warns))
+	}
+
+}
+
+func TestValidateListShouldReturnNoErrsOrWarnsWhenIsValidList(t *testing.T) {
+
+	warns, errs := validateList([]string{"Another Valid", "Valid"})("Valid", "test_key")
+
+	if len(warns) > 0 {
+		t.Errorf("warns should be empty, got %d", len(warns))
+	}
+
+	if len(errs) > 0 {
+		t.Errorf("errs should be empty, got %d", len(warns))
+	}
+
+}
+
+func TestValidateListShouldReturnErrorWhenNotValid(t *testing.T) {
+
+	warns, errs := validateList([]string{"Valid"})("Not Valid", "test_key")
+
+	if len(warns) > 0 {
+		t.Errorf("warns should be empty, got %d", len(warns))
+	}
+
+	if len(errs) != 1 {
+		t.Errorf("one error should be returned, got %d", len(warns))
+	}
+
+	if errs[0].Error() != "Not Valid is not a valid value for test_key [Valid]" {
+		t.Errorf("error message did did not match, got %s", errs[0].Error())
+	}
+
+}
+
+func TestValidateListShouldReturnErrorWhenNotValidList(t *testing.T) {
+
+	warns, errs := validateList([]string{"Another Valid", "Valid"})("Not Valid", "test_key")
+
+	if len(warns) > 0 {
+		t.Errorf("warns should be empty, got %d", len(warns))
+	}
+
+	if len(errs) != 1 {
+		t.Errorf("one error should be returned, got %d", len(warns))
+	}
+
+	if errs[0].Error() != "Not Valid is not a valid value for test_key [Another Valid Valid]" {
+		t.Errorf("error message did did not match, got %s", errs[0].Error())
+	}
+
+}
+
 func TestMapToStringSingle(t *testing.T) {
 	assert.Equal(t, "{k1: \"v1\",}", mapToString(map[string]string{"k1": "v1"}), "map should be correctly formatted")
 }
@@ -68,30 +131,4 @@ func TestArrayToStringSingle(t *testing.T) {
 func TestArrayToStringMultiple(t *testing.T) {
 	strings := []string{"test", "test2"}
 	assert.Equal(t, "[\"test\",\"test2\",]", arrayToString(strings))
-}
-
-func arrayToString(a []string) string {
-	result := "["
-
-	for _, s := range a {
-		result += fmt.Sprintf("\"%s\",", s)
-	}
-
-	result += "]"
-	return result
-}
-
-func mapToString(m map[string]string) string {
-	result := "{"
-
-	for key, value := range m {
-		result += fmt.Sprintf("%s: \"%s\",", key, value)
-	}
-
-	result += "}"
-	return result
-}
-
-func hash(s string) int {
-	return schema.HashString(s)
 }
