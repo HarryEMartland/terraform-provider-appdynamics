@@ -7,7 +7,6 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/terraform"
 	"strconv"
 	"testing"
-	"time"
 )
 
 func TestAccAppDHealthRule_basicSingleMetricAllBts(t *testing.T) {
@@ -42,11 +41,11 @@ func TestAccAppDHealthRule_basicSingleMetricAllBts(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "warn_compare_value", warnValue),
 					resource.TestCheckResourceAttr(resourceName, "critical_compare_value", criticalValue),
 					resource.TestCheckResourceAttrSet(resourceName, "id"),
-					CheckHealthRuleExists(resourceName),
+					RetryCheck(CheckHealthRuleExists(resourceName)),
 				),
 			},
 		},
-		CheckDestroy: CheckHealthRuleDoesNotExist(resourceName),
+		CheckDestroy: RetryCheck(CheckHealthRuleDoesNotExist(resourceName)),
 	})
 }
 
@@ -89,7 +88,7 @@ func TestAccAppDHealthRule_updateSingleMetricAllBts(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "warn_compare_value", warnValue),
 					resource.TestCheckResourceAttr(resourceName, "critical_compare_value", criticalValue),
 					resource.TestCheckResourceAttrSet(resourceName, "id"),
-					CheckHealthRuleExists(resourceName),
+					RetryCheck(CheckHealthRuleExists(resourceName)),
 				),
 			},
 			{
@@ -107,11 +106,11 @@ func TestAccAppDHealthRule_updateSingleMetricAllBts(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "warn_compare_value", updatedWarnValue),
 					resource.TestCheckResourceAttr(resourceName, "critical_compare_value", updatedCriticalValue),
 					resource.TestCheckResourceAttrSet(resourceName, "id"),
-					CheckHealthRuleExists(resourceName),
+					RetryCheck(CheckHealthRuleExists(resourceName)),
 				),
 			},
 		},
-		CheckDestroy: CheckHealthRuleDoesNotExist(resourceName),
+		CheckDestroy: RetryCheck(CheckHealthRuleDoesNotExist(resourceName)),
 	})
 }
 
@@ -134,11 +133,11 @@ func TestAccAppDHealthRule_basicSpecificBts(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "business_transactions.#", "1"),
 					resource.TestCheckResourceAttr(resourceName, "application_id", applicationIdS),
 					resource.TestCheckResourceAttrSet(resourceName, "id"),
-					CheckHealthRuleExists(resourceName),
+					RetryCheck(CheckHealthRuleExists(resourceName)),
 				),
 			},
 		},
-		CheckDestroy: CheckHealthRuleDoesNotExist(resourceName),
+		CheckDestroy: RetryCheck(CheckHealthRuleDoesNotExist(resourceName)),
 	})
 }
 
@@ -162,7 +161,7 @@ func TestAccAppDHealthRule_updateSpecificBts(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "business_transactions.#", "1"),
 					resource.TestCheckResourceAttr(resourceName, "application_id", applicationIdS),
 					resource.TestCheckResourceAttrSet(resourceName, "id"),
-					CheckHealthRuleExists(resourceName),
+					RetryCheck(CheckHealthRuleExists(resourceName)),
 				),
 			},
 			{
@@ -172,11 +171,11 @@ func TestAccAppDHealthRule_updateSpecificBts(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "business_transactions.#", "2"),
 					resource.TestCheckResourceAttr(resourceName, "application_id", applicationIdS),
 					resource.TestCheckResourceAttrSet(resourceName, "id"),
-					CheckHealthRuleExists(resourceName),
+					RetryCheck(CheckHealthRuleExists(resourceName)),
 				),
 			},
 		},
-		CheckDestroy: CheckHealthRuleDoesNotExist(resourceName),
+		CheckDestroy: RetryCheck(CheckHealthRuleDoesNotExist(resourceName)),
 	})
 }
 
@@ -199,11 +198,11 @@ func TestAccAppDHealthRule_basicSpecificTiers(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "specific_tiers.#", "1"),
 					resource.TestCheckResourceAttr(resourceName, "application_id", applicationIdS),
 					resource.TestCheckResourceAttrSet(resourceName, "id"),
-					CheckHealthRuleExists(resourceName),
+					RetryCheck(CheckHealthRuleExists(resourceName)),
 				),
 			},
 		},
-		CheckDestroy: CheckHealthRuleDoesNotExist(resourceName),
+		CheckDestroy: RetryCheck(CheckHealthRuleDoesNotExist(resourceName)),
 	})
 }
 
@@ -227,7 +226,7 @@ func TestAccAppDHealthRule_updateSpecificTiers(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "specific_tiers.#", "1"),
 					resource.TestCheckResourceAttr(resourceName, "application_id", applicationIdS),
 					resource.TestCheckResourceAttrSet(resourceName, "id"),
-					CheckHealthRuleExists(resourceName),
+					RetryCheck(CheckHealthRuleExists(resourceName)),
 				),
 			},
 			{
@@ -237,11 +236,11 @@ func TestAccAppDHealthRule_updateSpecificTiers(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "specific_tiers.#", "2"),
 					resource.TestCheckResourceAttr(resourceName, "application_id", applicationIdS),
 					resource.TestCheckResourceAttrSet(resourceName, "id"),
-					CheckHealthRuleExists(resourceName),
+					RetryCheck(CheckHealthRuleExists(resourceName)),
 				),
 			},
 		},
-		CheckDestroy: CheckHealthRuleDoesNotExist(resourceName),
+		CheckDestroy: RetryCheck(CheckHealthRuleDoesNotExist(resourceName)),
 	})
 }
 
@@ -269,8 +268,6 @@ func CheckHealthRuleExists(resourceName string) func(state *terraform.State) err
 
 func CheckHealthRuleDoesNotExist(resourceName string) func(state *terraform.State) error {
 	return func(state *terraform.State) error {
-
-		time.Sleep(time.Second)
 
 		resourceState, ok := state.RootModule().Resources[resourceName]
 		if !ok {
