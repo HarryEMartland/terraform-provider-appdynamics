@@ -19,6 +19,11 @@ jobs:
     - name: Test
       run: make build
 
+    - name: Setup Git
+      run: |
+        git config --local user.email "action@github.com"
+        git config --local user.name "GitHub Action"
+
     - name: Create Changelog and Tag
       run: npx standard-version
 
