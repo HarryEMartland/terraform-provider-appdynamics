@@ -5,7 +5,7 @@ build:
 	$(GOBUILD)
 	chmod +x ./terraform-provider-appd
 test:
-	go test ./appd
+	go test ./appd -v
 install:
 	go get
 
