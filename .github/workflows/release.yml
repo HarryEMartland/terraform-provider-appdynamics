@@ -92,7 +92,7 @@ jobs:
         prerelease: false
 
     - name: Upload Linux Build to Release
-      id: upload-release-asset
+      id: upload-release-asset-linux
       uses: actions/upload-release-asset@v1
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -103,7 +103,7 @@ jobs:
         asset_content_type: application/zip
 
     - name: Upload Max Build to Release
-      id: upload-release-asset
+      id: upload-release-asset-mac
       uses: actions/upload-release-asset@v1
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
