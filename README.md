@@ -10,8 +10,8 @@ See the [terraform documentation](https://www.terraform.io/docs/extend/how-terra
 The latest downloads can be found attached to the [latest release](https://github.com/HarryEMartland/appd-terraform-provider/releases/tag/latest) in github or on the below links.
 Make sure to download the correct version for your OS.
 
-- [Darwin/Mac Os](https://github.com/HarryEMartland/appd-terraform-provider/releases/download/latest/terraform-provider-appd.mac.zip)
-- [Linux](https://github.com/HarryEMartland/appd-terraform-provider/releases/download/latest/terraform-provider-appd.linux.zip)
+- [Darwin/Mac Os](https://github.com/HarryEMartland/appd-terraform-provider/releases/latest/download/terraform-provider-appd.mac.zip)
+- [Linux](https://github.com/HarryEMartland/appd-terraform-provider/releases/latest/download/terraform-provider-appd.linux.zip)
 
 #### Configuration
 
