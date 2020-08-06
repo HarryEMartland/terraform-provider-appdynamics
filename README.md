@@ -12,7 +12,7 @@ Make sure to download the correct version for your OS.
 
 #### Configuration
 
-To use the AppD Teraform provider you must configure it with the controller base url and a secret.
+To use the AppD Terraform provider you must configure it with the controller base url and a secret.
 A secret can be generated in the AppD UI as documented [here](https://docs.appdynamics.com/display/PRO45/API+Clients).
 
 ###### Example
