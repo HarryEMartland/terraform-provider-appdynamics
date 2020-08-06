@@ -52,3 +52,13 @@ release:
   draft: false
 changelog:
   skip: false
+  filters:
+    # commit messages matching the regexp listed here will be removed from
+    # the changelog
+    # Default is empty
+    exclude:
+      - '^docs():'
+      - '^docs:'
+      - '^chore():'
+      - '^chore:'
+      - typo
