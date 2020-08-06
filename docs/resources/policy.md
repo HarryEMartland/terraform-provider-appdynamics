@@ -1,6 +1,42 @@
 ## Policy Resource
 
-#### Properties
+Creates a policy which triggers an action when events occur.
+
+[AppDynamics Policy Documentation](https://docs.appdynamics.com/display/PRO45/Policies)  
+[AppDynamics Policy API](https://docs.appdynamics.com/display/PRO45/Policy+API)
+
+## Example Usage
+
+#### Specific Health Rule
+
+```hcl
+resource "appd_policy" "my_policy" {
+  name = "My Policy"
+  application_id = var.application_id
+  action_name = "my action"
+  action_type = appd_action.my-first-action.action_type
+  health_rule_event_types = [
+    "HEALTH_RULE_OPEN_WARNING",
+    "HEALTH_RULE_OPEN_CRITICAL"]
+  health_rule_scope_type = "SPECIFIC_HEALTH_RULES"
+  health_rules = ["my health rule"]
+}
+```
+
+#### All Health Rules
+
+```hcl
+resource "appd_policy" "all_health_rules_email_on_call" {
+  name = "All Health Rules Email On call"
+  application_id = var.application_id
+  action_name = join(", ",appd_action.on-call-email-action.emails)
+  action_type = appd_action.my-first-action.action_type
+  health_rule_event_types = ["HEALTH_RULE_OPEN_CRITICAL"]
+  health_rule_scope_type = "ALL_HEALTH_RULES"
+}
+```
+
+## Argument Reference
 
 |Name|Required|Type|Description|Example|
 |----|--------|----|-----------|-------|
@@ -15,11 +51,11 @@
 |`execute_actions_in_batch`|no (default `true`)|boolean|Other events to trigger the action on|`true`|
 |`enabled`|no (default `true`)|boolean|Triggers the action when enabled|`true`|
 
-###### health_rule_scope_type
+#### health_rule_scope_type
 - ALL_HEALTH_RULES
 - SPECIFIC_HEALTH_RULES
 
-###### health_rule_event_types
+#### health_rule_event_types
 - HEALTH_RULE_CONTINUES_CRITICAL
 - HEALTH_RULE_OPEN_CRITICAL
 - HEALTH_RULE_OPEN_WARNING
@@ -31,7 +67,7 @@
 - HEALTH_RULE_CANCELED_WARNING
 - HEALTH_RULE_CANCELED_CRITICAL
 
-###### other_events
+#### other_events
 - CLR_CRASH
 - APPLICATION_CRASH
 - DEADLOCK
@@ -63,34 +99,3 @@
 - EUM_CLOUD_SYNTHETIC_PERF_ONGOING_CRITICAL_EVENT
 - MOBILE_NEW_CRASH_EVENT, SLOW, VERY_SLOW, STALL
 - ERROR
-
-#### Examples
-
-###### Specific Health Rule
-
-```hcl
-resource "appd_policy" "my_policy" {
-  name = "My Policy"
-  application_id = var.application_id
-  action_name = "my action"
-  action_type = appd_action.my-first-action.action_type
-  health_rule_event_types = [
-    "HEALTH_RULE_OPEN_WARNING",
-    "HEALTH_RULE_OPEN_CRITICAL"]
-  health_rule_scope_type = "SPECIFIC_HEALTH_RULES"
-  health_rules = ["my health rule"]
-}
-```
-
-###### All Health Rules
-
-```hcl
-resource "appd_policy" "all_health_rules_email_on_call" {
-  name = "All Health Rules Email On call"
-  application_id = var.application_id
-  action_name = join(", ",appd_action.on-call-email-action.emails)
-  action_type = appd_action.my-first-action.action_type
-  health_rule_event_types = ["HEALTH_RULE_OPEN_CRITICAL"]
-  health_rule_scope_type = "ALL_HEALTH_RULES"
-}
-```
