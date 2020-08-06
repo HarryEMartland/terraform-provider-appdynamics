@@ -28,6 +28,8 @@ jobs:
       run: |
         git config --local user.email "action@github.com"
         git config --local user.name "GitHub Action"
+        git remote set-url origin https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/$GITHUB_REPOSITORY
+        git checkout "${GITHUB_REF:11}"
 
     - name: Version (npx)
       run: npx -v
@@ -37,9 +39,6 @@ jobs:
 
     - name: Create Changelog and Tag
       run: npx standard-version --dry-run
-
-    - name: List Remote
-      run: git remote
 
     - name: Push
       run: git push "https://$GITHUB_ACTOR:${{ secrets.GITHUB_TOKEN }}@github.com/$GITHUB_REPOSITORY.git" --follow-tags origin master
