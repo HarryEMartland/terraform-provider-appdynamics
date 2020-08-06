@@ -7,7 +7,7 @@ Provides resources for creating Health Rules, Actions and configuring Transactio
 
 Download the latest version of the provider and place it where terraform will find it e.g. `~/.terraform.d/plugins/`.
 See the [terraform documentation](https://www.terraform.io/docs/extend/how-terraform-works.html#discovery) for more information.
-The latest downloads can be found attached to the [latest release](https://github.com/HarryEMartland/appd-terraform-provider/releases/latest) in github or on the below links.
+The latest downloads can be found in the [Terraform Registry](https://registry.terraform.io/providers/HarryEMartland/appdynamics/latest) and attached to the [latest release](https://github.com/HarryEMartland/appd-terraform-provider/releases/latest).
 Make sure to download the correct version for your OS.
 
 #### Configuration
