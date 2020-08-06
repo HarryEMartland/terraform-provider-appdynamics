@@ -1,0 +1,22 @@
+name: Change Log Preview
+
+on:
+  workflow_dispatch:
+    branches:
+      - master
+
+jobs:
+
+  test-cross-compile-and-release:
+    name: Create Changelog and Tag
+    runs-on: ubuntu-latest
+    steps:
+
+    - name: Check out code
+      uses: actions/checkout@v2
+
+    - name: Fetch tags
+      run:  git fetch --unshallow --tags
+
+    - name: Create Changelog and Tag
+      run: npx standard-version --dry-run
