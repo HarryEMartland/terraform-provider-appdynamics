@@ -25,7 +25,7 @@ provider "appd" {
 
 #### Resources
 
-- [appd_action](docs/resources/action_resource.md)
+- [appd_action](docs/resources/action.md)
 - [appd_policy](docs/resources/policy_resource.md)
 - [appd_health_rule](docs/resources/health_rule_resource.md)
 
