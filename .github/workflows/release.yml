@@ -31,14 +31,8 @@ jobs:
         git remote set-url origin https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/$GITHUB_REPOSITORY
         git checkout "${GITHUB_REF:11}"
 
-    - name: Version (npx)
-      run: npx -v
-
-    - name: Version (standard-version)
-      run: npx standard-version -v
-
     - name: Create Changelog and Tag
-      run: npx standard-version --dry-run
+      run: npx standard-version
 
     - name: Push
       run: git push --follow-tags origin master
