@@ -2,7 +2,7 @@
 
 Creates an action which can be triggered by a [policy](policy_resource.md).
 
-[AppDynamics Action Information](https://docs.appdynamics.com/display/PRO45/Actions)  
+[AppDynamics Action Documentation](https://docs.appdynamics.com/display/PRO45/Actions)  
 [AppDynamics Action API](https://docs.appdynamics.com/display/PRO45/Actions+API)
 
 ## Example Usage

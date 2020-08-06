@@ -1,7 +1,9 @@
 # Health Rule Resource
 
-Description of what this resource does, with links to official
-app/service documentation.
+Creates a health rule which defines what normal looks like for an application.
+
+[AppDynamics Health Rule Documentation](https://docs.appdynamics.com/display/PRO45/Health+Rules)  
+[AppDynamics Health Rule API](https://docs.appdynamics.com/display/PRO45/Health+Rule+API)
 
 ## Example Usage
 
