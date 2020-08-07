@@ -1,11 +1,11 @@
 
-GOBUILD=go build -o terraform-provider-appd
+GOBUILD=go build -o terraform-provider-appdynamics
 
 build:
 	$(GOBUILD)
-	chmod +x ./terraform-provider-appd
+	chmod +x ./terraform-provider-appdynamics
 test:
-	go test ./appd -v
+	go test ./appdynamics -v
 install:
 	go get
 

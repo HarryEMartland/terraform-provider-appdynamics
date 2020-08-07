@@ -9,7 +9,7 @@ You must also provide terraform with the base url of the controller, an example 
 ## Example Usage
 
 ```hcl
-provider "appd" {
+provider "appdynamics" {
   secret = "<your secret>"
   controller_base_url = "https://example.saas.appdynamics.com"
 }

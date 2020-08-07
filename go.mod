@@ -1,4 +1,4 @@
-module github.com/HarryEMartland/appd-terraform-provider
+module github.com/HarryEMartland/terraform-provider-appdynamics
 
 go 1.14
 

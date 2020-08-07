@@ -39,9 +39,9 @@ jobs:
       run: make build
 
     - name: Zip (Mac)
-      run: zip  terraform-provider-appd.zip ./terraform-provider-appd
+      run: zip  terraform-provider-appdynamics.zip ./terraform-provider-appdynamics
 
     - uses: actions/upload-artifact@v2
       with:
-        name: terraform-provider-appd.zip
-        path: terraform-provider-appd.zip
+        name: terraform-provider-appdynamics.zip
+        path: terraform-provider-appdynamics.zip

@@ -1,4 +1,4 @@
-package appd
+package appdynamics
 
 import (
 	"fmt"
@@ -15,10 +15,10 @@ func TestAccAppDAction_basicSMS(t *testing.T) {
 
 	phoneNumber := acctest.RandStringFromCharSet(11, "0123456789")
 
-	resourceName := "appd_action.test_sms"
+	resourceName := "appdynamics_action.test_sms"
 	resource.Test(t, resource.TestCase{
 		Providers: map[string]terraform.ResourceProvider{
-			"appd": Provider(),
+			"appdynamics": Provider(),
 		},
 		Steps: []resource.TestStep{
 			{
@@ -41,10 +41,10 @@ func TestAccAppDAction_updateSMS(t *testing.T) {
 	phoneNumber1 := acctest.RandStringFromCharSet(11, "0123456789")
 	phoneNumber2 := acctest.RandStringFromCharSet(11, "0123456789")
 
-	resourceName := "appd_action.test_sms"
+	resourceName := "appdynamics_action.test_sms"
 	resource.Test(t, resource.TestCase{
 		Providers: map[string]terraform.ResourceProvider{
-			"appd": Provider(),
+			"appdynamics": Provider(),
 		},
 		Steps: []resource.TestStep{
 			{
@@ -77,10 +77,10 @@ func TestAccAppDAction_basicEmail(t *testing.T) {
 	email := fmt.Sprintf("%s@example.com", acctest.RandStringFromCharSet(5, acctest.CharSetAlphaNum))
 	emails := []string{email}
 
-	resourceName := "appd_action.test_email"
+	resourceName := "appdynamics_action.test_email"
 	resource.Test(t, resource.TestCase{
 		Providers: map[string]terraform.ResourceProvider{
-			"appd": Provider(),
+			"appdynamics": Provider(),
 		},
 		Steps: []resource.TestStep{
 			{
@@ -106,10 +106,10 @@ func TestAccAppDAction_updateEmail(t *testing.T) {
 	emails := []string{email}
 	emailsUpdated := []string{email, email2}
 
-	resourceName := "appd_action.test_email"
+	resourceName := "appdynamics_action.test_email"
 	resource.Test(t, resource.TestCase{
 		Providers: map[string]terraform.ResourceProvider{
-			"appd": Provider(),
+			"appdynamics": Provider(),
 		},
 		Steps: []resource.TestStep{
 			{
@@ -143,19 +143,18 @@ func TestAccAppDAction_updateEmail(t *testing.T) {
 func TestAccAppDAction_basicHttp(t *testing.T) {
 
 	name := acctest.RandStringFromCharSet(5, acctest.CharSetAlphaNum)
-	templateName := os.Getenv("APPD_HTTP_ACTION_TEMPLATE_NAME")
 
-	resourceName := "appd_action.test_http_action"
+	resourceName := "appdynamics_action.test_http_action"
 	resource.Test(t, resource.TestCase{
 		Providers: map[string]terraform.ResourceProvider{
-			"appd": Provider(),
+			"appdynamics": Provider(),
 		},
 		Steps: []resource.TestStep{
 			{
-				Config: httpAction(name, templateName, map[string]string{"config": "cValue"}),
+				Config: httpAction(name, httpActionTemplateName, map[string]string{"config": "cValue"}),
 				Check: resource.ComposeAggregateTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "name", name),
-					resource.TestCheckResourceAttr(resourceName, "http_request_template_name", templateName),
+					resource.TestCheckResourceAttr(resourceName, "http_request_template_name", httpActionTemplateName),
 					resource.TestCheckResourceAttr(resourceName, "action_type", "HTTP_REQUEST"),
 					resource.TestCheckResourceAttr(resourceName, "custom_template_variables.config", "cValue"),
 					CheckActionExists(resourceName),
@@ -170,29 +169,28 @@ func TestAccAppDAction_updateHttp(t *testing.T) {
 
 	name := acctest.RandStringFromCharSet(5, acctest.CharSetAlphaNum)
 	updateName := acctest.RandStringFromCharSet(5, acctest.CharSetAlphaNum)
-	templateName := os.Getenv("APPD_HTTP_ACTION_TEMPLATE_NAME")
 
-	resourceName := "appd_action.test_http_action"
+	resourceName := "appdynamics_action.test_http_action"
 	resource.Test(t, resource.TestCase{
 		Providers: map[string]terraform.ResourceProvider{
-			"appd": Provider(),
+			"appdynamics": Provider(),
 		},
 		Steps: []resource.TestStep{
 			{
-				Config: httpAction(name, templateName, map[string]string{"config": "cValue"}),
+				Config: httpAction(name, httpActionTemplateName, map[string]string{"config": "cValue"}),
 				Check: resource.ComposeAggregateTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "name", name),
-					resource.TestCheckResourceAttr(resourceName, "http_request_template_name", templateName),
+					resource.TestCheckResourceAttr(resourceName, "http_request_template_name", httpActionTemplateName),
 					resource.TestCheckResourceAttr(resourceName, "action_type", "HTTP_REQUEST"),
 					resource.TestCheckResourceAttr(resourceName, "custom_template_variables.config", "cValue"),
 					CheckActionExists(resourceName),
 				),
 			},
 			{
-				Config: httpAction(updateName, templateName, map[string]string{"config": "cValue", "second": "sValue"}),
+				Config: httpAction(updateName, httpActionTemplateName, map[string]string{"config": "cValue", "second": "sValue"}),
 				Check: resource.ComposeAggregateTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "name", updateName),
-					resource.TestCheckResourceAttr(resourceName, "http_request_template_name", templateName),
+					resource.TestCheckResourceAttr(resourceName, "http_request_template_name", httpActionTemplateName),
 					resource.TestCheckResourceAttr(resourceName, "action_type", "HTTP_REQUEST"),
 					resource.TestCheckResourceAttr(resourceName, "custom_template_variables.config", "cValue"),
 					resource.TestCheckResourceAttr(resourceName, "custom_template_variables.second", "sValue"),
@@ -251,7 +249,7 @@ func CheckActionExists(resourceName string) func(state *terraform.State) error {
 func smsAction(phoneNumber string) string {
 	return fmt.Sprintf(`
 					%s
-					resource "appd_action" "test_sms" {
+					resource "appdynamics_action" "test_sms" {
 					  application_id = var.application_id
 					  action_type = "SMS"
 					  phone_number = "%s"
@@ -262,7 +260,7 @@ func smsAction(phoneNumber string) string {
 func emailAction(emails []string) string {
 	return fmt.Sprintf(`
 					%s
-					resource "appd_action" "test_email" {
+					resource "appdynamics_action" "test_email" {
 					  application_id = var.application_id
 					  action_type = "EMAIL"
 					  emails = ["%s"]
@@ -273,7 +271,7 @@ func emailAction(emails []string) string {
 func httpAction(name string, templateName string, variableMap map[string]string) string {
 	return fmt.Sprintf(`
 					%s
-					resource "appd_action" "test_http_action" {
+					resource "appdynamics_action" "test_http_action" {
 					  application_id = var.application_id
 					  name = "%s"
 					  action_type = "HTTP_REQUEST"
@@ -285,7 +283,7 @@ func httpAction(name string, templateName string, variableMap map[string]string)
 
 func configureConfig() string {
 	return fmt.Sprintf(`
-					provider "appd" {
+					provider "appdynamics" {
 					  secret = "%s"
 					  controller_base_url = "%s"
 					}

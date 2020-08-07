@@ -1,7 +1,7 @@
-package appd
+package appdynamics
 
 import (
-	"github.com/HarryEMartland/appd-terraform-provider/appd/client"
+	"github.com/HarryEMartland/terraform-provider-appdynamics/appdynamics/client"
 	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
 	"strconv"
 )
