@@ -1,4 +1,4 @@
-package appd
+package appdynamics
 
 import (
 	"fmt"
@@ -13,7 +13,7 @@ func TestAccAppDHealthRule_basicSingleMetricAllBts(t *testing.T) {
 
 	name := acctest.RandStringFromCharSet(11, acctest.CharSetAlphaNum)
 
-	resourceName := "appd_health_rule.test_all_bts"
+	resourceName := "appdynamics_health_rule.test_all_bts"
 	aggregationFunction := "VALUE"
 	detailType := "SINGLE_METRIC"
 	entityType := "BUSINESS_TRANSACTION_PERFORMANCE"
@@ -23,7 +23,7 @@ func TestAccAppDHealthRule_basicSingleMetricAllBts(t *testing.T) {
 	criticalValue := "2"
 	resource.Test(t, resource.TestCase{
 		Providers: map[string]terraform.ResourceProvider{
-			"appd": Provider(),
+			"appdynamics": Provider(),
 		},
 		Steps: []resource.TestStep{
 			{
@@ -53,7 +53,7 @@ func TestAccAppDHealthRule_updateSingleMetricAllBts(t *testing.T) {
 
 	name := acctest.RandStringFromCharSet(11, acctest.CharSetAlphaNum)
 
-	resourceName := "appd_health_rule.test_all_bts"
+	resourceName := "appdynamics_health_rule.test_all_bts"
 	aggregationFunction := "VALUE"
 	detailType := "SINGLE_METRIC"
 	entityType := "BUSINESS_TRANSACTION_PERFORMANCE"
@@ -70,7 +70,7 @@ func TestAccAppDHealthRule_updateSingleMetricAllBts(t *testing.T) {
 
 	resource.Test(t, resource.TestCase{
 		Providers: map[string]terraform.ResourceProvider{
-			"appd": Provider(),
+			"appdynamics": Provider(),
 		},
 		Steps: []resource.TestStep{
 			{
@@ -119,11 +119,11 @@ func TestAccAppDHealthRule_basicSpecificBts(t *testing.T) {
 	name := acctest.RandStringFromCharSet(11, acctest.CharSetAlphaNum)
 	bts := []string{bt1}
 
-	resourceName := "appd_health_rule.test_specific_bts"
+	resourceName := "appdynamics_health_rule.test_specific_bts"
 
 	resource.Test(t, resource.TestCase{
 		Providers: map[string]terraform.ResourceProvider{
-			"appd": Provider(),
+			"appdynamics": Provider(),
 		},
 		Steps: []resource.TestStep{
 			{
@@ -147,11 +147,11 @@ func TestAccAppDHealthRule_updateSpecificBts(t *testing.T) {
 	bts := []string{bt1}
 	updatedBts := []string{bt1, bt2}
 
-	resourceName := "appd_health_rule.test_specific_bts"
+	resourceName := "appdynamics_health_rule.test_specific_bts"
 
 	resource.Test(t, resource.TestCase{
 		Providers: map[string]terraform.ResourceProvider{
-			"appd": Provider(),
+			"appdynamics": Provider(),
 		},
 		Steps: []resource.TestStep{
 			{
@@ -184,11 +184,11 @@ func TestAccAppDHealthRule_basicSpecificTiers(t *testing.T) {
 	name := acctest.RandStringFromCharSet(11, acctest.CharSetAlphaNum)
 	tiers := []string{tier1}
 
-	resourceName := "appd_health_rule.test_specific_tiers"
+	resourceName := "appdynamics_health_rule.test_specific_tiers"
 
 	resource.Test(t, resource.TestCase{
 		Providers: map[string]terraform.ResourceProvider{
-			"appd": Provider(),
+			"appdynamics": Provider(),
 		},
 		Steps: []resource.TestStep{
 			{
@@ -212,11 +212,11 @@ func TestAccAppDHealthRule_updateSpecificTiers(t *testing.T) {
 	tiers := []string{tier1}
 	updatedBts := []string{tier1, tier2}
 
-	resourceName := "appd_health_rule.test_specific_tiers"
+	resourceName := "appdynamics_health_rule.test_specific_tiers"
 
 	resource.Test(t, resource.TestCase{
 		Providers: map[string]terraform.ResourceProvider{
-			"appd": Provider(),
+			"appdynamics": Provider(),
 		},
 		Steps: []resource.TestStep{
 			{
@@ -291,7 +291,7 @@ func CheckHealthRuleDoesNotExist(resourceName string) func(state *terraform.Stat
 func allBTsHealthRule(name string, aggregationFunction string, detailType string, entityType string, metric string, compareCondition string, warnValue string, criticalValue string) string {
 	return fmt.Sprintf(`
 					%s
-					resource "appd_health_rule" "test_all_bts" {
+					resource "appdynamics_health_rule" "test_all_bts" {
 					  name = "%s"
 					  application_id = var.application_id
 					  metric_aggregation_function = "%s"
@@ -310,7 +310,7 @@ func allBTsHealthRule(name string, aggregationFunction string, detailType string
 func specificBTsHealthRule(name string, bts []string) string {
 	return fmt.Sprintf(`
 					%s
-					resource "appd_health_rule" "test_specific_bts" {
+					resource "appdynamics_health_rule" "test_specific_bts" {
 					  name = "%s"
 					  application_id = var.application_id
 					  metric_aggregation_function = "VALUE"
@@ -330,7 +330,7 @@ func specificBTsHealthRule(name string, bts []string) string {
 func specificTiersHealthRule(name string, tiers []string) string {
 	return fmt.Sprintf(`
 					%s
-					resource "appd_health_rule" "test_specific_tiers" {
+					resource "appdynamics_health_rule" "test_specific_tiers" {
 					  name = "%s"
 					  application_id = var.application_id
 					  metric_aggregation_function = "VALUE"

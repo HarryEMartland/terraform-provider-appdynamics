@@ -1,4 +1,4 @@
-package appd
+package appdynamics
 
 import (
 	"fmt"

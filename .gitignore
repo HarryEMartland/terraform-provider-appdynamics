@@ -91,7 +91,7 @@ fabric.properties
 
 .terraform
 
-terraform-provider-appd
+terraform-provider-appdynamics
 
 *.tf
 *.tfstate

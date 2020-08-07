@@ -1,8 +1,8 @@
-package appd
+package appdynamics
 
 import (
 	"fmt"
-	"github.com/HarryEMartland/appd-terraform-provider/appd/client"
+	"github.com/HarryEMartland/terraform-provider-appdynamics/appdynamics/client"
 	"github.com/stretchr/testify/assert"
 	"log"
 	"os"

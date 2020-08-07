@@ -1,16 +1,16 @@
-package appd
+package appdynamics
 
 import (
-	"github.com/HarryEMartland/appd-terraform-provider/appd/client"
+	"github.com/HarryEMartland/terraform-provider-appdynamics/appdynamics/client"
 	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
 )
 
 func Provider() *schema.Provider {
 	return &schema.Provider{
 		ResourcesMap: map[string]*schema.Resource{
-			"appd_health_rule": resourceHealthRule(),
-			"appd_action":      resourceAction(),
-			"appd_policy":      resourcePolicy(),
+			"appdynamics_health_rule": resourceHealthRule(),
+			"appdynamics_action":      resourceAction(),
+			"appdynamics_policy":      resourcePolicy(),
 		},
 		Schema: map[string]*schema.Schema{
 			"secret":              {Type: schema.TypeString, Sensitive: true, Required: true},

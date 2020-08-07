@@ -1,9 +1,9 @@
 package main
 
 import (
-"github.com/hashicorp/terraform-plugin-sdk/plugin"
-"github.com/hashicorp/terraform-plugin-sdk/terraform"
-	. "github.com/HarryEMartland/appd-terraform-provider/appd"
+	. "github.com/HarryEMartland/terraform-provider-appdynamics/appdynamics"
+	"github.com/hashicorp/terraform-plugin-sdk/plugin"
+	"github.com/hashicorp/terraform-plugin-sdk/terraform"
 )
 
 func main() {

@@ -1,4 +1,4 @@
-package appd
+package appdynamics
 
 import (
 	"fmt"
@@ -13,10 +13,10 @@ func TestAccAppDAction_basicAllHealthRulesPolicy(t *testing.T) {
 
 	name := acctest.RandStringFromCharSet(11, acctest.CharSetAlphaNum)
 
-	resourceName := "appd_policy.all_health_rules_email_on_call"
+	resourceName := "appdynamics_policy.all_health_rules_email_on_call"
 	resource.Test(t, resource.TestCase{
 		Providers: map[string]terraform.ResourceProvider{
-			"appd": Provider(),
+			"appdynamics": Provider(),
 		},
 		Steps: []resource.TestStep{
 			{
@@ -41,10 +41,10 @@ func TestAccAppDAction_updateAllHealthRulesPolicy(t *testing.T) {
 
 	name := acctest.RandStringFromCharSet(11, acctest.CharSetAlphaNum)
 
-	resourceName := "appd_policy.all_health_rules_email_on_call"
+	resourceName := "appdynamics_policy.all_health_rules_email_on_call"
 	resource.Test(t, resource.TestCase{
 		Providers: map[string]terraform.ResourceProvider{
-			"appd": Provider(),
+			"appdynamics": Provider(),
 		},
 		Steps: []resource.TestStep{
 			{
@@ -76,10 +76,10 @@ func TestAccAppDAction_basicSpecificHealthRulesPolicy(t *testing.T) {
 
 	name := acctest.RandStringFromCharSet(11, acctest.CharSetAlphaNum)
 
-	resourceName := "appd_policy.all_health_rules_email_on_call"
+	resourceName := "appdynamics_policy.all_health_rules_email_on_call"
 	resource.Test(t, resource.TestCase{
 		Providers: map[string]terraform.ResourceProvider{
-			"appd": Provider(),
+			"appdynamics": Provider(),
 		},
 		Steps: []resource.TestStep{
 			{
@@ -100,10 +100,10 @@ func TestAccAppDAction_updateSpecificHealthRulesPolicy(t *testing.T) {
 
 	name := acctest.RandStringFromCharSet(11, acctest.CharSetAlphaNum)
 
-	resourceName := "appd_policy.all_health_rules_email_on_call"
+	resourceName := "appdynamics_policy.all_health_rules_email_on_call"
 	resource.Test(t, resource.TestCase{
 		Providers: map[string]terraform.ResourceProvider{
-			"appd": Provider(),
+			"appdynamics": Provider(),
 		},
 		Steps: []resource.TestStep{
 			{
@@ -176,16 +176,16 @@ func CheckPolicyExists(resourceName string) func(state *terraform.State) error {
 func allHealthRulesPolicy(name string, eventTypes []string) string {
 	return fmt.Sprintf(`
 					%s
-					resource "appd_action" "test_action" {
+					resource "appdynamics_action" "test_action" {
 					  application_id = var.application_id
 					  action_type = "SMS"
 					  phone_number = "07421365896"
 					}
-					resource "appd_policy" "all_health_rules_email_on_call" {
+					resource "appdynamics_policy" "all_health_rules_email_on_call" {
 					  name = "%s"
 					  application_id = var.application_id
-					  action_name = appd_action.test_action.phone_number
-					  action_type = appd_action.test_action.action_type
+					  action_name = appdynamics_action.test_action.phone_number
+					  action_type = appdynamics_action.test_action.action_type
 					  health_rule_event_types = %s
 					  health_rule_scope_type = "ALL_HEALTH_RULES"
 					}
@@ -195,7 +195,7 @@ func allHealthRulesPolicy(name string, eventTypes []string) string {
 func specificHealthRulesPolicy(name string) string {
 	return fmt.Sprintf(`
 					%s
-					resource "appd_health_rule" "test_health_rule" {
+					resource "appdynamics_health_rule" "test_health_rule" {
 					  name = "My Single Metring Health Rule"
 					  application_id = var.application_id
 					  metric_aggregation_function = "VALUE"
@@ -208,19 +208,19 @@ func specificHealthRulesPolicy(name string) string {
 					  warn_compare_value = 100
 					  critical_compare_value = 200
 					}
-					resource "appd_action" "test_action" {
+					resource "appdynamics_action" "test_action" {
 					  application_id = var.application_id
 					  action_type = "SMS"
 					  phone_number = "07421365896"
 					}
-					resource "appd_policy" "all_health_rules_email_on_call" {
+					resource "appdynamics_policy" "all_health_rules_email_on_call" {
 					  name = "%s"
 					  application_id = var.application_id
-					  action_name = appd_action.test_action.phone_number
-					  action_type = appd_action.test_action.action_type
+					  action_name = appdynamics_action.test_action.phone_number
+					  action_type = appdynamics_action.test_action.action_type
 					  health_rule_event_types = ["HEALTH_RULE_OPEN_CRITICAL"]
 					  health_rule_scope_type = "SPECIFIC_HEALTH_RULES"
-					  health_rules = [appd_health_rule.test_health_rule.name]
+					  health_rules = [appdynamics_health_rule.test_health_rule.name]
 					}
 `, configureConfig(), name)
 }
@@ -228,7 +228,7 @@ func specificHealthRulesPolicy(name string) string {
 func updatedSpecificHealthRulesPolicy(name string) string {
 	return fmt.Sprintf(`
 					%s
-					resource "appd_health_rule" "test_health_rule" {
+					resource "appdynamics_health_rule" "test_health_rule" {
 					  name = "My Single Metring Health Rule"
 					  application_id = var.application_id
 					  metric_aggregation_function = "VALUE"
@@ -241,7 +241,7 @@ func updatedSpecificHealthRulesPolicy(name string) string {
 					  warn_compare_value = 100
 					  critical_compare_value = 200
 					}
-					resource "appd_health_rule" "test_health_rule_2" {
+					resource "appdynamics_health_rule" "test_health_rule_2" {
 					  name = "My Single Metring Health Rule 2"
 					  application_id = var.application_id
 					  metric_aggregation_function = "VALUE"
@@ -254,19 +254,19 @@ func updatedSpecificHealthRulesPolicy(name string) string {
 					  warn_compare_value = 100
 					  critical_compare_value = 200
 					}
-					resource "appd_action" "test_action" {
+					resource "appdynamics_action" "test_action" {
 					  application_id = var.application_id
 					  action_type = "SMS"
 					  phone_number = "07421365896"
 					}
-					resource "appd_policy" "all_health_rules_email_on_call" {
+					resource "appdynamics_policy" "all_health_rules_email_on_call" {
 					  name = "%s"
 					  application_id = var.application_id
-					  action_name = appd_action.test_action.phone_number
-					  action_type = appd_action.test_action.action_type
+					  action_name = appdynamics_action.test_action.phone_number
+					  action_type = appdynamics_action.test_action.action_type
 					  health_rule_event_types = ["HEALTH_RULE_OPEN_CRITICAL"]
 					  health_rule_scope_type = "SPECIFIC_HEALTH_RULES"
-					  health_rules = [appd_health_rule.test_health_rule.name, appd_health_rule.test_health_rule_2.name]
+					  health_rules = [appdynamics_health_rule.test_health_rule.name, appdynamics_health_rule.test_health_rule_2.name]
 					}
 `, configureConfig(), name)
 }
