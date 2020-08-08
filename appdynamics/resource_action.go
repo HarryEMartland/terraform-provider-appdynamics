@@ -3,6 +3,8 @@ package appdynamics
 import (
 	"github.com/HarryEMartland/terraform-provider-appdynamics/appdynamics/client"
 	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
+	"github.com/hashicorp/terraform-plugin-sdk/helper/validation"
+	"regexp"
 	"strconv"
 	"strings"
 )
@@ -46,8 +48,9 @@ func resourceAction() *schema.Resource {
 				},
 			},
 			"phone_number": {
-				Type:     schema.TypeString,
-				Optional: true,
+				Type:         schema.TypeString,
+				Optional:     true,
+				ValidateFunc: validation.StringMatch(regexp.MustCompile("^\\d{10,}$"), "Phone number must match regex ^\\d{10,}$"),
 			},
 			"http_request_template_name": {
 				Type:     schema.TypeString,
