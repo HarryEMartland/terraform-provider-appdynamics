@@ -1,0 +1,86 @@
+{
+    "ruleScopeSummaryMappings": [
+        {
+            "rule": {
+                "type": "TX_MATCH_RULE",
+                "summary": {
+                    "id": "87f83904-d9bd-11ea-87d0-0242ac130003",
+                    "type": "com.appdynamics.platform.services.configuration.impl.persistenceapi.model.ConfigRuleEntity",
+                    "accountId": "7d2d1f44-d9bd-11ea-87d0-0242ac130003",
+                    "name": "test",
+                    "description": "test description",
+                    "createdOn": 1596904293456,
+                    "updatedOn": 1596913107229
+                },
+                "enabled": true,
+                "priority": 40,
+                "version": 3,
+                "agentType": "NODE_JS_SERVER",
+                "txMatchRule": {
+                    "type": "CUSTOM",
+                    "txAutoDiscoveryRule": {},
+                    "txCustomRule": {
+                        "type": "INCLUDE",
+                        "txEntryPointType": "NODEJS_WEB",
+                        "matchConditions": [
+                            {
+                                "type": "HTTP",
+                                "httpMatch": {
+                                    "httpMethod": "GET",
+                                    "uri": {
+                                        "type": "IS_IN_LIST",
+                                        "matchStrings": [
+                                            "/root,/health"
+                                        ]
+                                    }
+                                }
+                            }
+                        ]
+                    },
+                    "agentType": "NODE_JS_SERVER"
+                }
+            }
+        },
+        {
+            "rule": {
+                "type": "TX_MATCH_RULE",
+                "summary": {
+                    "id": "2dfb495f-6d82-424c-9639-d745263ee9ca",
+                    "type": "com.appdynamics.platform.services.configuration.impl.persistenceapi.model.ConfigRuleEntity",
+                    "accountId": "7d2d1f44-d9bd-11ea-87d0-0242ac130003",
+                    "name": "test",
+                    "description": "test description",
+                    "createdOn": 1596904293456,
+                    "updatedOn": 1596913107229
+                },
+                "enabled": true,
+                "priority": 40,
+                "version": 3,
+                "agentType": "NODE_JS_SERVER",
+                "txMatchRule": {
+                    "type": "CUSTOM",
+                    "txAutoDiscoveryRule": {},
+                    "txCustomRule": {
+                        "type": "INCLUDE",
+                        "txEntryPointType": "NODEJS_WEB",
+                        "matchConditions": [
+                            {
+                                "type": "HTTP",
+                                "httpMatch": {
+                                    "httpMethod": "GET",
+                                    "uri": {
+                                        "type": "IS_IN_LIST",
+                                        "matchStrings": [
+                                            "/user"
+                                        ]
+                                    }
+                                }
+                            }
+                        ]
+                    },
+                    "agentType": "NODE_JS_SERVER"
+                }
+            }
+        }
+    ]
+}

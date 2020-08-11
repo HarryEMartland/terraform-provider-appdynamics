@@ -1,0 +1,12 @@
+{
+    "resultType": "SUCCESS",
+    "successes": [
+        {
+            "summary": {
+                "id": "878bdfc0-da7b-11ea-87d0-0242ac130003",
+                "type": "com.appdynamics.platform.services.configuration.impl.persistenceapi.model.ConfigRuleEntity",
+                "accountId": "8c469528-da7b-11ea-87d0-0242ac130003"
+            }
+        }
+    ]
+}

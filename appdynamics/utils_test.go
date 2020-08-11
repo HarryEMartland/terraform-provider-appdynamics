@@ -18,6 +18,7 @@ var bt1 string
 var bt2 string
 var tier1 string
 var tier2 string
+var accountId string
 
 func init() {
 	_, acceptanceTest := os.LookupEnv("TF_ACC")
@@ -40,6 +41,7 @@ func init() {
 	bt2 = os.Getenv("APPD_BT2")
 	tier1 = os.Getenv("APPD_TIER1")
 	tier2 = os.Getenv("APPD_TIER2")
+	accountId = os.Getenv("APPD_ACCOUNT_ID")
 }
 
 func TestValidateListShouldReturnNoErrsOrWarnsWhenIsValid(t *testing.T) {

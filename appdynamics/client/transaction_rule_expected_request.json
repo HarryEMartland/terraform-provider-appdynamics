@@ -1,0 +1,35 @@
+{
+    "type": "TX_MATCH_RULE",
+    "enabled": true,
+    "priority": 1,
+    "agentType": "NODE_JS_SERVER",
+    "summary": {
+        "type": "com.appdynamics.platform.services.configuration.impl.persistenceapi.model.ConfigRuleEntity",
+        "accountId": "ad14e72e-da84-11ea-87d0-0242ac130003",
+        "id": "",
+        "name": "test",
+        "description": "test description"
+    },
+    "txMatchRule": {
+        "agentType": "NODE_JS_SERVER",
+        "type": "CUSTOM",
+        "txCustomRule": {
+            "type": "INCLUDE",
+            "txEntryPointType": "NODEJS_WEB",
+            "matchConditions": [
+                {
+                    "type": "HTTP",
+                    "httpMatch": {
+                        "uri": {
+                            "type": "EQUALS",
+                            "matchStrings": [
+                                "/bob"
+                            ]
+                        },
+                        "httpMethod": "POST"
+                    }
+                }
+            ]
+        }
+    }
+}

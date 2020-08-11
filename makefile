@@ -5,9 +5,13 @@ build:
 	$(GOBUILD)
 	chmod +x ./terraform-provider-appdynamics
 test:
-	go test ./appdynamics -v
+	go test ./...  -v
 install:
 	go get
+
+build-install:
+	make build
+	mv terraform-provider-appdynamics ~/.terraform.d/plugins/github.com/HarryEMartland/terraform-provider-appdynamics
 
 build-linux:
 	GOOS=linux GOARCH=amd64 $(GOBUILD)

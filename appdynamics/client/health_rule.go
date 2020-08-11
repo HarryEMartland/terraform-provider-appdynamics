@@ -68,7 +68,7 @@ func (c *AppDClient) GetHealthRule(healthRuleId int, applicationId int) (*Health
 
 	if resp.Response().StatusCode != 200 {
 		respString, _ := resp.ToString()
-		return nil, errors.New(fmt.Sprintf("Error getting Health Rule: %d, %s, %s", resp.Response().StatusCode, c.createHealthRuleUrl(healthRuleId, applicationId), respString))
+		return nil, errors.New(fmt.Sprintf("Error getting Health TransactionRule: %d, %s, %s", resp.Response().StatusCode, c.createHealthRuleUrl(healthRuleId, applicationId), respString))
 	}
 
 	updated := HealthRule{}

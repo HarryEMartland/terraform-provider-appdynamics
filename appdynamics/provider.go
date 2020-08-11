@@ -8,9 +8,10 @@ import (
 func Provider() *schema.Provider {
 	return &schema.Provider{
 		ResourcesMap: map[string]*schema.Resource{
-			"appdynamics_health_rule": resourceHealthRule(),
-			"appdynamics_action":      resourceAction(),
-			"appdynamics_policy":      resourcePolicy(),
+			"appdynamics_health_rule":                resourceHealthRule(),
+			"appdynamics_action":                     resourceAction(),
+			"appdynamics_policy":                     resourcePolicy(),
+			"appdynamics_transaction_detection_rule": resourceTransactionDetectionRule(),
 		},
 		Schema: map[string]*schema.Schema{
 			"secret":              {Type: schema.TypeString, Sensitive: true, Required: true},

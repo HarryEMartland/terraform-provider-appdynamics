@@ -19,6 +19,14 @@ func arrayToString(a []string) string {
 	return result
 }
 
+func castArrayToStringArray(array []interface{}) []string {
+	s := make([]string, len(array))
+	for i, v := range array {
+		s[i] = fmt.Sprint(v)
+	}
+	return s
+}
+
 func mapToString(m map[string]string) string {
 	result := "{"
 
