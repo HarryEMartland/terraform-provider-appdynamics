@@ -28,6 +28,7 @@ provider "appdynamics" {
 - [appdynamics_action](docs/resources/action.md)
 - [appdynamics_policy](docs/resources/policy.md)
 - [appdynamics_health_rule](docs/resources/health_rule.md)
+- [appdynamics_transaction_detection_rule](docs/resources/transaction_detection_rule.md)
 
 #### Building
 
