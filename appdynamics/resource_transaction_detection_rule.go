@@ -75,10 +75,11 @@ func resourceTransactionDetectionRule() *schema.Resource {
 func resourceTransactionRuleCreate(d *schema.ResourceData, m interface{}) error {
 	appdClient := m.(*client.AppDClient)
 	applicationId := d.Get("application_id").(int)
+	scopeId := d.Get("scope_id").(string)
 
 	transactionRule := createTransactionRule(d)
 
-	updatedHealthRule, err := appdClient.CreateTransactionDetectionRule(applicationId, transactionRule)
+	updatedHealthRule, err := appdClient.CreateTransactionDetectionRule(applicationId, scopeId, transactionRule)
 	if err != nil {
 		return err
 	}
@@ -176,15 +177,16 @@ func resourceTransactionRuleRead(d *schema.ResourceData, m interface{}) error {
 func resourceTransactionRuleUpdate(d *schema.ResourceData, m interface{}) error {
 	appdClient := m.(*client.AppDClient)
 	applicationId := d.Get("application_id").(int)
+	scopeId := d.Get("scope_id").(string)
 
 	transactionRule := createTransactionRule(d)
 
-	_, err := appdClient.UpdateTransactionDetectionRule(applicationId, transactionRule)
+	_, err := appdClient.UpdateTransactionDetectionRule(applicationId, scopeId, transactionRule)
 	if err != nil {
 		return err
 	}
 
-	return resourceActionRead(d, m)
+	return resourceTransactionRuleRead(d, m)
 }
 
 func resourceTransactionRuleDelete(d *schema.ResourceData, m interface{}) error {

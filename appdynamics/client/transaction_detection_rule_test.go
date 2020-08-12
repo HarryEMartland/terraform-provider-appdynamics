@@ -104,7 +104,7 @@ func TestShouldPostNewTransactionConfig(t *testing.T) {
 	queryHandler := func(w http.ResponseWriter, r *http.Request) {
 		file, _ := ioutil.ReadFile("./transaction_rule_response.json")
 		assert.Equal(t, "/controller/restui/transactionConfigProto/createRule", r.URL.Path, "path should be correct")
-		assert.Equal(t, "", r.URL.Query().Get("scopeId"), "query should have empty scopeId")
+		assert.Equal(t, "b67f600f-13b7-4cd0-93ae-22566f8bc92b", r.URL.Query().Get("scopeId"), "query should have scopeId")
 		assert.Equal(t, "1234", r.URL.Query().Get("applicationId"), "query contain applicationId")
 		assert.Equal(t, fmt.Sprintf("Bearer %s", secret), r.Header.Get("Authorization"), "request should be authenticated")
 
@@ -127,7 +127,7 @@ func TestShouldPostNewTransactionConfig(t *testing.T) {
 	}
 
 	rule := createRule()
-	result, err := client.CreateTransactionDetectionRule(1234, &rule)
+	result, err := client.CreateTransactionDetectionRule(1234, "b67f600f-13b7-4cd0-93ae-22566f8bc92b", &rule)
 
 	if err != nil {
 		t.Error(err)
@@ -150,7 +150,7 @@ func TestShouldPostUpdatedTransactionConfig(t *testing.T) {
 	queryHandler := func(w http.ResponseWriter, r *http.Request) {
 		file, _ := ioutil.ReadFile("./transaction_rule_response.json")
 		assert.Equal(t, "/controller/restui/transactionConfigProto/updateRule", r.URL.Path, "path should be correct")
-		assert.Equal(t, "", r.URL.Query().Get("scopeId"), "query should have empty scopeId")
+		assert.Equal(t, "0c1bd18c-dcb1-11ea-87d0-0242ac130003", r.URL.Query().Get("scopeId"), "query should have scopeId")
 		assert.Equal(t, "1234", r.URL.Query().Get("applicationId"), "query contain applicationId")
 		assert.Equal(t, fmt.Sprintf("Bearer %s", secret), r.Header.Get("Authorization"), "request should be authenticated")
 
@@ -173,7 +173,7 @@ func TestShouldPostUpdatedTransactionConfig(t *testing.T) {
 	}
 
 	rule := createRule()
-	result, err := client.UpdateTransactionDetectionRule(1234, &rule)
+	result, err := client.UpdateTransactionDetectionRule(1234, "0c1bd18c-dcb1-11ea-87d0-0242ac130003", &rule)
 
 	if err != nil {
 		t.Error(err)

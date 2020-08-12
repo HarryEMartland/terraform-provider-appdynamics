@@ -287,9 +287,14 @@ func configureConfig() string {
 					  secret = "%s"
 					  controller_base_url = "%s"
 					}
+
+					variable "scope_id" {
+					  type = string
+					  default = "%s"
+					}
 					
 					variable "application_id" {
 					  type = number
 					  default = %s
-					}`, os.Getenv("APPD_SECRET"), os.Getenv("APPD_CONTROLLER_BASE_URL"), os.Getenv("APPD_APPLICATION_ID"))
+					}`, os.Getenv("APPD_SECRET"), os.Getenv("APPD_CONTROLLER_BASE_URL"), os.Getenv("APPD_SCOPE_ID"), os.Getenv("APPD_APPLICATION_ID"))
 }

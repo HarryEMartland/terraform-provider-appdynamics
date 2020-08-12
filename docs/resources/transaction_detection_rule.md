@@ -10,15 +10,16 @@ Creates a rule which defines when to creat a transaction within an application.
 
 ```hcl
 resource "appdynamics_transaction_detection_rule" "test_rule" {
-    application_id = var.application_id
-    name = "My test rule"
-    agent_type = "NODE_JS_SERVER"
-    account_id = "dffa443e-3634-415c-9755-317ee5ddbbbc"
-    description = "My test health rule created with Terraform"
-    entry_point_type = "NODEJS_WEB"
-    http_uri_match_type = "EQUALS"
-    http_uris = ["/user/account"]
-    http_method = "GET"
+  application_id      = var.application_id
+  account_id          = var.account_id
+  scope_id            = var.scope_id
+  name                = "My test rule"
+  agent_type          = "NODE_JS_SERVER"
+  description         = "My test health rule created with Terraform"
+  entry_point_type    = "NODEJS_WEB"
+  http_uri_match_type = "EQUALS"
+  http_uris           = ["/user/account"]
+  http_method         = "GET"
 }
 ```
 
@@ -26,15 +27,16 @@ resource "appdynamics_transaction_detection_rule" "test_rule" {
 
 ```hcl
 resource "appdynamics_transaction_detection_rule" "regex_test_rule" {
-    application_id = var.application_id
-    name = "My regex test rule"
-    agent_type = "NODE_JS_SERVER"
-    account_id = "dffa443e-3634-415c-9755-317ee5ddbbbc"
-    description = "My test regex health rule created with Terraform"
-    entry_point_type = "NODEJS_WEB"
-    http_uri_match_type = "MATCHES_REGEX"
-    http_uris = ["/user/.*"]
-    http_method = "GET"
+  application_id      = var.application_id
+  account_id          = var.account_id
+  scope_id            = var.scope_id
+  name                = "My regex test rule"
+  agent_type          = "NODE_JS_SERVER"
+  description         = "My test regex health rule created with Terraform"
+  entry_point_type    = "NODEJS_WEB"
+  http_uri_match_type = "MATCHES_REGEX"
+  http_uris           = ["/user/.*"]
+  http_method         = "GET"
 }
 ```
 
@@ -42,15 +44,16 @@ resource "appdynamics_transaction_detection_rule" "regex_test_rule" {
 
 ```hcl
 resource "appdynamics_transaction_detection_rule" "list_test_rule" {
-    application_id = var.application_id
-    name = "My regex test rule"
-    agent_type = "NODE_JS_SERVER"
-    account_id = "dffa443e-3634-415c-9755-317ee5ddbbbc"
-    description = "My test regex health rule created with Terraform"
-    entry_point_type = "NODEJS_WEB"
-    http_uri_match_type = "IS_IN_LIST"
-    http_uris = ["/user/.*", "/user/.*/"]
-    http_method = "GET"
+  application_id      = var.application_id
+  account_id          = var.account_id
+  scope_id            = var.scope_id
+  name                = "My list test rule"
+  agent_type          = "NODE_JS_SERVER"
+  description         = "My test regex health rule created with Terraform"
+  entry_point_type    = "NODEJS_WEB"
+  http_uri_match_type = "IS_IN_LIST"
+  http_uris           = ["/user/.*", "/user/.*/"]
+  http_method         = "GET"
 }
 ```
 
@@ -58,15 +61,16 @@ resource "appdynamics_transaction_detection_rule" "list_test_rule" {
 
 ```hcl
 resource "appdynamics_transaction_detection_rule" "java_test_rule" {
-  application_id = var.application_id
-  account_id = var.account_id
-  name = "My java test rule"
-  agent_type = "APPLICATION_SERVER"
-  description = "My test java health rule created with Terraform"
-  entry_point_type = "SERVLET"
+  application_id      = var.application_id
+  account_id          = var.account_id
+  scope_id            = var.scope_id
+  name                = "My java test rule"
+  agent_type          = "APPLICATION_SERVER"
+  description         = "My test java health rule created with Terraform"
+  entry_point_type    = "SERVLET"
   http_uri_match_type = "EQUALS"
-  http_uris = ["/user/account"]
-  http_method = "GET"
+  http_uris           = ["/user/account"]
+  http_method         = "GET"
 }
 ```
 

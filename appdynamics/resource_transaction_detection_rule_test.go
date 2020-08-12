@@ -50,6 +50,54 @@ func TestAccAppDTransactionRule_basicRule(t *testing.T) {
 	})
 }
 
+func TestAccAppDTransactionRule_modify(t *testing.T) {
+
+	name := acctest.RandStringFromCharSet(11, acctest.CharSetAlphaNum)
+
+	resourceName := "appdynamics_transaction_detection_rule.test_rule"
+	agentType := "NODE_JS_SERVER"
+	description := "Health rule created in automated acceptance tests for terraform"
+	updateDescription := "Health rule updated"
+	enabled := "true"
+	entryPointType := "NODEJS_WEB"
+	method := "GET"
+	matchType := "EQUALS"
+	updatedMatchType := "CONTAINS"
+
+	resource.Test(t, resource.TestCase{
+		Providers: map[string]terraform.ResourceProvider{
+			"appdynamics": Provider(),
+		},
+		Steps: []resource.TestStep{
+			{
+				Config: transactionRule(name, agentType, description, enabled, 36, entryPointType, matchType, []string{"/test"}, method),
+				Check: resource.ComposeAggregateTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "application_id", applicationIdS),
+					resource.TestCheckResourceAttr(resourceName, "name", name),
+					resource.TestCheckResourceAttr(resourceName, "agent_type", agentType),
+					resource.TestCheckResourceAttr(resourceName, "account_id", accountId),
+					resource.TestCheckResourceAttr(resourceName, "description", description),
+					resource.TestCheckResourceAttr(resourceName, "enabled", enabled),
+					resource.TestCheckResourceAttr(resourceName, "entry_point_type", entryPointType),
+					resource.TestCheckResourceAttr(resourceName, "http_uris.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "http_method", method),
+					resource.TestCheckResourceAttr(resourceName, "http_uri_match_type", matchType),
+					RetryCheck(CheckTransactionRuleExists(resourceName)),
+				),
+			},
+			{
+				Config: transactionRule(name, agentType, updateDescription, enabled, 36, entryPointType, updatedMatchType, []string{"/test2"}, method),
+				Check: resource.ComposeAggregateTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "description", updateDescription),
+					resource.TestCheckResourceAttr(resourceName, "http_uri_match_type", updatedMatchType),
+					resource.TestCheckResourceAttr(resourceName, "http_uris.#", "1"),
+				),
+			},
+		},
+		CheckDestroy: RetryCheck(CheckTransactionRuleDoesNotExist(resourceName)),
+	})
+}
+
 
 func TestAccAppDTransactionRule_multipleUris(t *testing.T) {
 
@@ -143,6 +191,7 @@ func transactionRule(name string, agentType string, description string, enabled 
 					%s
 					resource "appdynamics_transaction_detection_rule" "test_rule" {
 					  application_id = var.application_id
+					  scope_id = var.scope_id
 					  name = "%s"
 					  agent_type = "%s"
 					  account_id = "%s"
@@ -163,6 +212,7 @@ func basicTransactionRuleMultiple(name string) string {
 					%s
 					resource "appdynamics_transaction_detection_rule" "test_rule" {
 					  application_id = var.application_id
+					  scope_id = var.scope_id
 					  name = "%s"
 					  agent_type = "NODE_JS_SERVER"
 					  account_id = "%s"
@@ -176,6 +226,3 @@ func basicTransactionRuleMultiple(name string) string {
 					}
 `, configureConfig(), name, accountId)
 }
-
-//todo finish documentation
-//todo scope

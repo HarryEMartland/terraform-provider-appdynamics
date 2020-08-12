@@ -15,7 +15,7 @@ func (c *AppDClient) GetTransactionDetectionRules(applicationId int) (*Transacti
 
 	if resp.Response().StatusCode != 200 {
 		respString, _ := resp.ToString()
-		return nil, errors.New(fmt.Sprintf("Error getting Transaction configs: %d, %s", resp.Response().StatusCode, respString))
+		return nil, errors.New(fmt.Sprintf( "Error getting Transaction configs: %d, %s", resp.Response().StatusCode, respString))
 	}
 
 	var updated TransactionRules
@@ -44,9 +44,9 @@ func (c *AppDClient) GetTransactionDetectionRule(applicationId int, transactionR
 	return nil, false, nil
 }
 
-func (c *AppDClient) CreateTransactionDetectionRule(applicationId int, rule *TransactionRule) (*UpdateResult, error) {
+func (c *AppDClient) CreateTransactionDetectionRule(applicationId int, scopeId string, rule *TransactionRule) (*UpdateResult, error) {
 
-	resp, err := req.Post(c.createCreateTransactionDetectionRuleUrl(), c.createAuthHeader(), req.QueryParam{"scopeId": "", "applicationId": applicationId}, req.BodyJSON(rule))
+	resp, err := req.Post(c.createCreateTransactionDetectionRuleUrl(), c.createAuthHeader(), req.QueryParam{"scopeId": scopeId, "applicationId": applicationId}, req.BodyJSON(rule))
 	if err != nil {
 		return nil, err
 	}
@@ -86,9 +86,9 @@ func (c *AppDClient) DeleteTransactionDetectionRules(transactionRuleIds []string
 	return &updated, nil
 }
 
-func (c *AppDClient) UpdateTransactionDetectionRule(applicationId int, transactionConfig *TransactionRule) (*UpdateResult, error) {
+func (c *AppDClient) UpdateTransactionDetectionRule(applicationId int, scopeId string, transactionConfig *TransactionRule) (*UpdateResult, error) {
 
-	resp, err := req.Post(c.createUpdateTransactionDetectionRuleUrl(), c.createAuthHeader(), req.QueryParam{"scopeId": "", "applicationId": applicationId}, req.BodyJSON(transactionConfig))
+	resp, err := req.Post(c.createUpdateTransactionDetectionRuleUrl(), c.createAuthHeader(), req.QueryParam{"scopeId": scopeId, "applicationId": applicationId}, req.BodyJSON(transactionConfig))
 	if err != nil {
 		return nil, err
 	}
