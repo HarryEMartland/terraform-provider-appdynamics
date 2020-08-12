@@ -85,7 +85,7 @@ func CheckTransactionRule(resourceName string, callback func(scope *client.RuleS
 			return fmt.Errorf("not found: %s", resourceName)
 		}
 
-		rule, found, err := appDClient.GetTransactionRule(applicationIdI, resourceState.Primary.ID)
+		rule, found, err := appDClient.GetTransactionDetectionRule(applicationIdI, resourceState.Primary.ID)
 		if err != nil {
 			return err
 		}
@@ -106,7 +106,7 @@ func CheckTransactionRuleDoesNotExist(resourceName string) func(state *terraform
 			return fmt.Errorf("not found: %s", resourceName)
 		}
 
-		_, found, err := appDClient.GetTransactionRule(applicationIdI, resourceState.Primary.ID)
+		_, found, err := appDClient.GetTransactionDetectionRule(applicationIdI, resourceState.Primary.ID)
 		if err != nil {
 			return fmt.Errorf("error finding transaction: %s", resourceState.Primary.ID)
 		}
@@ -126,7 +126,7 @@ func CheckTransactionRuleExists(resourceName string) func(state *terraform.State
 			return fmt.Errorf("not found: %s", resourceName)
 		}
 
-		_, found, err := appDClient.GetTransactionRule(applicationIdI, resourceState.Primary.ID)
+		_, found, err := appDClient.GetTransactionDetectionRule(applicationIdI, resourceState.Primary.ID)
 		if err != nil {
 			return err
 		}
@@ -178,4 +178,4 @@ func basicTransactionRuleMultiple(name string) string {
 }
 
 //todo finish documentation
-//todo add java example
+//todo scope

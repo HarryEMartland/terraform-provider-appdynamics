@@ -27,7 +27,7 @@ func TestShouldGetListOfTransactionRule(t *testing.T) {
 		Secret:  secret,
 	}
 
-	configs, err := client.GetTransactionRules(1234)
+	configs, err := client.GetTransactionDetectionRules(1234)
 
 	if err != nil {
 		t.Error(err)
@@ -85,7 +85,7 @@ func TestShouldFindTransactionRule(t *testing.T) {
 		Secret:  secret,
 	}
 
-	rule, found, err := client.GetTransactionRule(1234, "2dfb495f-6d82-424c-9639-d745263ee9ca")
+	rule, found, err := client.GetTransactionDetectionRule(1234, "2dfb495f-6d82-424c-9639-d745263ee9ca")
 
 	if err != nil {
 		t.Error(err)
@@ -127,7 +127,7 @@ func TestShouldPostNewTransactionConfig(t *testing.T) {
 	}
 
 	rule := createRule()
-	result, err := client.CreateTransactionRule(1234, &rule)
+	result, err := client.CreateTransactionDetectionRule(1234, &rule)
 
 	if err != nil {
 		t.Error(err)
@@ -173,7 +173,7 @@ func TestShouldPostUpdatedTransactionConfig(t *testing.T) {
 	}
 
 	rule := createRule()
-	result, err := client.UpdateTransactionRule(1234, &rule)
+	result, err := client.UpdateTransactionDetectionRule(1234, &rule)
 
 	if err != nil {
 		t.Error(err)
@@ -214,7 +214,7 @@ func TestShouldDeleteTransactionConfigs(t *testing.T) {
 		Secret:  secret,
 	}
 
-	configs, err := client.DeleteTransactionRules([]string{"33e1c67a-da88-11ea-87d0-0242ac130003"})
+	configs, err := client.DeleteTransactionDetectionRules([]string{"33e1c67a-da88-11ea-87d0-0242ac130003"})
 	if err != nil {
 		t.Error(err)
 		return

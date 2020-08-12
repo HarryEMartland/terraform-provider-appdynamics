@@ -31,6 +31,10 @@ func resourceTransactionDetectionRule() *schema.Resource {
 				Type:     schema.TypeString,
 				Required: true,
 			},
+			"scope_id": {
+				Type:     schema.TypeString,
+				Required: true,
+			},
 			"description": {
 				Type:     schema.TypeString,
 				Required: true,
@@ -74,7 +78,7 @@ func resourceTransactionRuleCreate(d *schema.ResourceData, m interface{}) error 
 
 	transactionRule := createTransactionRule(d)
 
-	updatedHealthRule, err := appdClient.CreateTransactionRule(applicationId, transactionRule)
+	updatedHealthRule, err := appdClient.CreateTransactionDetectionRule(applicationId, transactionRule)
 	if err != nil {
 		return err
 	}
@@ -156,7 +160,7 @@ func resourceTransactionRuleRead(d *schema.ResourceData, m interface{}) error {
 	applicationId := d.Get("application_id").(int)
 	id := d.Id()
 
-	rule, found, err := appdClient.GetTransactionRule(applicationId, id)
+	rule, found, err := appdClient.GetTransactionDetectionRule(applicationId, id)
 	if err != nil {
 		return err
 	}
@@ -175,7 +179,7 @@ func resourceTransactionRuleUpdate(d *schema.ResourceData, m interface{}) error 
 
 	transactionRule := createTransactionRule(d)
 
-	_, err := appdClient.UpdateTransactionRule(applicationId, transactionRule)
+	_, err := appdClient.UpdateTransactionDetectionRule(applicationId, transactionRule)
 	if err != nil {
 		return err
 	}
@@ -188,7 +192,7 @@ func resourceTransactionRuleDelete(d *schema.ResourceData, m interface{}) error 
 
 	id := d.Id()
 
-	_, err := appdClient.DeleteTransactionRules([]string{id})
+	_, err := appdClient.DeleteTransactionDetectionRules([]string{id})
 	if err != nil {
 		return err
 	}

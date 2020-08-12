@@ -6,9 +6,9 @@ import (
 	"github.com/imroc/req"
 )
 
-func (c *AppDClient) GetTransactionRules(applicationId int) (*TransactionRules, error) {
+func (c *AppDClient) GetTransactionDetectionRules(applicationId int) (*TransactionRules, error) {
 
-	resp, err := req.Get(c.createGetTransactionRuleUrl(applicationId), c.createAuthHeader())
+	resp, err := req.Get(c.createGetTransactionDetectionRuleUrl(applicationId), c.createAuthHeader())
 	if err != nil {
 		return nil, err
 	}
@@ -27,9 +27,9 @@ func (c *AppDClient) GetTransactionRules(applicationId int) (*TransactionRules, 
 	return &updated, nil
 }
 
-func (c *AppDClient) GetTransactionRule(applicationId int, transactionRuleId string) (*RuleScope, bool, error) {
+func (c *AppDClient) GetTransactionDetectionRule(applicationId int, transactionRuleId string) (*RuleScope, bool, error) {
 
-	rules, err := c.GetTransactionRules(applicationId)
+	rules, err := c.GetTransactionDetectionRules(applicationId)
 
 	if err != nil {
 		return nil, false, err
@@ -44,9 +44,9 @@ func (c *AppDClient) GetTransactionRule(applicationId int, transactionRuleId str
 	return nil, false, nil
 }
 
-func (c *AppDClient) CreateTransactionRule(applicationId int, rule *TransactionRule) (*UpdateResult, error) {
+func (c *AppDClient) CreateTransactionDetectionRule(applicationId int, rule *TransactionRule) (*UpdateResult, error) {
 
-	resp, err := req.Post(c.createCreateTransactionRuleUrl(), c.createAuthHeader(), req.QueryParam{"scopeId": "", "applicationId": applicationId}, req.BodyJSON(rule))
+	resp, err := req.Post(c.createCreateTransactionDetectionRuleUrl(), c.createAuthHeader(), req.QueryParam{"scopeId": "", "applicationId": applicationId}, req.BodyJSON(rule))
 	if err != nil {
 		return nil, err
 	}
@@ -65,9 +65,9 @@ func (c *AppDClient) CreateTransactionRule(applicationId int, rule *TransactionR
 	return &updated, nil
 }
 
-func (c *AppDClient) DeleteTransactionRules(transactionRuleIds []string) (*UpdateResult, error) {
+func (c *AppDClient) DeleteTransactionDetectionRules(transactionRuleIds []string) (*UpdateResult, error) {
 
-	resp, err := req.Post(c.createDeleteTransactionRuleUrl(), c.createAuthHeader(), req.BodyJSON(transactionRuleIds))
+	resp, err := req.Post(c.createDeleteTransactionDetectionRuleUrl(), c.createAuthHeader(), req.BodyJSON(transactionRuleIds))
 	if err != nil {
 		return nil, err
 	}
@@ -86,9 +86,9 @@ func (c *AppDClient) DeleteTransactionRules(transactionRuleIds []string) (*Updat
 	return &updated, nil
 }
 
-func (c *AppDClient) UpdateTransactionRule(applicationId int, transactionConfig *TransactionRule) (*UpdateResult, error) {
+func (c *AppDClient) UpdateTransactionDetectionRule(applicationId int, transactionConfig *TransactionRule) (*UpdateResult, error) {
 
-	resp, err := req.Post(c.createUpdateTransactionRuleUrl(), c.createAuthHeader(), req.QueryParam{"scopeId": "", "applicationId": applicationId}, req.BodyJSON(transactionConfig))
+	resp, err := req.Post(c.createUpdateTransactionDetectionRuleUrl(), c.createAuthHeader(), req.QueryParam{"scopeId": "", "applicationId": applicationId}, req.BodyJSON(transactionConfig))
 	if err != nil {
 		return nil, err
 	}
@@ -107,19 +107,19 @@ func (c *AppDClient) UpdateTransactionRule(applicationId int, transactionConfig 
 	return &updated, nil
 }
 
-func (c *AppDClient) createGetTransactionRuleUrl(applicationId int) string {
+func (c *AppDClient) createGetTransactionDetectionRuleUrl(applicationId int) string {
 	return fmt.Sprintf("%s/controller/restui/transactionConfigProto/getRules/%d", c.BaseUrl, applicationId)
 }
 
-func (c *AppDClient) createCreateTransactionRuleUrl() string {
+func (c *AppDClient) createCreateTransactionDetectionRuleUrl() string {
 	return fmt.Sprintf("%s/controller/restui/transactionConfigProto/createRule", c.BaseUrl)
 }
 
-func (c *AppDClient) createDeleteTransactionRuleUrl() string {
+func (c *AppDClient) createDeleteTransactionDetectionRuleUrl() string {
 	return fmt.Sprintf("%s/controller/restui/transactionConfigProto/deleteRules", c.BaseUrl)
 }
 
-func (c *AppDClient) createUpdateTransactionRuleUrl() string {
+func (c *AppDClient) createUpdateTransactionDetectionRuleUrl() string {
 	return fmt.Sprintf("%s/controller/restui/transactionConfigProto/updateRule", c.BaseUrl)
 }
 
