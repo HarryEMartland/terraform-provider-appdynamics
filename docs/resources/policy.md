@@ -10,7 +10,7 @@ Creates a policy which triggers an action when events occur.
 #### Specific Health Rule
 
 ```hcl
-resource "appd_policy" "my_policy" {
+resource "appdynamics_policy" "my_policy" {
   name = "My Policy"
   application_id = var.application_id
   action_name = "my action"
@@ -26,7 +26,7 @@ resource "appd_policy" "my_policy" {
 #### All Health Rules
 
 ```hcl
-resource "appd_policy" "all_health_rules_email_on_call" {
+resource "appdynamics_policy" "all_health_rules_email_on_call" {
   name = "All Health Rules Email On call"
   application_id = var.application_id
   action_name = join(", ",appd_action.on-call-email-action.emails)

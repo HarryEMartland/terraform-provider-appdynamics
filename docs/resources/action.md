@@ -9,7 +9,7 @@ Creates an action which can be triggered by a [policy](policy_resource.md).
 
 #### Email
 ```terraform
-resource "appd_action" "my_first_email_action" {
+resource "appdynamics_action" "my_first_email_action" {
   application_id = var.application_id
   action_type = "EMAIL"
   emails = [
@@ -21,7 +21,7 @@ resource "appd_action" "my_first_email_action" {
 
 #### SMS
 ```hcl
-resource "appd_action" "my-first-sms-action" {
+resource "appdynamics_action" "my-first-sms-action" {
   application_id = var.application_id
   action_type = "SMS"
   phone_number = "07421365896"
@@ -30,7 +30,7 @@ resource "appd_action" "my-first-sms-action" {
 
 #### HTTP Request
 ```hcl
-resource "appd_action" "my-first-http-action" {
+resource "appdyanmics_action" "my-first-http-action" {
   application_id = var.application_id
   name = "My First HTTP Action"
   action_type = "HTTP_REQUEST"

@@ -9,7 +9,7 @@ Creates a health rule which defines what normal looks like for an application.
 
 #### All BTs Baseline 
 ```hcl
-resource "appd_health_rule" "my_baseline_rule" {
+resource "appdynamics_health_rule" "my_baseline_rule" {
   name = "My Baseline Health Rule"
   application_id = var.application_id
   metric_aggregation_function = "VALUE"
@@ -28,7 +28,7 @@ resource "appd_health_rule" "my_baseline_rule" {
 
 #### All BTs Value
 ```hcl
-resource "appd_health_rule" "my_single_metric_rule" {
+resource "appdynamics_health_rule" "my_single_metric_rule" {
   name = "My Single Metring Health Rule"
   application_id = var.application_id
   metric_aggregation_function = "VALUE"
@@ -45,7 +45,7 @@ resource "appd_health_rule" "my_single_metric_rule" {
 
 #### Specific BTs Value
 ```hcl
-resource "appd_health_rule" "specific_bts_rule" {
+resource "appdynamics_health_rule" "specific_bts_rule" {
   name = "My Specific BTs Rule"
   application_id = var.application_id
   metric_aggregation_function = "VALUE"
@@ -66,7 +66,7 @@ resource "appd_health_rule" "specific_bts_rule" {
 
 #### Specific Tiers Value
 ```hcl
-resource "appd_health_rule" "specific_tiers_rule" {
+resource "appdynamics_health_rule" "specific_tiers_rule" {
   name = "My Specific Tiers Rule"
   application_id = var.application_id
   metric_aggregation_function = "VALUE"
