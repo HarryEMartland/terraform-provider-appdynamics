@@ -3,6 +3,7 @@ package appdynamics
 import (
 	"fmt"
 	"github.com/HarryEMartland/terraform-provider-appdynamics/appdynamics/client"
+	godotenv "github.com/joho/godotenv"
 	"github.com/stretchr/testify/assert"
 	"log"
 	"os"
@@ -22,6 +23,7 @@ var accountId string
 var scopeId string
 
 func init() {
+	godotenv.Load("../.env")
 	_, acceptanceTest := os.LookupEnv("TF_ACC")
 	if !acceptanceTest {
 		return

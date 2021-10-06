@@ -12,6 +12,9 @@ build:
 	chmod +x ./terraform-provider-appdynamics
 test:
 	go test ./...  -v
+
+r:
+	go test ./...  -v -run TestAccAppDDashboard_basic
 install:
 	go get
 
