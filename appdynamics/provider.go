@@ -12,6 +12,10 @@ func Provider() *schema.Provider {
 			"appdynamics_action":                     resourceAction(),
 			"appdynamics_policy":                     resourcePolicy(),
 			"appdynamics_transaction_detection_rule": resourceTransactionDetectionRule(),
+			"appdynamics_dashboard":                  resourceDashboard(),
+		},
+		DataSourcesMap: map[string]*schema.Resource{
+			"appdynamics_dashboard_widget": dataSourceDashboardWidget(),
 		},
 		Schema: map[string]*schema.Schema{
 			"secret":              {Type: schema.TypeString, Sensitive: true, Required: true},
