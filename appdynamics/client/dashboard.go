@@ -162,12 +162,8 @@ func (c *AppDClient) createDashboardUrl() string {
 	return fmt.Sprintf("%s/createDashboard", c.createDashboardBaseUrl())
 }
 
-func (c *AppDClient) createDashboardUrl2() string {
-	return fmt.Sprintf("%s/controller/CustomDashboardImportExportServlet", c.BaseUrl)
-}
-
-func (c *AppDClient) getDashboardUrl(dashboardId int) string {
-	return fmt.Sprintf("%s/controller/CustomDashboardImportExportServlet?dashboardId=%d", c.BaseUrl, dashboardId)
+func (c *AppDClient) updateDashboardUrl() string {
+	return fmt.Sprintf("%s/updateDashboard", c.createDashboardBaseUrl())
 }
 
 func (c *AppDClient) deleteDashboard() string {
@@ -175,7 +171,15 @@ func (c *AppDClient) deleteDashboard() string {
 }
 
 func (c *AppDClient) deleteDashboards() string {
-	return fmt.Sprintf("%s/controller/restui/dashboards/deleteDashboards", c.BaseUrl)
+	return fmt.Sprintf("%s/deleteDashboards", c.createDashboardBaseUrl())
+}
+
+func (c *AppDClient) getDashboardUrl(dashboardId int) string {
+	return fmt.Sprintf("%s/controller/CustomDashboardImportExportServlet?dashboardId=%d", c.BaseUrl, dashboardId)
+}
+
+func (c *AppDClient) importDashboardUrl() string {
+	return fmt.Sprintf("%s/controller/CustomDashboardImportExportServlet", c.BaseUrl)
 }
 
 func (c *AppDClient) ImportDashboard(dashboard Dashboard, template string) (*Dashboard, error) {
@@ -205,7 +209,6 @@ func (c *AppDClient) CreateDashboard(dashboard Dashboard) (*Dashboard, error) {
 		fmt.Println(resp)
 		fmt.Println("XDD")
 		return nil, errors.New(fmt.Sprintf("Error creating Dashboard: %d, %s", resp.Response().StatusCode, respString))
-
 	}
 	fmt.Println("A")
 	updated := Dashboard{}
@@ -221,9 +224,24 @@ func (c *AppDClient) CreateDashboard(dashboard Dashboard) (*Dashboard, error) {
 	return &updated, err
 }
 
+func (c *AppDClient) UpdateDashboard(dashboard Dashboard) (*Dashboard, error) {
+	resp, err := req.Post(c.updateDashboardUrl(), c.createAuthHeader(), req.BodyJSON(dashboard))
+	if resp.Response().StatusCode != 201 {
+		respString, _ := resp.ToString()
+		return nil, errors.New(fmt.Sprintf("Error creating Dashboard: %d, %s", resp.Response().StatusCode, respString))
+
+	}
+	updated := Dashboard{}
+	err = resp.ToJSON(&updated)
+	if err != nil {
+		return nil, err
+	}
+	return &updated, err
+}
+
 func (c *AppDClient) DeleteDashboard(dashboardId int) error {
 	fmt.Println("REMOVING", dashboardId)
-	resp, err := req.Post(c.deleteDashboard(), c.createAuthHeader(), req.BodyJSON(1))
+	resp, err := req.Post(c.deleteDashboard(), c.createAuthHeader(), req.BodyJSON(dashboardId))
 	if err != nil {
 		return err
 	}

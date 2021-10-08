@@ -4,6 +4,7 @@ go 1.14
 
 require (
 	cloud.google.com/go v0.61.0 // indirect
+	github.com/MakeNowJust/heredoc v1.0.0 // indirect
 	github.com/agext/levenshtein v1.2.3 // indirect
 	github.com/apparentlymart/go-cidr v1.1.0 // indirect
 	github.com/aws/aws-sdk-go v1.33.16 // indirect

@@ -14,7 +14,13 @@ test:
 	go test ./...  -v
 
 r:
+	go clean -testcache
 	go test ./...  -v -run TestAccAppDDashboard_basic
+
+w:
+	go clean -testcache
+	go test ./...  -v -run TestAccDataSourceDashboardWidget_basic
+
 install:
 	go get
 
