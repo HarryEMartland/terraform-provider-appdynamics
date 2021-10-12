@@ -7,22 +7,6 @@ import (
 	"strconv"
 )
 
-//"name":"abcde",
-//"width":1024,
-//"height":768,
-//"canvasType":
-//"CANVAS_TYPE_GRID",
-//"templateEntityType":"APPLICATION_COMPONENT_NODE",
-//"refreshInterval":120000,
-//"backgroundColor":15856629,
-//"warRoom":false,
-//"template":false,
-//"widgets":[],
-//"version":0,
-//"minutesBeforeAnchorTime":-1,
-//"startTime":-1,
-//"endTime":-1
-
 func resourceDashboard() *schema.Resource {
 	return &schema.Resource{
 		Create: resourceDashboardCreate,
