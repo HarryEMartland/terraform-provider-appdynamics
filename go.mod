@@ -11,6 +11,7 @@ require (
 	github.com/cenkalti/backoff/v4 v4.0.2
 	github.com/fatih/color v1.9.0 // indirect
 	github.com/google/go-cmp v0.5.1 // indirect
+	github.com/google/uuid v1.3.0 // indirect
 	github.com/hashicorp/go-getter v1.4.1 // indirect
 	github.com/hashicorp/go-hclog v0.14.1 // indirect
 	github.com/hashicorp/go-multierror v1.1.0 // indirect
@@ -40,4 +41,5 @@ require (
 	golang.org/x/tools v0.0.0-20200730183239-644d416712ac // indirect
 	google.golang.org/genproto v0.0.0-20200730144737-007c33dbd381 // indirect
 	google.golang.org/grpc v1.31.0 // indirect
+	gopkg.in/guregu/null.v4 v4.0.0 // indirect
 )

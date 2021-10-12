@@ -1,42 +1,23 @@
 package appdynamics
 
 import (
+	"crypto/sha256"
+	"encoding/hex"
 	"encoding/json"
 	"github.com/HarryEMartland/terraform-provider-appdynamics/appdynamics/client"
 	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
+	"gopkg.in/guregu/null.v4"
 )
 
 func dataSourceDashboardWidget() *schema.Resource {
 	return &schema.Resource{
 		Read: dataSourceDashboardWidgetRead,
-
 		Schema: map[string]*schema.Schema{
-			"type": {
+			"json": {
 				Type:     schema.TypeString,
 				Optional: true,
-				Default:  "TIMESERIES_GRAPH",
 			},
-			"height": {
-				Type:     schema.TypeInt,
-				Optional: true,
-				Default:  "4",
-			},
-			"width": {
-				Type:     schema.TypeInt,
-				Optional: true,
-				Default:  "4",
-			},
-			"x": {
-				Type:     schema.TypeInt,
-				Optional: true,
-				Default:  "0",
-			},
-			"y": {
-				Type:     schema.TypeInt,
-				Optional: true,
-				Default:  "0",
-			},
-			"json": {
+			"widget_json": {
 				Type:     schema.TypeString,
 				Computed: true,
 			},
@@ -44,42 +25,23 @@ func dataSourceDashboardWidget() *schema.Resource {
 	}
 }
 
-//ID int `json:"id"`
-//Version int `json:"version"`
-//GUID int `json:"guid"`
-//Type string `json:"type"`
-//DashboardId int `json:"dashboardId"`
-//Height int `json:"height"`
-//Width int `json:"width"`
-//MinHeight int `json:"minHeight"`
-//MinWidth int `json:"minWidth"`
-//X int `json:"x"`
-//Y int `json:"y"`
-
 func dataSourceDashboardWidgetRead(d *schema.ResourceData, meta interface{}) error {
-	//fmt.Println(d.Get("json"))
-	widgetType := d.Get("type").(string)
-	height := d.Get("height").(int)
-	width := d.Get("width").(int)
-	x := d.Get("x").(int)
-	y := d.Get("y").(int)
-	//d.SetId(fmt.Sprintf("%s-%d-%d%d%d", widgetType, height, width, x, y))
-	d.SetId(widgetType)
-
-	widget := client.DashboardWidget{
-		Type:   widgetType,
-		Height: height,
-		Width:  width,
-		//MinHeight: d.Get("minHeight").(int),
-		//MinWidth: d.Get("minWidth").(int),
-		X: x,
-		Y: y,
-	}
-	jsonDoc, err := json.MarshalIndent(widget, "", "  ")
+	/*
+			Generate nullable json structure to be able to detect changes inside and outside of terraform of the widget.
+		    Also provider GUID to fulfill AppD requirements.
+	*/
+	jsonSource := d.Get("json").(string)
+	hash := sha256.Sum224([]byte(jsonSource))
+	hashString := "wr-" + hex.EncodeToString(hash[:])
+	d.SetId(hashString)
+	widget := client.DashboardWidget{}
+	json.Unmarshal([]byte(jsonSource), &widget)
+	widget.GUID = null.NewString(hashString[0:50], true)
+	jsonDoc, err := json.Marshal(widget)
 	if err != nil {
 		return err
 	}
 	jsonString := string(jsonDoc)
-	d.Set("json", jsonString)
+	d.Set("widget_json", jsonString)
 	return nil
 }

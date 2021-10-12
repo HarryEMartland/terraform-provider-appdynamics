@@ -13,11 +13,15 @@ build:
 test:
 	go test ./...  -v
 
-r:
+test-create:
 	go clean -testcache
-	go test ./...  -v -run TestAccAppDDashboard_basic
+	go test ./...  -v -run TestAccAppDDashboard_Create
 
-w:
+test-update:
+	go clean -testcache
+	go test ./...  -v -run TestAccAppDDashboard_Update
+
+test-widget:
 	go clean -testcache
 	go test ./...  -v -run TestAccDataSourceDashboardWidget_basic
 
@@ -26,7 +30,7 @@ install:
 
 build-install:
 	make build
-	mv terraform-provider-appdynamics ~/.terraform.d/plugins/github.com/HarryEMartland/terraform-provider-appdynamics
+	mv terraform-provider-appdynamics ~/.terraform.d/plugins/registry.terraform.io/hashicorp/appdynamics/0.1.0/linux_amd64/terraform-provider-appdynamics_v0.1.0
 
 build-linux:
 	GOOS=linux GOARCH=amd64 $(GOBUILD)

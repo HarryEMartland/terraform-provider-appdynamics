@@ -2,18 +2,15 @@ package appdynamics
 
 import (
 	"fmt"
-	"github.com/HarryEMartland/terraform-provider-appdynamics/appdynamics/client"
 	"github.com/hashicorp/terraform-plugin-sdk/helper/resource"
 	"github.com/hashicorp/terraform-plugin-sdk/terraform"
+	"os"
 	"testing"
 )
 
 func TestAccDataSourceDashboardWidget_basic(t *testing.T) {
 	resourceName := "data.appdynamics_dashboard_widget.test"
-
-	testDashboardWidget := client.DashboardWidget{
-		Type: "TIMESERIES_GRAPH",
-	}
+	sampleWidget, _ := os.ReadFile("./widgets/cpu_widget_small.json")
 
 	resource.ParallelTest(t, resource.TestCase{
 		Providers: map[string]terraform.ResourceProvider{
@@ -21,10 +18,11 @@ func TestAccDataSourceDashboardWidget_basic(t *testing.T) {
 		},
 		Steps: []resource.TestStep{
 			{
-				Config: testAccDataSourceDashboardWidgetConfig(),
+				Config: testAccDataSourceDashboardWidgetConfig(string(sampleWidget)),
 				Check: resource.ComposeTestCheckFunc(
 					testAccDataSourceAwsArn(resourceName),
-					resource.TestCheckResourceAttr(resourceName, "type", testDashboardWidget.Type),
+					resource.TestCheckResourceAttrSet(resourceName, "json"),
+					resource.TestCheckResourceAttrSet(resourceName, "widget_json"),
 				),
 			},
 		},
@@ -42,10 +40,12 @@ func testAccDataSourceAwsArn(name string) resource.TestCheckFunc {
 	}
 }
 
-func testAccDataSourceDashboardWidgetConfig() string {
+func testAccDataSourceDashboardWidgetConfig(sampleWidget string) string {
 	return fmt.Sprintf(`
 %s
+
 data "appdynamics_dashboard_widget" "test" {
+ json = jsonencode(%s)
 }
-`, configureDashboardConfig())
+`, configureDashboardConfig(), sampleWidget)
 }

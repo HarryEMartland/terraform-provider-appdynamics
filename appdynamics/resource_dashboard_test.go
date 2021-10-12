@@ -10,10 +10,10 @@ import (
 	"testing"
 )
 
-func TestAccAppDDashboard_basic(t *testing.T) {
+func TestAccAppDDashboard_Create(t *testing.T) {
 
 	name := acctest.RandStringFromCharSet(11, acctest.CharSetAlphaNum)
-
+	cpuWidget, _ := os.ReadFile("./widgets/cpu_widget_small.json")
 	resourceName := "appdynamics_dashboard.test_basic"
 
 	resource.Test(t, resource.TestCase{
@@ -22,17 +22,73 @@ func TestAccAppDDashboard_basic(t *testing.T) {
 		},
 		Steps: []resource.TestStep{
 			{
-				Config: dashboardBasic("TEST_RAFAL_LIZON"),
+				Config: dashboardWidthOneWidgets(name, string(cpuWidget)),
 				Check: resource.ComposeAggregateTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "name", name),
-					resource.TestCheckResourceAttrSet(resourceName, "id"),
-					//RetryCheck(CheckDashboardDoesNotExist(resourceName)),
 				),
 			},
 		},
-		//CheckDestroy: RetryCheck(CheckDashboardDoesNotExist(resourceName)),
+		CheckDestroy: RetryCheck(CheckDashboardDoesNotExist(resourceName)),
 	})
 }
+
+func TestAccAppDDashboard_UpdateDashboard(t *testing.T) {
+
+	name := acctest.RandStringFromCharSet(11, acctest.CharSetAlphaNum)
+	name2 := acctest.RandStringFromCharSet(11, acctest.CharSetAlphaNum)
+	resourceName := "appdynamics_dashboard.test_basic"
+
+	resource.Test(t, resource.TestCase{
+		Providers: map[string]terraform.ResourceProvider{
+			"appdynamics": Provider(),
+		},
+		Steps: []resource.TestStep{
+			{
+				Config: basicDashboard(name),
+				Check: resource.ComposeAggregateTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "name", name),
+				),
+			},
+			{
+				Config: basicDashboard(name2),
+				Check: resource.ComposeAggregateTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "name", name2),
+				),
+			},
+		},
+		CheckDestroy: RetryCheck(CheckDashboardDoesNotExist(resourceName)),
+	})
+}
+
+func TestAccAppDDashboard_UpdateWidgets(t *testing.T) {
+
+	name := acctest.RandStringFromCharSet(11, acctest.CharSetAlphaNum)
+	cpuWidget, _ := os.ReadFile("./widgets/cpu_widget_small.json")
+	//cpuWidget2, _ := os.ReadFile("./widgets/memory_a.json")
+	resourceName := "appdynamics_dashboard.test_basic"
+
+	resource.Test(t, resource.TestCase{
+		Providers: map[string]terraform.ResourceProvider{
+			"appdynamics": Provider(),
+		},
+		Steps: []resource.TestStep{
+			{
+				Config: basicDashboard(name),
+				Check: resource.ComposeAggregateTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "name", name),
+				),
+			},
+			{
+				Config: dashboardWidthOneWidgets(name, string(cpuWidget)),
+				Check: resource.ComposeAggregateTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "name", name),
+				),
+			},
+		},
+		CheckDestroy: RetryCheck(CheckDashboardDoesNotExist(resourceName)),
+	})
+}
+
 func CheckDashboardDoesNotExist(resourceName string) func(state *terraform.State) error {
 	return func(state *terraform.State) error {
 
@@ -73,68 +129,59 @@ func configureDashboardConfig() string {
 					}`, os.Getenv("APPD_SECRET"), os.Getenv("APPD_CONTROLLER_BASE_URL"), os.Getenv("APPD_SCOPE_ID"), os.Getenv("APPD_APPLICATION_ID"))
 }
 
-//func sampleDashboard() string {
-//	return `{"name":"abcde",
-//             "width":1024,
-//             "height":768,
-//             "canvasType":
-//             "CANVAS_TYPE_GRID",
-//             "templateEntityType":"APPLICATION_COMPONENT_NODE",
-//             "refreshInterval":120000,
-//             "backgroundColor":15856629,
-//             "warRoom":false,
-//             "template":false,
-//             "widgets":[],
-//             "version":0,
-//             "minutesBeforeAnchorTime":-1,
-//             "startTime":-1,
-//             "endTime":-1
-//            }`
-//}
-
-//func importTemplate() string {
-//	return `{
-//		"schemaVersion": null,
-//		"dashboardFormatVersion": "4.0",
-//		"name": "TEMPLATE__NAME",
-//		"description": null,
-//			"properties": null,
-//			"templateEntityType": "APPLICATION_COMPONENT_NODE",
-//			"associatedEntityTemplates": null,
-//			"minutesBeforeAnchorTime": -1,
-//			"startDate": null,
-//			"endDate": null,
-//			"refreshInterval": 120000,
-//			"backgroundColor": 15856629,
-//			"color" : 15856629,
-//			"height": 768,
-//			"width": 1024,
-//			"canvasType": "CANVAS_TYPE_GRID",
-//			"layoutType": "",
-//			"widgetTemplates" : null,
-//			"warRoom": false,
-//			"template": false
-//	}`
-//}
-
-func dashboardBasic(name string) string {
+func dashboardWidthOneWidgets(name string, cpuWidget string) string {
 	return fmt.Sprintf(`
 					%s
 					data "appdynamics_dashboard_widget" "basic_widget" {
-					}
-
-					data "appdynamics_dashboard_widget" "basic_widget2" {
-							x = 4
-                            y = 4
-                            width = 12
+							json = jsonencode(%s)
 					}
 
 					resource "appdynamics_dashboard" "test_basic" {
-		  				name = "%s"
-                        widgets = [
-  									data.appdynamics_dashboard_widget.basic_widget.json,
-   									#data.appdynamics_dashboard_widget.basic_widget2.json
-						]
+						name = "%s"
+  						template_entity_type = "APPLICATION_COMPONENT_NODE"
+  						minutes_before_anchor_time = -1
+  						refresh_interval = 120000
+  						background_color = 15856629
+  						height = 768
+  						width = 1024
+  						canvas_type = "CANVAS_TYPE_GRID"
+                        widgets = [data.appdynamics_dashboard_widget.basic_widget.widget_json]
+					}
+`, configureDashboardConfig(), cpuWidget, name)
+}
+
+func dashboardWidthTwoWidgets(name string, cpuWidget string, cpu2Widget string) string {
+	return fmt.Sprintf(`
+					%s
+
+					resource "appdynamics_dashboard" "test_basic" {
+					  name = "%s"
+					  template_entity_type = "APPLICATION_COMPONENT_NODE"
+					  minutes_before_anchor_time = -1
+					  refresh_interval = 120000
+					  background_color = 15856629
+					  height = 768
+					  width = 1024
+					  canvas_type = "CANVAS_TYPE_GRID"
+					  widgets = [jsonencode(%s), jsonencode(%s)]
+					}
+`, configureDashboardConfig(), name, cpuWidget, cpu2Widget)
+}
+
+func basicDashboard(name string) string {
+	return fmt.Sprintf(`
+					%s
+
+					resource "appdynamics_dashboard" "test_basic" {
+					  name = "%s"
+					  template_entity_type = "APPLICATION_COMPONENT_NODE"
+					  minutes_before_anchor_time = -1
+					  refresh_interval = 120000
+					  background_color = 15856629
+					  height = 768
+					  width = 1024
+					  canvas_type = "CANVAS_TYPE_GRID"
+					  widgets = []	
 					}
 `, configureDashboardConfig(), name)
 }

@@ -18,5 +18,6 @@ func (c *AppDClient) createAuthHeader() req.Header {
 	return req.Header{
 		"Content-Type":  "application/json",
 		"Authorization": fmt.Sprintf("Bearer %s", c.Secret),
+		"Accept":        "application/json",
 	}
 }

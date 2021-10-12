@@ -2,7 +2,6 @@ package appdynamics
 
 import (
 	"encoding/json"
-	"fmt"
 	"github.com/HarryEMartland/terraform-provider-appdynamics/appdynamics/client"
 	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
 	"strconv"
@@ -83,8 +82,7 @@ func resourceDashboard() *schema.Resource {
 			},
 			"version": {
 				Type:     schema.TypeInt,
-				Optional: true,
-				Default:  0,
+				Computed: true,
 			},
 			"minutes_before_anchor_time": {
 				Type:     schema.TypeInt,
@@ -108,9 +106,13 @@ func resourceDashboard() *schema.Resource {
 func resourceDashboardCreate(d *schema.ResourceData, m interface{}) error {
 	appdClient := m.(*client.AppDClient)
 	dashboard := createDashboard(d)
-	dash, _ := appdClient.CreateDashboard(dashboard)
-	d.SetId(strconv.Itoa(dash.ID))
-	return resourceDashboardRead(d, m)
+	dash, err := appdClient.CreateDashboard(dashboard)
+	if err != nil {
+		return err
+	}
+	dashboardId := strconv.Itoa(dash.ID)
+	d.SetId(dashboardId)
+	return err
 }
 
 func createDashboard(d *schema.ResourceData) client.Dashboard {
@@ -121,8 +123,9 @@ func createDashboard(d *schema.ResourceData) client.Dashboard {
 		json.Unmarshal([]byte(widget.(string)), &test)
 		dashboardWidgetList = append(dashboardWidgetList, test)
 	}
-
+	dashboardId, _ := strconv.Atoi(d.Id())
 	dashboard := client.Dashboard{
+		ID:                      dashboardId,
 		Name:                    d.Get("name").(string),
 		Width:                   d.Get("width").(int),
 		Height:                  d.Get("height").(int),
@@ -138,20 +141,36 @@ func createDashboard(d *schema.ResourceData) client.Dashboard {
 		StartTime:               d.Get("start_time").(int),
 		EndTime:                 d.Get("end_time").(int),
 	}
+
 	return dashboard
 }
 
 func updateDashboard(d *schema.ResourceData, dashboard client.Dashboard) {
-	d.Set("ID", dashboard.ID)
-	d.Set("Name", dashboard.Name)
-	//d.Set("Template", dashboard.Template)
+	var dashboardWidgetList []string
+	for _, widget := range dashboard.Widgets {
+		widget, _ := json.Marshal(widget)
+		dashboardWidgetList = append(dashboardWidgetList, string(widget))
+	}
 
+	d.SetId(strconv.Itoa(dashboard.ID))
+	d.Set("name", dashboard.Name)
+	d.Set("width", dashboard.Width)
+	d.Set("height", dashboard.Height)
+	d.Set("canvas_type", dashboard.CanvasType)
+	d.Set("template_entity_type", dashboard.TemplateEntityType)
+	d.Set("refresh_interval", dashboard.RefreshInterval)
+	d.Set("background_color", dashboard.BackgroundColor)
+	d.Set("war_room", dashboard.WarRoom)
+	d.Set("template", dashboard.Template)
+	d.Set("widgets", dashboardWidgetList)
+	d.Set("version", dashboard.Version)
+	d.Set("minutes_before_anchor_time", dashboard.MinutesBeforeAnchorTime)
+	d.Set("start_time", dashboard.StartTime)
+	d.Set("end_time", dashboard.EndTime)
 }
 
 func resourceDashboardRead(d *schema.ResourceData, m interface{}) error {
 	appdClient := m.(*client.AppDClient)
-
-	fmt.Println("1")
 	id := d.Id()
 	dashboardId, err := strconv.Atoi(id)
 	if err != nil {
@@ -161,38 +180,27 @@ func resourceDashboardRead(d *schema.ResourceData, m interface{}) error {
 	if err != nil {
 		return err
 	}
+
 	updateDashboard(d, *dashboard)
+
 	return nil
 }
 
 func resourceDashboardUpdate(d *schema.ResourceData, m interface{}) error {
-	//appdClient := m.(*client.AppDClient)
-	//applicationId := d.Get("application_id").(int)
-	//
-	//healthRule := createDashboard(d)
-	//
-	//healthRuleId, err := strconv.Atoi(d.Id())
-	//if err != nil {
-	//	return err
-	//}
-	//healthRule.ID = healthRuleId
-	//
-	//_, err = appdClient.UpdateDashboard(&healthRule, applicationId)
-	//if err != nil {
-	//	return err
-	//}
-	//
-	//return resourceDashboardRead(d, m)
-	return nil
+	appdClient := m.(*client.AppDClient)
+	dashboard := createDashboard(d)
+	_, err := appdClient.UpdateDashboard(dashboard)
+	if err != nil {
+		return err
+	}
+	return resourceDashboardRead(d, m)
 }
 
 func resourceDashboardDelete(d *schema.ResourceData, m interface{}) error {
-	fmt.Println("Trying to delete resource")
 	appdClient := m.(*client.AppDClient)
 
 	id := d.Id()
 	dashboardId, err := strconv.Atoi(id)
-
 	if err != nil {
 		return err
 	}
@@ -204,12 +212,3 @@ func resourceDashboardDelete(d *schema.ResourceData, m interface{}) error {
 
 	return nil
 }
-
-//func contains(s []string, e string) bool {
-//	for _, a := range s {
-//		if a == e {
-//			return true
-//		}
-//	}
-//	return false
-//}
