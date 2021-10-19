@@ -21,7 +21,6 @@ type DashboardWidget struct {
 	AdqlQueries                 []string    `json:"adqlQueries"`
 	AnalyticsType               null.String `json:"analyticsType"`
 	SearchMode                  null.String `json:"searchMode"`
-	WidgetsMetricMatchCriterias null.String `json:"widgetsMetricMatchCriterias"`
 	Description                 null.String `json:"description"`
 	DrillDownUrl                null.String `json:"drillDownUrl"`
 	UseMetricBrowserAsDrillDown null.Bool   `json:"useMetricBrowserAsDrillDown"`
@@ -52,6 +51,7 @@ type DashboardWidget struct {
 	IsGlobal                    null.Bool   `json:"isGlobal"`
 
 	// TODO
+	//WidgetsMetricMatchCriterias null.String `json:"widgetsMetricMatchCriterias"`
 	//Properties          []int  `json:"properties"` // null list?
 	//MissingEntities     null.String `json:"missingEntities"`
 	//VerticalAxisLabel   null.String `json:"verticalAxisLabel"`
@@ -87,12 +87,9 @@ type Dashboard struct {
 	EndTime                 int               `json:"endTime"`
 }
 
-type AppdDashboardCreateResponse struct {
-	Success   bool `json:"success"`
-	Dashboard struct {
-		Name string `json:"name"`
-		ID   int    `json:"id"`
-	} `json:"dashboard"`
+type ImportExportResponse struct {
+	Success   bool      `json:"success"`
+	Dashboard Dashboard `json:"dashboard"`
 }
 
 func (c *AppDClient) createDashboardBaseUrl() string {
@@ -123,21 +120,27 @@ func (c *AppDClient) importDashboardUrl() string {
 	return fmt.Sprintf("%s/controller/CustomDashboardImportExportServlet", c.BaseUrl)
 }
 
-func (c *AppDClient) ImportDashboard(dashboard Dashboard, template string) (*Dashboard, error) {
-	file := io.NopCloser(strings.NewReader(template))
-	resp, err := req.Post(c.createDashboardUrl(), c.createAuthHeader(), req.FileUpload{
+func (c *AppDClient) exportDashboardUrl(dashboardId int) string {
+	return fmt.Sprintf("%s/controller/CustomDashboardImportExportServlet?dashboardId=%d", c.BaseUrl, dashboardId)
+}
+
+func (c *AppDClient) ImportDashboard(templateJson string) (*Dashboard, error) {
+	file := io.NopCloser(strings.NewReader(templateJson))
+	resp, err := req.Post(c.importDashboardUrl(), c.createAuthHeader(), req.FileUpload{
 		File:      file,
 		FieldName: "fileUpload",    // FieldName is form field name
 		FileName:  "template.json", //Filename is the name of the file that you wish to upload. We use this to guess the mimetype as well as pass it onto the server
 	})
-	dResponse := AppdDashboardCreateResponse{}
-	err = resp.ToJSON(&dResponse)
 
-	updated := Dashboard{
-		Name: dashboard.Name,
-		ID:   dResponse.Dashboard.ID,
+	if resp.Response().StatusCode != 200 {
+		respString, _ := resp.ToString()
+		return nil, errors.New(fmt.Sprintf("Error during dashboard import: %d, %s", resp.Response().StatusCode, respString))
 	}
-	return &updated, err
+
+	appdResponse := ImportExportResponse{}
+	err = resp.ToJSON(&appdResponse)
+
+	return &appdResponse.Dashboard, err
 }
 
 func (c *AppDClient) CreateDashboard(dashboard Dashboard) (*Dashboard, error) {
@@ -159,7 +162,6 @@ func (c *AppDClient) UpdateDashboard(dashboard Dashboard) (*Dashboard, error) {
 	if resp.Response().StatusCode != 200 {
 		respString, _ := resp.ToString()
 		return nil, errors.New(fmt.Sprintf("Error updating Dashboard: %d, %s", resp.Response().StatusCode, respString))
-
 	}
 	updated := Dashboard{}
 	err = resp.ToJSON(&updated)
