@@ -18,16 +18,13 @@ func (c *AppDClient) createGetAllDashboardTemplatesByTierUrl(tierId int) string 
 	return fmt.Sprintf("%s/getAllDashboardTemplatesByTier/%d?isTierDashboard=true", c.createTemplateBaseUrl(), tierId)
 }
 
-func (c *AppDClient) SetTemplateDashboardAssociations(tierId int, associations []int) (*Dashboard, error) {
+func (c *AppDClient) SetTemplateDashboardAssociations(tierId int, associations []int) error {
 	resp, err := req.Post(c.createSetAssociatedDashboardsUrl(tierId), c.createAuthHeader(), req.BodyJSON(associations))
 	if resp.Response().StatusCode != 204 {
 		respString, _ := resp.ToString()
-		return nil, errors.New(fmt.Sprintf("Error creating association: %d, %s", resp.Response().StatusCode, respString))
+		return errors.New(fmt.Sprintf("Error creating association: %d, %s", resp.Response().StatusCode, respString))
 	}
-	if err != nil {
-		return nil, err
-	}
-	return nil, err
+	return err
 }
 
 func (c *AppDClient) GetAllDashboardTemplatesByTier(tierId int) ([]Dashboard, error) {
@@ -43,5 +40,5 @@ func (c *AppDClient) GetAllDashboardTemplatesByTier(tierId int) ([]Dashboard, er
 	if err != nil {
 		return nil, err
 	}
-	return dashboardTemplates, err
+	return dashboardTemplates, nil
 }

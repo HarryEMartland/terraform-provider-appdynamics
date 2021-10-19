@@ -41,11 +41,8 @@ func resourceTierTemplateAssociationSet(d *schema.ResourceData, m interface{}) e
 		templateIds[i] = rawId.(int)
 	}
 	appdClient := m.(*client.AppDClient)
-	_, err := appdClient.SetTemplateDashboardAssociations(tierId, templateIds)
-	if err != nil {
-		return err
-	}
-	return nil
+	err := appdClient.SetTemplateDashboardAssociations(tierId, templateIds)
+	return err
 }
 
 func resourceTierTemplateAssociationRead(d *schema.ResourceData, m interface{}) error {
@@ -70,10 +67,6 @@ func resourceTierTemplateAssociationDelete(d *schema.ResourceData, m interface{}
 	templateIdsRaw := d.Get("template_ids").([]interface{})
 	templateIds := make([]int, len(templateIdsRaw))
 	appdClient := m.(*client.AppDClient)
-	_, err := appdClient.SetTemplateDashboardAssociations(tierId, templateIds)
-
-	if err != nil {
-		return err
-	}
-	return nil
+	err := appdClient.SetTemplateDashboardAssociations(tierId, templateIds)
+	return err
 }
