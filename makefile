@@ -25,7 +25,7 @@ test-widget:
 	go clean -testcache
 	go test ./...  -v -run TestAccDataSourceAppdService_basic
 
-a:
+test-appd-service:
 	go clean -testcache
 	go test ./...  -v -run TestAccDataSource
 
