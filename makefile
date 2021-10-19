@@ -25,7 +25,7 @@ test-widget:
 	go clean -testcache
 	go test ./...  -v -run TestAccDataSourceDashboardWidget_basic
 
-a:
+test-associations:
 	go clean -testcache
 	go test ./...  -v -run TestAccTierTemplateAssociation_Create
 
