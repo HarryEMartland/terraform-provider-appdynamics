@@ -31,7 +31,6 @@ func (c *AppDClient) GetAllDashboardTemplatesByTier(tierId int) ([]Dashboard, er
 	resp, err := req.Get(c.createGetAllDashboardTemplatesByTierUrl(tierId), c.createAuthHeader())
 	if resp.Response().StatusCode != 200 {
 		respString, _ := resp.ToString()
-		fmt.Println(resp.Response())
 		return nil, errors.New(fmt.Sprintf("Error creating association: %d, %s", resp.Response().StatusCode, respString))
 	}
 	dashboardTemplates := make([]Dashboard, 0)

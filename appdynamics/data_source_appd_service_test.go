@@ -8,7 +8,7 @@ import (
 )
 
 func TestAccDataSourceAppdService_basic(t *testing.T) {
-	resourceName := "data.appdynamics_dashboard_widget.test"
+	resourceName := "data.appdynamics_appd_service.test"
 
 	resource.ParallelTest(t, resource.TestCase{
 		Providers: map[string]terraform.ResourceProvider{
@@ -19,32 +19,21 @@ func TestAccDataSourceAppdService_basic(t *testing.T) {
 				Config: testAccDataSourceAppdServiceConfig(),
 				Check: resource.ComposeTestCheckFunc(
 					testAccDataSourceAwsArn(resourceName),
-					resource.TestCheckResourceAttrSet(resourceName, "json"),
-					resource.TestCheckResourceAttrSet(resourceName, "widget_json"),
+					resource.TestCheckResourceAttrSet(resourceName, "application_id"),
+					resource.TestCheckResourceAttrSet(resourceName, "tier_id"),
 				),
 			},
 		},
 	})
 }
 
-//func testAccDataSourceAwsArn(name string) resource.TestCheckFunc {
-//	return func(s *terraform.State) error {
-//		_, ok := s.RootModule().Resources[name]
-//		if !ok {
-//			return fmt.Errorf("root module has no resource called %s", name)
-//		}
-//
-//		return nil
-//	}
-//}
-//
 func testAccDataSourceAppdServiceConfig() string {
 	return fmt.Sprintf(`
 %s
 
 data "appdynamics_appd_service" "test" {
-     application_name = "TEST"
-     tier_name = "TEST"
+     application_name = "TST-Client-Facing"
+     tier_name = "airtime-purchase"
 }
 `, configureDashboardConfig())
 }
