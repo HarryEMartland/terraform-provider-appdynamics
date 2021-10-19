@@ -3,12 +3,13 @@ package appdynamics
 import (
 	"crypto/sha256"
 	"encoding/hex"
+	"fmt"
 	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
 )
 
 func dataSourceAppdService() *schema.Resource {
 	return &schema.Resource{
-		Read: dataSourceDashboardWidgetRead,
+		Read: dataSourceAppdServiceRead,
 		Schema: map[string]*schema.Schema{
 			"application_name": {
 				Type:     schema.TypeString,
@@ -32,9 +33,12 @@ func dataSourceAppdService() *schema.Resource {
 
 func dataSourceAppdServiceRead(d *schema.ResourceData, meta interface{}) error {
 	tierName := d.Get("tier_name").(string)
+	applicationName := d.Get("application_name").(string)
 	hash := sha256.Sum224([]byte(tierName))
 	hashString := hex.EncodeToString(hash[:])
+
+	fmt.Println(applicationName)
+	fmt.Println(tierName)
 	d.SetId(hashString)
-	//application_id
 	return nil
 }
