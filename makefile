@@ -23,7 +23,11 @@ test-update:
 
 test-widget:
 	go clean -testcache
-	go test ./...  -v -run TestAccDataSourceDashboardWidget_basic
+	go test ./...  -v -run TestAccDataSourceAppdService_basic
+
+test-appd-service:
+	go clean -testcache
+	go test ./...  -v -run TestAccDataSource
 
 test-associations:
 	go clean -testcache

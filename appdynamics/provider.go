@@ -17,6 +17,7 @@ func Provider() *schema.Provider {
 		},
 		DataSourcesMap: map[string]*schema.Resource{
 			"appdynamics_dashboard_widget": dataSourceDashboardWidget(),
+			"appdynamics_appd_service":     dataSourceAppdService(),
 		},
 		Schema: map[string]*schema.Schema{
 			"secret":              {Type: schema.TypeString, Sensitive: true, Required: true},
