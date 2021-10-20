@@ -13,6 +13,7 @@ func Provider() *schema.Provider {
 			"appdynamics_policy":                     resourcePolicy(),
 			"appdynamics_transaction_detection_rule": resourceTransactionDetectionRule(),
 			"appdynamics_dashboard":                  resourceDashboard(),
+			"appdynamics_import_export_dashboard":    resourceImportExportDashboard(),
 			"appdynamics_tier_template_association":  resourceTierTemplateAssociation(),
 		},
 		DataSourcesMap: map[string]*schema.Resource{

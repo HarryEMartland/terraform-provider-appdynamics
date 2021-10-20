@@ -49,9 +49,12 @@ func CheckAssociationDoesNotExist(resourceName string) func(state *terraform.Sta
 			return err
 		}
 
-		_, err = appDClient.GetDashboard(id)
+		associatedDashboards, err := appDClient.GetAllDashboardTemplatesByTier(id)
 		if err == nil {
 			return fmt.Errorf("dashboard found: %d", id)
+		}
+		if len(associatedDashboards) > 0 {
+			return fmt.Errorf("association not removed")
 		}
 
 		return nil
