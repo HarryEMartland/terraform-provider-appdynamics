@@ -20,24 +20,12 @@ func TestAccDataSourceDashboardWidget_basic(t *testing.T) {
 			{
 				Config: testAccDataSourceDashboardWidgetConfig(string(sampleWidget)),
 				Check: resource.ComposeTestCheckFunc(
-					testAccDataSourceAwsArn(resourceName),
 					resource.TestCheckResourceAttrSet(resourceName, "json"),
 					resource.TestCheckResourceAttrSet(resourceName, "widget_json"),
 				),
 			},
 		},
 	})
-}
-
-func testAccDataSourceAwsArn(name string) resource.TestCheckFunc {
-	return func(s *terraform.State) error {
-		_, ok := s.RootModule().Resources[name]
-		if !ok {
-			return fmt.Errorf("root module has no resource called %s", name)
-		}
-
-		return nil
-	}
 }
 
 func testAccDataSourceDashboardWidgetConfig(sampleWidget string) string {
