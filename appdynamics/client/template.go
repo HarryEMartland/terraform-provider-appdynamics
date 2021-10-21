@@ -18,7 +18,7 @@ func (c *AppDClient) createGetAllDashboardTemplatesByTierUrl(tierId int) string 
 	return fmt.Sprintf("%s/getAllDashboardTemplatesByTier/%d?isTierDashboard=true", c.createTemplateBaseUrl(), tierId)
 }
 
-func (c *AppDClient) SetTemplateDashboardAssociations(tierId int, associations []int) error {
+func (c *AppDClient) SetTemplateDashboardAssociations(tierId int, associations interface{}) error {
 	resp, err := req.Post(c.createSetAssociatedDashboardsUrl(tierId), c.createAuthHeader(), req.BodyJSON(associations))
 	if resp.Response().StatusCode != 204 {
 		respString, _ := resp.ToString()
