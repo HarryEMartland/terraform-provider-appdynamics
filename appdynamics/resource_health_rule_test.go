@@ -6,40 +6,95 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/helper/resource"
 	"github.com/hashicorp/terraform-plugin-sdk/terraform"
 	"strconv"
+	"strings"
 	"testing"
+	//"github.com/k0kubun/pp"
 )
 
-func TestAccAppDHealthRule_basicSingleMetricAllBts(t *testing.T) {
+func TestAccAppDHealthRule_basicSingleMetricAllBtsMultipleCrit(t *testing.T) {
 
 	name := acctest.RandStringFromCharSet(11, acctest.CharSetAlphaNum)
 
-	resourceName := "appdynamics_health_rule.test_all_bts"
-	aggregationFunction := "VALUE"
-	detailType := "SINGLE_METRIC"
+	resourceName := "appdynamics_health_rule.test_all_bts_multiple_criteria"
+
 	entityType := "BUSINESS_TRANSACTION_PERFORMANCE"
-	metric := "95th Percentile Response Time (ms)"
-	condition := "GREATER_THAN_SPECIFIC_VALUE"
-	warnValue := "1"
-	criticalValue := "2"
+	businessTransactionScope := "ALL_BUSINESS_TRANSACTIONS"
+
+	criticalConditionAggregationType := "ANY"
+/*
+	var criticalCriteria []map[string]interface{}
+	criticalCriteria = nil
+*/
+	criticalCriteria  := []map[string]interface{} {
+		{
+			"name": acctest.RandStringFromCharSet(11, acctest.CharSetAlphaNum),
+			"shortname": strings.ToUpper(acctest.RandStringFromCharSet(2, acctest.CharSetAlpha)),
+			"evaluate_to_true_on_no_data": false,
+			"eval_detail_type": "SINGLE_METRIC",
+			"metric_aggregation_function": "VALUE",
+			"metric_path": "95th Percentile Response Time (ms)",
+			"metric_eval_detail_type": "SPECIFIC_TYPE",
+			"compare_condition": "GREATER_THAN_SPECIFIC_VALUE",
+			"compare_value": 2.4,
+		},
+		{
+			"name": acctest.RandStringFromCharSet(11, acctest.CharSetAlphaNum),
+			"shortname": strings.ToUpper(acctest.RandStringFromCharSet(2, acctest.CharSetAlpha)),
+			"evaluate_to_true_on_no_data": false,
+			"eval_detail_type": "SINGLE_METRIC",
+			"metric_aggregation_function": "VALUE",
+			"metric_path": "Average CPU Used (ms)",
+			"metric_eval_detail_type": "BASELINE_TYPE",
+			"baseline_name": "All data - Last 15 days",
+			"baseline_condition": "WITHIN_BASELINE",
+			"baseline_unit": "PERCENTAGE",
+			"compare_value": 7.5,
+		},
+	}
+
+	warningConditionAggregationType := "ALL"
+	warningCriteria := []map[string]interface{} {
+		{
+			"name": acctest.RandStringFromCharSet(11, acctest.CharSetAlphaNum),
+			"shortname": strings.ToUpper(acctest.RandStringFromCharSet(2, acctest.CharSetAlpha)),
+			"evaluate_to_true_on_no_data": false,
+			"eval_detail_type": "SINGLE_METRIC",
+			"metric_aggregation_function": "VALUE",
+			"metric_path": "95th Percentile Response Time (ms)",
+			"metric_eval_detail_type": "SPECIFIC_TYPE",
+			"compare_condition": "GREATER_THAN_SPECIFIC_VALUE",
+			"compare_value": 6.6,
+		},
+		{
+			"name": acctest.RandStringFromCharSet(11, acctest.CharSetAlphaNum),
+			"shortname": strings.ToUpper(acctest.RandStringFromCharSet(2, acctest.CharSetAlpha)),
+			"evaluate_to_true_on_no_data": false,
+			"eval_detail_type": "SINGLE_METRIC",
+			"metric_aggregation_function": "VALUE",
+			"metric_path": "Average CPU Used (ms)",
+			"metric_eval_detail_type": "BASELINE_TYPE",
+			"baseline_name": "All data - Last 15 days",
+			"baseline_condition": "WITHIN_BASELINE",
+			"baseline_unit": "PERCENTAGE",
+			"compare_value": 7.5,
+		},
+	}
+
 	resource.Test(t, resource.TestCase{
 		Providers: map[string]terraform.ResourceProvider{
 			"appdynamics": Provider(),
 		},
 		Steps: []resource.TestStep{
 			{
-				Config: allBTsHealthRule(name, aggregationFunction, detailType, entityType, metric, condition, warnValue, criticalValue),
+				Config: allBTsHealthRule(strings.Split(resourceName, ".")[1], name, entityType, businessTransactionScope, criticalConditionAggregationType, criticalCriteria, warningConditionAggregationType, warningCriteria),
 				Check: resource.ComposeAggregateTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "name", name),
 					resource.TestCheckResourceAttr(resourceName, "application_id", applicationIdS),
-					resource.TestCheckResourceAttr(resourceName, "metric_aggregation_function", aggregationFunction),
-					resource.TestCheckResourceAttr(resourceName, "eval_detail_type", detailType),
 					resource.TestCheckResourceAttr(resourceName, "affected_entity_type", entityType),
-					resource.TestCheckResourceAttr(resourceName, "business_transaction_scope", "ALL_BUSINESS_TRANSACTIONS"),
-					resource.TestCheckResourceAttr(resourceName, "metric_eval_detail_type", "SPECIFIC_TYPE"), //bug in api?
-					resource.TestCheckResourceAttr(resourceName, "metric_path", metric),
-					resource.TestCheckResourceAttr(resourceName, "compare_condition", condition),
-					resource.TestCheckResourceAttr(resourceName, "warn_compare_value", warnValue),
-					resource.TestCheckResourceAttr(resourceName, "critical_compare_value", criticalValue),
+					resource.TestCheckResourceAttr(resourceName, "business_transaction_scope", businessTransactionScope),
+					resource.TestCheckResourceAttr(resourceName, "critical_criteria.1.baseline_condition", "WITHIN_BASELINE"),
+					resource.TestCheckResourceAttr(resourceName, "critical_criteria.0.compare_value", "2.4"),
+					resource.TestCheckResourceAttr(resourceName, "warning_criteria.0.compare_condition", "GREATER_THAN_SPECIFIC_VALUE"),
 					resource.TestCheckResourceAttrSet(resourceName, "id"),
 					RetryCheck(CheckHealthRuleExists(resourceName)),
 				),
@@ -49,24 +104,33 @@ func TestAccAppDHealthRule_basicSingleMetricAllBts(t *testing.T) {
 	})
 }
 
-func TestAccAppDHealthRule_updateSingleMetricAllBts(t *testing.T) {
+func TestAccAppDHealthRule_basicSingleMetricAllBtsSingleCrit(t *testing.T) {
 
 	name := acctest.RandStringFromCharSet(11, acctest.CharSetAlphaNum)
 
-	resourceName := "appdynamics_health_rule.test_all_bts"
-	aggregationFunction := "VALUE"
-	detailType := "SINGLE_METRIC"
+	resourceName := "appdynamics_health_rule.test_all_bts_single_criteria"
+
 	entityType := "BUSINESS_TRANSACTION_PERFORMANCE"
-	metric := "95th Percentile Response Time (ms)"
-	condition := "GREATER_THAN_SPECIFIC_VALUE"
-	warnValue := "1"
-	criticalValue := "2"
+	businessTransactionScope := "ALL_BUSINESS_TRANSACTIONS"
 
-	updatedAggregationFunction := "SUM"
-	updatedMetric := "95th Percentile Response Time (ms)"
-	updatedCondition := "LESS_THAN_SPECIFIC_VALUE"
-	updatedWarnValue := "3"
-	updatedCriticalValue := "4"
+	criticalConditionAggregationType := "ANY"
+	criticalCriteria := []map[string]interface{} {
+		{
+			"name": acctest.RandStringFromCharSet(11, acctest.CharSetAlphaNum),
+			"shortname": strings.ToUpper(acctest.RandStringFromCharSet(2, acctest.CharSetAlpha)),
+			"evaluate_to_true_on_no_data": false,
+			"eval_detail_type": "SINGLE_METRIC",
+			"metric_aggregation_function": "VALUE",
+			"metric_path": "95th Percentile Response Time (ms)",
+			"metric_eval_detail_type": "SPECIFIC_TYPE",
+			"compare_condition": "GREATER_THAN_SPECIFIC_VALUE",
+			"compare_value": 1.8,
+		},
+	}
+
+	warningConditionAggregationType := "ALL"
+	var warningCriteria []map[string]interface{}
+	warningCriteria = nil
 
 	resource.Test(t, resource.TestCase{
 		Providers: map[string]terraform.ResourceProvider{
@@ -74,37 +138,14 @@ func TestAccAppDHealthRule_updateSingleMetricAllBts(t *testing.T) {
 		},
 		Steps: []resource.TestStep{
 			{
-				Config: allBTsHealthRule(name, aggregationFunction, detailType, entityType, metric, condition, warnValue, criticalValue),
+				Config: allBTsHealthRule(strings.Split(resourceName, ".")[1], name, entityType, businessTransactionScope, criticalConditionAggregationType, criticalCriteria, warningConditionAggregationType, warningCriteria),
 				Check: resource.ComposeAggregateTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "name", name),
 					resource.TestCheckResourceAttr(resourceName, "application_id", applicationIdS),
-					resource.TestCheckResourceAttr(resourceName, "metric_aggregation_function", aggregationFunction),
-					resource.TestCheckResourceAttr(resourceName, "eval_detail_type", detailType),
 					resource.TestCheckResourceAttr(resourceName, "affected_entity_type", entityType),
-					resource.TestCheckResourceAttr(resourceName, "business_transaction_scope", "ALL_BUSINESS_TRANSACTIONS"),
-					resource.TestCheckResourceAttr(resourceName, "metric_eval_detail_type", "SPECIFIC_TYPE"), //bug in api?
-					resource.TestCheckResourceAttr(resourceName, "metric_path", metric),
-					resource.TestCheckResourceAttr(resourceName, "compare_condition", condition),
-					resource.TestCheckResourceAttr(resourceName, "warn_compare_value", warnValue),
-					resource.TestCheckResourceAttr(resourceName, "critical_compare_value", criticalValue),
-					resource.TestCheckResourceAttrSet(resourceName, "id"),
-					RetryCheck(CheckHealthRuleExists(resourceName)),
-				),
-			},
-			{
-				Config: allBTsHealthRule(name, updatedAggregationFunction, detailType, entityType, updatedMetric, updatedCondition, updatedWarnValue, updatedCriticalValue),
-				Check: resource.ComposeAggregateTestCheckFunc(
-					resource.TestCheckResourceAttr(resourceName, "name", name),
-					resource.TestCheckResourceAttr(resourceName, "application_id", applicationIdS),
-					resource.TestCheckResourceAttr(resourceName, "metric_aggregation_function", updatedAggregationFunction),
-					resource.TestCheckResourceAttr(resourceName, "eval_detail_type", detailType),
-					resource.TestCheckResourceAttr(resourceName, "affected_entity_type", entityType),
-					resource.TestCheckResourceAttr(resourceName, "business_transaction_scope", "ALL_BUSINESS_TRANSACTIONS"),
-					resource.TestCheckResourceAttr(resourceName, "metric_eval_detail_type", "SPECIFIC_TYPE"), //bug in api?
-					resource.TestCheckResourceAttr(resourceName, "metric_path", updatedMetric),
-					resource.TestCheckResourceAttr(resourceName, "compare_condition", updatedCondition),
-					resource.TestCheckResourceAttr(resourceName, "warn_compare_value", updatedWarnValue),
-					resource.TestCheckResourceAttr(resourceName, "critical_compare_value", updatedCriticalValue),
+					resource.TestCheckResourceAttr(resourceName, "business_transaction_scope", businessTransactionScope),
+					resource.TestCheckResourceAttr(resourceName, "critical_criteria.0.metric_eval_detail_type", "SPECIFIC_TYPE"),
+					resource.TestCheckResourceAttr(resourceName, "critical_criteria.0.compare_value", "1.8"),
 					resource.TestCheckResourceAttrSet(resourceName, "id"),
 					RetryCheck(CheckHealthRuleExists(resourceName)),
 				),
@@ -112,136 +153,7 @@ func TestAccAppDHealthRule_updateSingleMetricAllBts(t *testing.T) {
 		},
 		CheckDestroy: RetryCheck(CheckHealthRuleDoesNotExist(resourceName)),
 	})
-}
 
-func TestAccAppDHealthRule_basicSpecificBts(t *testing.T) {
-
-	name := acctest.RandStringFromCharSet(11, acctest.CharSetAlphaNum)
-	bts := []string{bt1}
-
-	resourceName := "appdynamics_health_rule.test_specific_bts"
-
-	resource.Test(t, resource.TestCase{
-		Providers: map[string]terraform.ResourceProvider{
-			"appdynamics": Provider(),
-		},
-		Steps: []resource.TestStep{
-			{
-				Config: specificBTsHealthRule(name, bts),
-				Check: resource.ComposeAggregateTestCheckFunc(
-					resource.TestCheckResourceAttr(resourceName, "name", name),
-					resource.TestCheckResourceAttr(resourceName, "business_transactions.#", "1"),
-					resource.TestCheckResourceAttr(resourceName, "application_id", applicationIdS),
-					resource.TestCheckResourceAttrSet(resourceName, "id"),
-					RetryCheck(CheckHealthRuleExists(resourceName)),
-				),
-			},
-		},
-		CheckDestroy: RetryCheck(CheckHealthRuleDoesNotExist(resourceName)),
-	})
-}
-
-func TestAccAppDHealthRule_updateSpecificBts(t *testing.T) {
-
-	name := acctest.RandStringFromCharSet(11, acctest.CharSetAlphaNum)
-	bts := []string{bt1}
-	updatedBts := []string{bt1, bt2}
-
-	resourceName := "appdynamics_health_rule.test_specific_bts"
-
-	resource.Test(t, resource.TestCase{
-		Providers: map[string]terraform.ResourceProvider{
-			"appdynamics": Provider(),
-		},
-		Steps: []resource.TestStep{
-			{
-				Config: specificBTsHealthRule(name, bts),
-				Check: resource.ComposeAggregateTestCheckFunc(
-					resource.TestCheckResourceAttr(resourceName, "name", name),
-					resource.TestCheckResourceAttr(resourceName, "business_transactions.#", "1"),
-					resource.TestCheckResourceAttr(resourceName, "application_id", applicationIdS),
-					resource.TestCheckResourceAttrSet(resourceName, "id"),
-					RetryCheck(CheckHealthRuleExists(resourceName)),
-				),
-			},
-			{
-				Config: specificBTsHealthRule(name, updatedBts),
-				Check: resource.ComposeAggregateTestCheckFunc(
-					resource.TestCheckResourceAttr(resourceName, "name", name),
-					resource.TestCheckResourceAttr(resourceName, "business_transactions.#", "2"),
-					resource.TestCheckResourceAttr(resourceName, "application_id", applicationIdS),
-					resource.TestCheckResourceAttrSet(resourceName, "id"),
-					RetryCheck(CheckHealthRuleExists(resourceName)),
-				),
-			},
-		},
-		CheckDestroy: RetryCheck(CheckHealthRuleDoesNotExist(resourceName)),
-	})
-}
-
-func TestAccAppDHealthRule_basicSpecificTiers(t *testing.T) {
-
-	name := acctest.RandStringFromCharSet(11, acctest.CharSetAlphaNum)
-	tiers := []string{tier1}
-
-	resourceName := "appdynamics_health_rule.test_specific_tiers"
-
-	resource.Test(t, resource.TestCase{
-		Providers: map[string]terraform.ResourceProvider{
-			"appdynamics": Provider(),
-		},
-		Steps: []resource.TestStep{
-			{
-				Config: specificTiersHealthRule(name, tiers),
-				Check: resource.ComposeAggregateTestCheckFunc(
-					resource.TestCheckResourceAttr(resourceName, "name", name),
-					resource.TestCheckResourceAttr(resourceName, "specific_tiers.#", "1"),
-					resource.TestCheckResourceAttr(resourceName, "application_id", applicationIdS),
-					resource.TestCheckResourceAttrSet(resourceName, "id"),
-					RetryCheck(CheckHealthRuleExists(resourceName)),
-				),
-			},
-		},
-		CheckDestroy: RetryCheck(CheckHealthRuleDoesNotExist(resourceName)),
-	})
-}
-
-func TestAccAppDHealthRule_updateSpecificTiers(t *testing.T) {
-
-	name := acctest.RandStringFromCharSet(11, acctest.CharSetAlphaNum)
-	tiers := []string{tier1}
-	updatedBts := []string{tier1, tier2}
-
-	resourceName := "appdynamics_health_rule.test_specific_tiers"
-
-	resource.Test(t, resource.TestCase{
-		Providers: map[string]terraform.ResourceProvider{
-			"appdynamics": Provider(),
-		},
-		Steps: []resource.TestStep{
-			{
-				Config: specificTiersHealthRule(name, tiers),
-				Check: resource.ComposeAggregateTestCheckFunc(
-					resource.TestCheckResourceAttr(resourceName, "name", name),
-					resource.TestCheckResourceAttr(resourceName, "specific_tiers.#", "1"),
-					resource.TestCheckResourceAttr(resourceName, "application_id", applicationIdS),
-					resource.TestCheckResourceAttrSet(resourceName, "id"),
-					RetryCheck(CheckHealthRuleExists(resourceName)),
-				),
-			},
-			{
-				Config: specificTiersHealthRule(name, updatedBts),
-				Check: resource.ComposeAggregateTestCheckFunc(
-					resource.TestCheckResourceAttr(resourceName, "name", name),
-					resource.TestCheckResourceAttr(resourceName, "specific_tiers.#", "2"),
-					resource.TestCheckResourceAttr(resourceName, "application_id", applicationIdS),
-					resource.TestCheckResourceAttrSet(resourceName, "id"),
-					RetryCheck(CheckHealthRuleExists(resourceName)),
-				),
-			},
-		},
-		CheckDestroy: RetryCheck(CheckHealthRuleDoesNotExist(resourceName)),
-	})
 }
 
 func CheckHealthRuleExists(resourceName string) func(state *terraform.State) error {
@@ -288,61 +200,74 @@ func CheckHealthRuleDoesNotExist(resourceName string) func(state *terraform.Stat
 	}
 }
 
-func allBTsHealthRule(name string, aggregationFunction string, detailType string, entityType string, metric string, compareCondition string, warnValue string, criticalValue string) string {
-	return fmt.Sprintf(`
-					%s
-					resource "appdynamics_health_rule" "test_all_bts" {
-					  name = "%s"
-					  application_id = var.application_id
-					  metric_aggregation_function = "%s"
-					  eval_detail_type = "%s"
-					  affected_entity_type = "%s"
-					  business_transaction_scope = "ALL_BUSINESS_TRANSACTIONS"
-					  metric_eval_detail_type = "SPECIFIC_TYPE"
-					  metric_path = "%s"
-					  compare_condition="%s"
-					  warn_compare_value = %s
-					  critical_compare_value = %s
-					}
-`, configureConfig(), name, aggregationFunction, detailType, entityType, metric, compareCondition, warnValue, criticalValue)
+func prepareHealthRuleCondition(level string, crit map[string]interface{}) string {
+
+	criteriaBlock := fmt.Sprintf(`
+            %s_criteria {
+                name = "%s"
+                shortname = "%s"
+                evaluate_to_true_on_no_data = %s
+                eval_detail_type = "%s"
+                metric_aggregation_function = "%s"
+                metric_path = "%s"
+                metric_eval_detail_type = "%s"`,
+		level,
+		crit["name"].(string),
+		crit["shortname"].(string),
+		strconv.FormatBool(crit["evaluate_to_true_on_no_data"].(bool)),
+		crit["eval_detail_type"].(string),
+		crit["metric_aggregation_function"].(string),
+		crit["metric_path"].(string),
+		crit["metric_eval_detail_type"].(string))
+
+	if crit["baseline_name"] != nil {
+		criteriaBlock += fmt.Sprintf(`
+				baseline_condition = "%s"
+                baseline_name = "%s"
+                baseline_unit = "%s"`,
+			crit["baseline_condition"].(string),
+			crit["baseline_name"].(string),
+			crit["baseline_unit"].(string))
+	}
+
+	if crit["compare_condition"] != nil {
+		criteriaBlock += fmt.Sprintf(`
+			compare_condition = "%s"`, crit["compare_condition"].(string))
+	}
+
+	criteriaBlock += fmt.Sprintf(`
+		compare_value = %f
+            }`, crit["compare_value"].(float64))
+
+	return criteriaBlock
 }
 
-func specificBTsHealthRule(name string, bts []string) string {
-	return fmt.Sprintf(`
-					%s
-					resource "appdynamics_health_rule" "test_specific_bts" {
-					  name = "%s"
-					  application_id = var.application_id
-					  metric_aggregation_function = "VALUE"
-					  eval_detail_type = "SINGLE_METRIC"
-					  affected_entity_type = "BUSINESS_TRANSACTION_PERFORMANCE"
-					  business_transaction_scope = "SPECIFIC_BUSINESS_TRANSACTIONS"
-					  business_transactions = %s
-					  metric_eval_detail_type = "SPECIFIC_TYPE"
-					  metric_path = "95th Percentile Response Time (ms)"
-					  compare_condition = "GREATER_THAN_SPECIFIC_VALUE"
-					  warn_compare_value = 100
-					  critical_compare_value = 200
-					}
-`, configureConfig(), name, arrayToString(bts))
-}
+func allBTsHealthRule(resourceName string, name string, entityType string, businessTransactionScope string, criticalConditionAggregationType string, criticalCriteria []map[string]interface{}, warningConditionAggregationType string, warningCriteria []map[string]interface{}) string {
 
-func specificTiersHealthRule(name string, tiers []string) string {
-	return fmt.Sprintf(`
-					%s
-					resource "appdynamics_health_rule" "test_specific_tiers" {
-					  name = "%s"
-					  application_id = var.application_id
-					  metric_aggregation_function = "VALUE"
-					  eval_detail_type = "SINGLE_METRIC"
-					  affected_entity_type = "BUSINESS_TRANSACTION_PERFORMANCE"
-					  business_transaction_scope = "BUSINESS_TRANSACTIONS_IN_SPECIFIC_TIERS"
-					  specific_tiers = %s
-					  metric_eval_detail_type = "SPECIFIC_TYPE"
-					  metric_path = "95th Percentile Response Time (ms)"
-					  compare_condition = "GREATER_THAN_SPECIFIC_VALUE"
-					  warn_compare_value = 100
-					  critical_compare_value = 200
-					}
-`, configureConfig(), name, arrayToString(tiers))
+	var criticalCriteriaData []string
+	var warningCriteriaData []string
+
+	for _, crit := range criticalCriteria {
+		criticalCriteriaData = append(criticalCriteriaData, prepareHealthRuleCondition("critical", crit))
+	}
+
+	for _, crit := range warningCriteria {
+		warningCriteriaData = append(warningCriteriaData, prepareHealthRuleCondition("warning", crit))
+	}
+
+	criteriaData := fmt.Sprintf(`
+%s
+
+resource "appdynamics_health_rule" "%s" {
+	name = "%s"
+	application_id = var.application_id
+	affected_entity_type = "%s"
+	business_transaction_scope = "%s"
+	critical_condition_aggregation_type = "%s"
+	warning_condition_aggregation_type = "%s"
+	%s
+	%s
+}`, configureConfig(), resourceName, name, entityType, businessTransactionScope, criticalConditionAggregationType, warningConditionAggregationType, strings.Join(criticalCriteriaData,"\n"), strings.Join(warningCriteriaData, "\n"))
+
+	return criteriaData
 }

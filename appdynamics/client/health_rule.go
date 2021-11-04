@@ -1,9 +1,12 @@
 package client
 
 import (
+	//"encoding/json"
 	"errors"
 	"fmt"
 	"github.com/imroc/req"
+	//"github.com/k0kubun/pp"
+	//"reflect"
 )
 
 func (c *AppDClient) CreateHealthRule(healthRule *HealthRule, applicationId int) (*HealthRule, error) {
@@ -92,6 +95,7 @@ type HealthRule struct {
 	ID                      int        `json:"id"`
 	Name                    string     `json:"name"`
 	Enabled                 bool       `json:"enabled"`
+	ScheduleName            string     `json:"scheduleName"`
 	UseDataFromLastNMinutes int        `json:"useDataFromLastNMinutes"`
 	WaitTimeAfterViolation  int        `json:"waitTimeAfterViolation"`
 	Affects                 *Affects   `json:"affects"`
@@ -123,12 +127,12 @@ type EvalDetail struct {
 }
 
 type MetricEvalDetail struct {
-	MetricEvalDetailType string  `json:"metricEvalDetailType"`
-	BaselineCondition    *string `json:"baselineCondition"`
-	BaselineName         *string `json:"baselineName"`
-	BaselineUnit         *string `json:"baselineUnit"`
-	CompareValue         float64 `json:"compareValue"`
-	CompareCondition     *string `json:"compareCondition"`
+	MetricEvalDetailType *string  `json:"metricEvalDetailType"`
+	BaselineCondition    *string  `json:"baselineCondition"`
+	BaselineName         *string  `json:"baselineName"`
+	BaselineUnit         *string  `json:"baselineUnit"`
+	CompareValue         *float64 `json:"compareValue"`
+	CompareCondition     *string  `json:"compareCondition"`
 }
 
 type Affects struct {

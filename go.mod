@@ -9,6 +9,7 @@ require (
 	github.com/apparentlymart/go-cidr v1.1.0 // indirect
 	github.com/aws/aws-sdk-go v1.33.16 // indirect
 	github.com/cenkalti/backoff/v4 v4.0.2
+	github.com/davecgh/go-spew v1.1.1 // indirect
 	github.com/fatih/color v1.9.0 // indirect
 	github.com/google/go-cmp v0.5.1 // indirect
 	github.com/google/uuid v1.3.0 // indirect
@@ -24,6 +25,7 @@ require (
 	github.com/hashicorp/yamux v0.0.0-20200609203250-aecfd211c9ce // indirect
 	github.com/imroc/req v0.3.0
 	github.com/joho/godotenv v1.4.0 // indirect
+	github.com/k0kubun/pp v3.0.1+incompatible // indirect
 	github.com/mattn/go-colorable v0.1.7 // indirect
 	github.com/mitchellh/cli v1.1.1 // indirect
 	github.com/mitchellh/go-testing-interface v1.14.1 // indirect

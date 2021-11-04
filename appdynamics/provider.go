@@ -18,6 +18,8 @@ func Provider() *schema.Provider {
 		DataSourcesMap: map[string]*schema.Resource{
 			"appdynamics_dashboard_widget": dataSourceDashboardWidget(),
 			"appdynamics_appd_service":     dataSourceAppdService(),
+//			"appdynamics_health_rule_critical_condition": dataSourceHealthRuleCriticalCondition(),
+//			"appdynamics_health_rule_critical_condition": dataSourceHealthRuleWarningCondition(),
 		},
 		Schema: map[string]*schema.Schema{
 			"secret":              {Type: schema.TypeString, Sensitive: true, Required: true},
