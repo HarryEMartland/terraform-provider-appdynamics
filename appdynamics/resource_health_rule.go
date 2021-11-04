@@ -2,11 +2,8 @@ package appdynamics
 
 import (
 	"fmt"
-	//"encoding/json"
 	"github.com/HarryEMartland/terraform-provider-appdynamics/appdynamics/client"
 	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
-	//"github.com/k0kubun/pp"
-	//"reflect"
 	"strconv"
 )
 
@@ -427,16 +424,7 @@ func createHealthRule(d *schema.ResourceData) client.HealthRule {
 
 		warningConditions = append(warningConditions, &condition)
 	}
-	/*
-	   criticalCriterias := client.Criteria{
-	       ConditionAggregationType: "ALL",
-	       Conditions:               criticalConditions,
-	   }
-	   warningCriterias := client.Criteria{
-	       ConditionAggregationType: "ALL",
-	       Conditions:               warningConditions,
-	   }
-	*/
+
 	criterias := client.Criterias{
 		Critical: conditionsOrNil(criticalConditions, criticalConditionAggregationType),
 		Warning:  conditionsOrNil(warningConditions, warningConditionAggregationType),
@@ -531,7 +519,6 @@ func updateHealthRule(d *schema.ResourceData, healthRule *client.HealthRule) {
 		if err != nil {
 			fmt.Println(err)
 		}
-		//d.Set("warning_criteria", healthRule.Criterias.Warning.Conditions)
 	}
 }
 
