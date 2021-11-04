@@ -44,7 +44,7 @@ func (c *AppDClient) GetApplicationByName(applicationName string) (*Application,
 	}
 	if resp.Response().StatusCode != 200 {
 		respString, _ := resp.ToString()
-		return nil, errors.New(fmt.Sprintf("Error getting dashboard: %d, %s", resp.Response().StatusCode, respString))
+		return nil, errors.New(fmt.Sprintf("Error getting application: %d, %s", resp.Response().StatusCode, respString))
 	}
 	applications := Applications{}
 	err = resp.ToJSON(&applications)
@@ -62,7 +62,7 @@ func (c *AppDClient) GetApplicationTiers(applicationName string, tierName string
 	}
 	if resp.Response().StatusCode != 200 {
 		respString, _ := resp.ToString()
-		return nil, errors.New(fmt.Sprintf("Error getting dashboard: %d, %s", resp.Response().StatusCode, respString))
+		return nil, errors.New(fmt.Sprintf("Error getting tiers: %d, %s", resp.Response().StatusCode, respString))
 	}
 	tiers := Tiers{}
 	err = resp.ToJSON(&tiers)

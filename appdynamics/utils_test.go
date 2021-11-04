@@ -9,7 +9,6 @@ import (
 	"os"
 	"strconv"
 	"testing"
-	//"github.com/k0kubun/pp"
 )
 
 var appDClient client.AppDClient

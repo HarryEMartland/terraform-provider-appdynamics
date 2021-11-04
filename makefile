@@ -21,6 +21,10 @@ test-update:
 	go clean -testcache
 	go test ./...  -v -run TestAccAppDDashboard_Update
 
+test-dashboard-import:
+	go clean -testcache
+	go test ./...  -v -run TestAccImportExportDashboard_Create
+
 test-widget:
 	go clean -testcache
 	go test ./...  -v -run TestAccDataSourceAppdService_basic

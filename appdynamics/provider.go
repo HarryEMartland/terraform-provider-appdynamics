@@ -13,13 +13,12 @@ func Provider() *schema.Provider {
 			"appdynamics_policy":                     resourcePolicy(),
 			"appdynamics_transaction_detection_rule": resourceTransactionDetectionRule(),
 			"appdynamics_dashboard":                  resourceDashboard(),
+			"appdynamics_import_export_dashboard":    resourceImportExportDashboard(),
 			"appdynamics_tier_template_association":  resourceTierTemplateAssociation(),
 		},
 		DataSourcesMap: map[string]*schema.Resource{
 			"appdynamics_dashboard_widget": dataSourceDashboardWidget(),
 			"appdynamics_appd_service":     dataSourceAppdService(),
-//			"appdynamics_health_rule_critical_condition": dataSourceHealthRuleCriticalCondition(),
-//			"appdynamics_health_rule_critical_condition": dataSourceHealthRuleWarningCondition(),
 		},
 		Schema: map[string]*schema.Schema{
 			"secret":              {Type: schema.TypeString, Sensitive: true, Required: true},

@@ -1,12 +1,9 @@
 package client
 
 import (
-	//"encoding/json"
 	"errors"
 	"fmt"
 	"github.com/imroc/req"
-	//"github.com/k0kubun/pp"
-	//"reflect"
 )
 
 func (c *AppDClient) CreateHealthRule(healthRule *HealthRule, applicationId int) (*HealthRule, error) {

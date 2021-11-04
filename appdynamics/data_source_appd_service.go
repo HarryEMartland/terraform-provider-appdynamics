@@ -13,11 +13,11 @@ func dataSourceAppdService() *schema.Resource {
 		Schema: map[string]*schema.Schema{
 			"application_name": {
 				Type:     schema.TypeString,
-				Optional: true,
+				Required: true,
 			},
 			"tier_name": {
 				Type:     schema.TypeString,
-				Optional: true,
+				Required: true,
 			},
 			"application_id": {
 				Type:     schema.TypeInt,
@@ -39,9 +39,19 @@ func dataSourceAppdServiceRead(d *schema.ResourceData, m interface{}) error {
 	appdClient := m.(*client.AppDClient)
 
 	d.SetId(hashString)
-	application, _ := appdClient.GetApplicationByName(applicationName)
-	tier, _ := appdClient.GetApplicationTiers(applicationName, tierName)
+	application, err := appdClient.GetApplicationByName(applicationName)
+	if err != nil {
+		return err
+	}
+
+	tier, err := appdClient.GetApplicationTiers(applicationName, tierName)
+
+	if err != nil {
+		return err
+	}
+
 	d.Set("application_id", application.ID)
 	d.Set("tier_id", tier.ID)
+
 	return nil
 }
