@@ -1,72 +1,93 @@
 package client
 
 import (
+	"encoding/json"
 	"errors"
 	"fmt"
 	"github.com/imroc/req"
-	"gopkg.in/guregu/null.v4"
 	"io"
 	"strings"
 )
 
 type DashboardWidget struct {
-	GUID                        null.String `json:"guid"`
-	Label                       null.String `json:"label"`
-	Title                       null.String `json:"title"`
-	Type                        null.String `json:"type"`
-	Height                      null.Int    `json:"height"`
-	Width                       null.Int    `json:"width"`
-	X                           null.Int    `json:"x"`
-	Y                           null.Int    `json:"y"`
-	AdqlQueries                 []string    `json:"adqlQueries"`
-	AnalyticsType               null.String `json:"analyticsType"`
-	SearchMode                  null.String `json:"searchMode"`
-	Description                 null.String `json:"description"`
-	DrillDownUrl                null.String `json:"drillDownUrl"`
-	UseMetricBrowserAsDrillDown null.Bool   `json:"useMetricBrowserAsDrillDown"`
-	DrillDownActionType         null.String `json:"drillDownActionType"`
-	BackgroundColor             null.Int    `json:"backgroundColor"`
-	Color                       null.Int    `json:"color"`
-	FontSize                    null.Int    `json:"fontSize"`
-	UseAutomaticFontSize        null.Bool   `json:"useAutomaticFontSize"`
-	BorderEnabled               null.Bool   `json:"borderEnabled"`
-	BorderThickness             null.Int    `json:"borderThickness"`
-	BorderColor                 null.Int    `json:"borderColor"`
-	BackgroundAlpha             null.Float  `json:"backgroundAlpha"`
-	ShowValues                  null.Bool   `json:"showValues"`
-	FormatNumber                null.Bool   `json:"formatNumber"`
-	NumDecimals                 null.Int    `json:"numDecimals"`
-	RemoveZeros                 null.Bool   `json:"removeZeros"`
-	BackgroundColors            []int       `json:"backgroundColors"`
-	CompactMode                 null.Bool   `json:"compactMode"`
-	ShowTimeRange               null.Bool   `json:"showTimeRange"`
-	RenderIn3D                  null.Bool   `json:"renderIn3D"`
-	ShowLegend                  null.Bool   `json:"showLegend"`
-	LegendPosition              null.String `json:"legendPosition"`
-	LegendColumnCount           null.Int    `json:"legendColumnCount"`
-	StartTime                   null.Bool   `json:"startTime"`       // null
-	EndTime                     null.Int    `json:"endTime"`         // null
-	CustomTimeRange             null.Int    `json:"customTimeRange"` // null ?
-	MinutesBeforeAnchorTime     null.Int    `json:"minutesBeforeAnchorTime"`
-	IsGlobal                    null.Bool   `json:"isGlobal"`
+	GUID                        *string   `json:"guid"`
+	Title                       *string   `json:"title,omitempty"`
+	Type                        *string   `json:"type"`
+	Height                      *int      `json:"height"`
+	Width                       *int      `json:"width"`
+	X                           *int      `json:"x"`
+	Y                           *int      `json:"y"`
+	Label                       *string   `json:"label,omitempty"`
+	AdqlQueries                 []*string `json:"adqlQueries,omitempty"`
+	AnalyticsType               *string   `json:"analyticsType,omitempty"`
+	SearchMode                  *string   `json:"searchMode,omitempty"`
+	Description                 *string   `json:"description,omitempty"`
+	DrillDownUrl                *string   `json:"drillDownUrl,omitempty"`
+	UseMetricBrowserAsDrillDown *bool     `json:"useMetricBrowserAsDrillDown,omitempty"`
+	DrillDownActionType         *string   `json:"drillDownActionType,omitempty"`
+	BackgroundColor             *int      `json:"backgroundColor,omitempty"`
+	Color                       *int      `json:"color,omitempty"`
+	FontSize                    *int      `json:"fontSize,omitempty"`
+	UseAutomaticFontSize        *bool     `json:"useAutomaticFontSize,omitempty"`
+	BorderEnabled               *bool     `json:"borderEnabled,omitempty"`
+	BorderThickness             *int      `json:"borderThickness,omitempty"`
+	BorderColor                 *int      `json:"borderColor,omitempty"`
+	BackgroundAlpha             float32   `json:"backgroundAlpha,omitempty"`
+	ShowValues                  *bool     `json:"showValues,omitempty"`
+	FormatNumber                *bool     `json:"formatNumber,omitempty"`
+	NumDecimals                 *int      `json:"numDecimals,omitempty"`
+	RemoveZeros                 *bool     `json:"removeZeros,omitempty"`
+	BackgroundColors            []int     `json:"backgroundColors,omitempty"`
+	CompactMode                 *bool     `json:"compactMode,omitempty"`
+	ShowTimeRange               *bool     `json:"showTimeRange,omitempty"`
+	RenderIn3D                  *bool     `json:"renderIn3D,omitempty"`
+	ShowLegend                  *bool     `json:"showLegend,omitempty"`
+	LegendPosition              *string   `json:"legendPosition,omitempty"`
+	LegendColumnCount           *int      `json:"legendColumnCount,omitempty"`
+	StartTime                   *bool     `json:"startTime,omitempty"`
+	EndTime                     *int      `json:"endTime,omitempty"`
+	CustomTimeRange             *int      `json:"customTimeRange,omitempty"`
+	MinutesBeforeAnchorTime     *int      `json:"minutesBeforeAnchorTime,omitempty"`
+	MinHeight                   *int      `json:"minHeight,omitempty"`
+	MinWidth                    *int      `json:"minWidth,omitempty"`
+	IsGlobal                    *bool     `json:"isGlobal,omitempty"`
+	Resolution                  *string   `json:"resolution,omitempty"`
 
+	IsShowLogYAxis           *bool    `json:"isShowLogYAxis,omitempty"`
+	IsStackingEnabled        *bool    `json:"isStackingEnabled,omitempty"`
+	LegendsLayout            *string  `json:"legendsLayout,omitempty"`
+	MaxAllowedYAxisFields    *int     `json:"maxAllowedYAxisFields,omitempty"`
+	MaxAllowedXAxisFields    *int     `json:"maxAllowedXAxisFields,omitempty"`
+	ShowMinExtremes          *bool    `json:"showMinExtremes,omitempty"`
+	ShowMaxExtremes          *bool    `json:"showMaxExtremes,omitempty"`
+	DisplayPercentileMarkers *bool    `json:"displayPercentileMarkers,omitempty"`
+	Unit                     *int     `json:"unit,omitempty"`
+	IsRawQuery               *bool    `json:"isRawQuery,omitempty"`
+	Align                    *string  `json:"align,omitempty"`
+	ShowInverse              *bool    `json:"showInverse,omitempty"`
+	ShowHealth               *bool    `json:"showHealth,omitempty"`
+	IsIncreaseGood           *bool    `json:"isIncreaseGood,omitempty"`
+	ShowUnivariateLabel      *bool    `json:"showUnivariateLabel,omitempty"`
+	Properties               []string `json:"properties,omitempty"`
+	VerticalAxisLabel        *string  `json:"verticalAxisLabel,omitempty"`
+	HideHorizontalAxis       *bool    `json:"hideHorizontalAxis,omitempty"`
+	HorizontalAxisLabel      *string  `json:"horizontalAxisLabel,omitempty"`
+	AxisType                 *string  `json:"axisType,omitempty"`
+	MultipleYAxis            *bool    `json:"multipleYAxis,omitempty"`
+	CustomVerticalAxisMin    *bool    `json:"customVerticalAxisMin,omitempty"`
+	CustomVerticalAxisMax    *bool    `json:"customVerticalAxisMax,omitempty"`
+	ShowEvents               *bool    `json:"showEvents,omitempty"`
+	EventFilter              *bool    `json:"eventFilter,omitempty"`
+	InterpolateDataGaps      *bool    `json:"interpolateDataGaps,omitempty"`
+	ShowAllTooltips          *bool    `json:"showAllTooltips,omitempty"`
+	StaticThresholds         *string  `json:"staticThresholds,omitempty"`
+
+	Text      *string `json:"text,omitempty"`
+	TextAlign *string `json:"textAlign,omitempty"`
+	Margin    *int    `json:"margin,omitempty"`
 	// TODO
 	//WidgetsMetricMatchCriterias null.String `json:"widgetsMetricMatchCriterias"`
-	//Properties          []int  `json:"properties"` // null list?
 	//MissingEntities     null.String `json:"missingEntities"`
-	//VerticalAxisLabel   null.String `json:"verticalAxisLabel"`
-	//HideHorizontalAxis  null.String `json:"hideHorizontalAxis"`
-	//HorizontalAxisLabel null.String `json:"horizontalAxisLabel"`
-	//AxisType string `json:"axisType"`
-	//MultipleYAxis         bool   `json:"multipleYAxis"`
-	//CustomVerticalAxisMin bool   `json:"customVerticalAxisMin"`
-	//CustomVerticalAxisMax bool   `json:"customVerticalAxisMax"`
-	//ShowEvents            null.Bool   `json:"showEvents"`
-	//EventFilter           bool   `json:"eventFilter"`
-	//InterpolateDataGaps bool `json:"interpolateDataGaps"`
-	//ShowAllTooltips       null.Bool   `json:"showAllTooltips"`
-	//StaticThresholds      null.String `json:"staticThresholds"`
-
 }
 
 type Dashboard struct {
@@ -144,8 +165,13 @@ func (c *AppDClient) ImportDashboard(templateJson string) (*Dashboard, error) {
 }
 
 func (c *AppDClient) CreateDashboard(dashboard Dashboard) (*Dashboard, error) {
-	resp, err := req.Post(c.createDashboardUrl(), c.createAuthHeader(), req.BodyJSON(dashboard))
+	dashboardJson, err := json.Marshal(dashboard)
+	if err != nil {
+		return nil, err
+	}
+	resp, err := req.Post(c.createDashboardUrl(), c.createAuthHeader(), dashboardJson)
 	if resp.Response().StatusCode != 200 {
+
 		respString, _ := resp.ToString()
 		return nil, errors.New(fmt.Sprintf("Error creating Dashboard: %d, %s", resp.Response().StatusCode, respString))
 	}
@@ -158,7 +184,11 @@ func (c *AppDClient) CreateDashboard(dashboard Dashboard) (*Dashboard, error) {
 }
 
 func (c *AppDClient) UpdateDashboard(dashboard Dashboard) (*Dashboard, error) {
-	resp, err := req.Post(c.updateDashboardUrl(), c.createAuthHeader(), req.BodyJSON(dashboard))
+	dashboardJson, err := json.Marshal(dashboard)
+	if err != nil {
+		return nil, err
+	}
+	resp, err := req.Post(c.updateDashboardUrl(), c.createAuthHeader(), dashboardJson)
 	if resp.Response().StatusCode != 200 {
 		respString, _ := resp.ToString()
 		return nil, errors.New(fmt.Sprintf("Error updating Dashboard: %d, %s", resp.Response().StatusCode, respString))
