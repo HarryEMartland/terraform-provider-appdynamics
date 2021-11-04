@@ -6,7 +6,6 @@ import (
 	"encoding/json"
 	"github.com/HarryEMartland/terraform-provider-appdynamics/appdynamics/client"
 	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
-	"gopkg.in/guregu/null.v4"
 )
 
 func dataSourceDashboardWidget() *schema.Resource {
@@ -35,8 +34,12 @@ func dataSourceDashboardWidgetRead(d *schema.ResourceData, meta interface{}) err
 	hashString := "wr-" + hex.EncodeToString(hash[:])
 	d.SetId(hashString)
 	widget := client.DashboardWidget{}
-	json.Unmarshal([]byte(jsonSource), &widget)
-	widget.GUID = null.NewString(hashString[0:50], true)
+	err := json.Unmarshal([]byte(jsonSource), &widget)
+	if err != nil {
+		return err
+	}
+	guid := hashString[0:50]
+	widget.GUID = &guid // max length for GUID
 	jsonDoc, err := json.Marshal(widget)
 	if err != nil {
 		return err
