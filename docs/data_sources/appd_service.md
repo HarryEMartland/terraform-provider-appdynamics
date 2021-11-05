@@ -15,7 +15,7 @@ data "appdynamics_appd_service" "test" {
 
 |Name|Required|Type|Description|Example|
 |----|--------|----|-----------|-------|
-|`application_name`|string|int|Existing application name|`APPLICATION_NAME`|
+|`application_name`|yes|string|Existing application name|`APPLICATION_NAME`|
 |`tier_name`|yes|string|Existing tier name|`TIER_NAME`|
 
 
