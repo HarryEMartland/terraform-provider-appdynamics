@@ -1,6 +1,6 @@
 ## AppD Service Data source
 
-Helper to add all needed fields to widget before using it with `dashboard` resource.
+Helper to add all needed fields to widget before using it with [dashboard](../resources/dashboard.md)`resource.
 
 ## Example Usage
 
