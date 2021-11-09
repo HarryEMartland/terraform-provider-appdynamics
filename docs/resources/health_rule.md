@@ -7,81 +7,81 @@ Creates a health rule which defines what normal looks like for an application.
 
 ## Example Usage
 
-#### All BTs Baseline 
+#### Specific tiers in BT
+
 ```hcl
-resource "appdynamics_health_rule" "my_baseline_rule" {
-  name = "My Baseline Health Rule"
-  application_id = var.application_id
-  metric_aggregation_function = "VALUE"
-  eval_detail_type = "SINGLE_METRIC"
-  affected_entity_type = "BUSINESS_TRANSACTION_PERFORMANCE"
-  business_transaction_scope = "ALL_BUSINESS_TRANSACTIONS"
-  baseline_condition = "WITHIN_BASELINE"
-  metric_eval_detail_type = "BASELINE_TYPE"
-  baseline_name = "All data - Last 15 days"
-  baseline_unit = "STANDARD_DEVIATIONS"
-  metric_path = "95th Percentile Response Time (ms)"
-  warn_compare_value = 1
-  critical_compare_value = 2
+resource "appdynamics_health_rule" "my_value_health_rule" {
+  name                                = "My Value Health Rule"
+  application_id                      = var.application_id
+  affected_entity_type                = "BUSINESS_TRANSACTION_PERFORMANCE"
+  business_transaction_scope          = "BUSINESS_TRANSACTIONS_IN_SPECIFIC_TIERS"
+  specific_tiers                      = ["my-tier-name"]
+  critical_condition_aggregation_type = "ANY"
+  warning_condition_aggregation_type  = "ALL"
+
+  critical_criteria {
+    name                        = "Errors per minute"
+    shortname                   = "EPM"
+    evaluate_to_true_on_no_data = false
+    eval_detail_type            = "SINGLE_METRIC"
+    metric_aggregation_function = "VALUE"
+    metric_path                 = "Errors per minute"
+    metric_eval_detail_type     = "SPECIFIC_TYPE"
+    compare_condition           = "GREATER_THAN_SPECIFIC_VALUE"
+    compare_value               = 7
+  }
+  critical_criteria {
+    name                        = "Errors per minute"
+    shortname                   = "EPM"
+    evaluate_to_true_on_no_data = false
+    eval_detail_type            = "SINGLE_METRIC"
+    metric_aggregation_function = "VALUE"
+    metric_path                 = "Errors per minute"
+    metric_eval_detail_type     = "BASELINE_TYPE"
+    baseline_condition          = "WITHIN_BASELINE"
+    baseline_name               = "All data - Last 15 days"
+    baseline_unit               = "STANDARD_DEVIATIONS"
+    metric_path                 = "95th Percentile Response Time (ms)"
+    compare_value               = 1
+  }
+  warning_criteria {
+    name                        = "Errors per minute"
+    shortname                   = "EPM"
+    evaluate_to_true_on_no_data = false
+    eval_detail_type            = "SINGLE_METRIC"
+    metric_aggregation_function = "VALUE"
+    metric_path                 = "Errors per minute"
+    metric_eval_detail_type     = "SPECIFIC_TYPE"
+    compare_condition           = "GREATER_THAN_SPECIFIC_VALUE"
+    compare_value               = 2.5
+  }
 }
 ```
 
-#### All BTs Value
-```hcl
-resource "appdynamics_health_rule" "my_single_metric_rule" {
-  name = "My Single Metring Health Rule"
-  application_id = var.application_id
-  metric_aggregation_function = "VALUE"
-  eval_detail_type = "SINGLE_METRIC"
-  affected_entity_type = "BUSINESS_TRANSACTION_PERFORMANCE"
-  business_transaction_scope = "ALL_BUSINESS_TRANSACTIONS"
-  metric_eval_detail_type = "SPECIFIC_TYPE"
-  metric_path = "95th Percentile Response Time (ms)"
-  compare_condition="GREATER_THAN_SPECIFIC_VALUE"
-  warn_compare_value = 100
-  critical_compare_value = 200
-}
-```
+#### All BTs Baseline
 
-#### Specific BTs Value
 ```hcl
-resource "appdynamics_health_rule" "specific_bts_rule" {
-  name = "My Specific BTs Rule"
-  application_id = var.application_id
-  metric_aggregation_function = "VALUE"
-  eval_detail_type = "SINGLE_METRIC"
-  affected_entity_type = "BUSINESS_TRANSACTION_PERFORMANCE"
-  business_transaction_scope = "SPECIFIC_BUSINESS_TRANSACTIONS"
-  business_transactions = [
-    "/route/one",
-    "/route/two"
-  ]
-  metric_eval_detail_type = "SPECIFIC_TYPE"
-  metric_path = "95th Percentile Response Time (ms)"
-  compare_condition = "GREATER_THAN_SPECIFIC_VALUE"
-  warn_compare_value = 100
-  critical_compare_value = 200
-}
-```
+resource "appdynamics_health_rule" "my_baseline_health_rule" {
+  name                                = "My baseline health rule"
+  application_id                      = var.application_id
+  affected_entity_type                = "BUSINESS_TRANSACTION_PERFORMANCE"
+  business_transaction_scope          = "ALL_BUSINESS_TRANSACTIONS"
+  critical_condition_aggregation_type = "ANY"
+  warning_condition_aggregation_type  = "ALL"
 
-#### Specific Tiers Value
-```hcl
-resource "appdynamics_health_rule" "specific_tiers_rule" {
-  name = "My Specific Tiers Rule"
-  application_id = var.application_id
-  metric_aggregation_function = "VALUE"
-  eval_detail_type = "SINGLE_METRIC"
-  affected_entity_type = "BUSINESS_TRANSACTION_PERFORMANCE"
-  business_transaction_scope = "BUSINESS_TRANSACTIONS_IN_SPECIFIC_TIERS"
-  specific_tiers = [
-    "tier1",
-    "tier2"
-  ]
-  metric_eval_detail_type = "SPECIFIC_TYPE"
-  metric_path = "95th Percentile Response Time (ms)"
-  compare_condition = "GREATER_THAN_SPECIFIC_VALUE"
-  warn_compare_value = 100
-  critical_compare_value = 200
+  critical_criteria {
+    name                        = "average cpu"
+    shortname                   = "AC"
+    evaluate_to_true_on_no_data = false
+    eval_detail_type            = "SINGLE_METRIC"
+    metric_aggregation_function = "VALUE"
+    metric_path                 = "Average CPU Used (ms)"
+    metric_eval_detail_type     = "BASELINE_TYPE"
+    baseline_condition          = "WITHIN_BASELINE"
+    baseline_name               = "All data - Last 15 days"
+    baseline_unit               = "PERCENTAGE"
+    compare_value               = 33
+  }
 }
 ```
 
@@ -89,21 +89,37 @@ resource "appdynamics_health_rule" "specific_tiers_rule" {
 
 |Name|Required|Type|Description|Example|
 |----|--------|----|-----------|-------|
-|`application_id`|yes|number|The application to add the action to|`32423`|
-|`metric_aggregation_function`|yes|string|How to aggregate multiple sources of the metric|`"VALUE"`|
-|`eval_detail_type`|yes|string|What to evaluate the metric against|`"SINGLE_METRIC"`|
+|`application_id`|yes|number|The application to add the health rule to|`32423`|
+|`name`|yes|string|Name of health rule to add|`My health rule`|
+|`schedule_name`|no|string|Schedule to be associated with the health rule|`Always`|
 |`affected_entity_type`|yes|string|The entity type for the health rule|`"OVERALL_APPLICATION_PERFORMANCE"`|
 |`business_transaction_scope`|yes|string|Which business transaction are applicable for the health rule|`"ALL_BUSINESS_TRANSACTIONS"`|
-|`baseline_condition`|no|string|How to compare to the baseline|`"WITHIN_BASELINE"`|
+|`business_transaction_scope_match`|no|string|Type of match for transaction matching|`"ENDS_WITH"|
+|`business_transaction_scope_match_value`|no|string|Value to match|`some name`|
+|`business_transaction_scope_match_negation`|no|bool|If match should be negated|`true`|
+|`business_transactions`|no|set|Set containing transactions|`["trans1", "trans2"]`|
+|`specific_tiers`|no|set|Set containing tier names|`["my-tier1","my-tier2"]`|
+|`warning_condition_aggregation_type`|no|string|How to aggregate warning conditions|`ANY`|
+|`warning_criteria`|no|list|List of structures defining warning criteria|`{}`|
+|`critical_condition_aggregation_type`|no|string|How to aggregate critical conditions|`ANY`|
+|`critical_criteria`|no|list|List of structures defining critical criteria|`{}`|
+
+### Critical and warning criteria arguments
+
+|Name|Required|Type|Description|Example|
+|----|--------|----|-----------|-------|
+|`name`|yes|string|Name of condition to add|`My condition`|
+|`shortname`|yes|string|Name of condition to add `[A-Z]{3}`|`ABC`|
+|`evaluate_to_true_on_no_data`|no|bool|Self explanatory|`false`|
+|`eval_detail_type`|yes|string|What to evaluate the metric against|`"SINGLE_METRIC"`|
+|`metric_aggregation_function`|yes|string|How to aggregate multiple sources of the metric|`"VALUE"`|
+|`metric_path`|yes|string|Which metric to use|`"95th Percentile Response Time (ms)"`|
 |`metric_eval_detail_type`|yes|string|The type of comparison|`"BASELINE_TYPE"`|
 |`baseline_name`|no|string|Which baseline to use|`"All data - Last 15 days"`|
+|`baseline_condition`|no|string|How to compare to the baseline|`"WITHIN_BASELINE"`|
 |`baseline_unit`|no|string|What unit to compare the baseline with|`"PERCENTAGE"`|
-|`metric_path`|yes|string|Which metric to use|`"95th Percentile Response Time (ms)"`|
 |`compare_condition`|no|string|How to compare the values to the metric|`"GREATER_THAN_SPECIFIC_VALUE"`|
-|`business_transactions`|no|number|A list of transactions to trigger the health rule for|`["/endpoint"]`|
-|`warn_compare_value`|yes|number|The value at which the health rule should trigger a warning|`1`|
-|`critical_compare_value`|yes|number|The value at which the health rule should trigger an error|`2`|
-
+|`compare_value`|yes|number|The value at which the health rule should trigger an error|`2`|
 
 #### affected_entity_type
 - OVERALL_APPLICATION_PERFORMANCE
@@ -125,6 +141,13 @@ resource "appdynamics_health_rule" "specific_tiers_rule" {
 - BUSINESS_TRANSACTIONS_IN_SPECIFIC_TIERS
 - BUSINESS_TRANSACTIONS_MATCHING_PATTERN
 
+#### business_transaction_scope_match
+- STARTS_WITH
+- ENDS_WITH
+- CONTAINS
+- EQUALS
+- MATCH_REG_EX
+
 #### baseline_unit
 - STANDARD_DEVIATIONS
 - PERCENTAGE
@@ -135,9 +158,21 @@ resource "appdynamics_health_rule" "specific_tiers_rule" {
 - GREATER_THAN_BASELINE
 - LESS_THAN_BASELINE
 
+#### critical_condition_aggregation_type
+- ALL
+- ANY
+
+#### warning_condition_aggregation_type
+- ALL
+- ANY
+
 #### metric_eval_detail_type
 - BASELINE_TYPE
 - SPECIFIC_TYPE
+
+#### eval_detail_type
+- SINGLE_METRIC
+- METRIC_EXPRESSION
 
 #### compare_condition
 - GREATER_THAN_SPECIFIC_VALUE
