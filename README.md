@@ -15,11 +15,20 @@ Make sure to download the correct version for your OS.
 To use the AppDynamics Terraform provider you must configure it with the controller base url and a secret.
 A secret can be generated in the AppDynamics UI as documented [here](https://docs.appdynamics.com/display/PRO45/API+Clients).
 
-###### Example
+###### Token access example
 ```terraform
 provider "appdynamics" {
-  secret = "<your secret>"
+  secret = "<your temporary token>"
   controller_base_url = "https://example.saas.appdynamics.com"
+}
+```
+
+###### Client name/secret access example
+```terraform
+provider "appdynamics" {
+  controller_base_url = "https://example.saas.appdynamics.com"
+  client_name = "<your client name>"
+  client_secret = "<your client secret>"
 }
 ```
 
