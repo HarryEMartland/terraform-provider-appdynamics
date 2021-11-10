@@ -10,6 +10,7 @@ func Provider() *schema.Provider {
 		ResourcesMap: map[string]*schema.Resource{
 			"appdynamics_health_rule":                resourceHealthRule(),
 			"appdynamics_action":                     resourceAction(),
+			"appdynamics_collector":                  resourceCollector(),
 			"appdynamics_policy":                     resourcePolicy(),
 			"appdynamics_transaction_detection_rule": resourceTransactionDetectionRule(),
 			"appdynamics_dashboard":                  resourceDashboard(),

@@ -94,7 +94,6 @@ fabric.properties
 
 terraform-provider-appdynamics
 
-*.tf
 *.tfstate
 *.tfstate.backup
 crash.log
