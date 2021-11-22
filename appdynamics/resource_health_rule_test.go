@@ -21,62 +21,62 @@ func TestAccAppDHealthRule_basicSingleMetricAllBtsMultipleCrit(t *testing.T) {
 	businessTransactionScope := "ALL_BUSINESS_TRANSACTIONS"
 
 	criticalConditionAggregationType := "ANY"
-/*
-	var criticalCriteria []map[string]interface{}
-	criticalCriteria = nil
-*/
-	criticalCriteria  := []map[string]interface{} {
+	/*
+		var criticalCriteria []map[string]interface{}
+		criticalCriteria = nil
+	*/
+	criticalCriteria := []map[string]interface{}{
 		{
-			"name": acctest.RandStringFromCharSet(11, acctest.CharSetAlphaNum),
-			"shortname": strings.ToUpper(acctest.RandStringFromCharSet(2, acctest.CharSetAlpha)),
+			"name":                        acctest.RandStringFromCharSet(11, acctest.CharSetAlphaNum),
+			"shortname":                   strings.ToUpper(acctest.RandStringFromCharSet(2, acctest.CharSetAlpha)),
 			"evaluate_to_true_on_no_data": false,
-			"eval_detail_type": "SINGLE_METRIC",
+			"eval_detail_type":            "SINGLE_METRIC",
 			"metric_aggregation_function": "VALUE",
-			"metric_path": "95th Percentile Response Time (ms)",
-			"metric_eval_detail_type": "SPECIFIC_TYPE",
-			"compare_condition": "GREATER_THAN_SPECIFIC_VALUE",
-			"compare_value": 2.4,
+			"metric_path":                 "95th Percentile Response Time (ms)",
+			"metric_eval_detail_type":     "SPECIFIC_TYPE",
+			"compare_condition":           "GREATER_THAN_SPECIFIC_VALUE",
+			"compare_value":               2.4,
 		},
 		{
-			"name": acctest.RandStringFromCharSet(11, acctest.CharSetAlphaNum),
-			"shortname": strings.ToUpper(acctest.RandStringFromCharSet(2, acctest.CharSetAlpha)),
+			"name":                        acctest.RandStringFromCharSet(11, acctest.CharSetAlphaNum),
+			"shortname":                   strings.ToUpper(acctest.RandStringFromCharSet(2, acctest.CharSetAlpha)),
 			"evaluate_to_true_on_no_data": false,
-			"eval_detail_type": "SINGLE_METRIC",
+			"eval_detail_type":            "SINGLE_METRIC",
 			"metric_aggregation_function": "VALUE",
-			"metric_path": "Average CPU Used (ms)",
-			"metric_eval_detail_type": "BASELINE_TYPE",
-			"baseline_name": "All data - Last 15 days",
-			"baseline_condition": "WITHIN_BASELINE",
-			"baseline_unit": "PERCENTAGE",
-			"compare_value": 7.5,
+			"metric_path":                 "Average CPU Used (ms)",
+			"metric_eval_detail_type":     "BASELINE_TYPE",
+			"baseline_name":               "All data - Last 15 days",
+			"baseline_condition":          "WITHIN_BASELINE",
+			"baseline_unit":               "PERCENTAGE",
+			"compare_value":               7.5,
 		},
 	}
 
 	warningConditionAggregationType := "ALL"
-	warningCriteria := []map[string]interface{} {
+	warningCriteria := []map[string]interface{}{
 		{
-			"name": acctest.RandStringFromCharSet(11, acctest.CharSetAlphaNum),
-			"shortname": strings.ToUpper(acctest.RandStringFromCharSet(2, acctest.CharSetAlpha)),
+			"name":                        acctest.RandStringFromCharSet(11, acctest.CharSetAlphaNum),
+			"shortname":                   strings.ToUpper(acctest.RandStringFromCharSet(2, acctest.CharSetAlpha)),
 			"evaluate_to_true_on_no_data": false,
-			"eval_detail_type": "SINGLE_METRIC",
+			"eval_detail_type":            "SINGLE_METRIC",
 			"metric_aggregation_function": "VALUE",
-			"metric_path": "95th Percentile Response Time (ms)",
-			"metric_eval_detail_type": "SPECIFIC_TYPE",
-			"compare_condition": "GREATER_THAN_SPECIFIC_VALUE",
-			"compare_value": 6.6,
+			"metric_path":                 "95th Percentile Response Time (ms)",
+			"metric_eval_detail_type":     "SPECIFIC_TYPE",
+			"compare_condition":           "GREATER_THAN_SPECIFIC_VALUE",
+			"compare_value":               6.6,
 		},
 		{
-			"name": acctest.RandStringFromCharSet(11, acctest.CharSetAlphaNum),
-			"shortname": strings.ToUpper(acctest.RandStringFromCharSet(2, acctest.CharSetAlpha)),
+			"name":                        acctest.RandStringFromCharSet(11, acctest.CharSetAlphaNum),
+			"shortname":                   strings.ToUpper(acctest.RandStringFromCharSet(2, acctest.CharSetAlpha)),
 			"evaluate_to_true_on_no_data": false,
-			"eval_detail_type": "SINGLE_METRIC",
+			"eval_detail_type":            "SINGLE_METRIC",
 			"metric_aggregation_function": "VALUE",
-			"metric_path": "Average CPU Used (ms)",
-			"metric_eval_detail_type": "BASELINE_TYPE",
-			"baseline_name": "All data - Last 15 days",
-			"baseline_condition": "WITHIN_BASELINE",
-			"baseline_unit": "PERCENTAGE",
-			"compare_value": 7.5,
+			"metric_path":                 "Average CPU Used (ms)",
+			"metric_eval_detail_type":     "BASELINE_TYPE",
+			"baseline_name":               "All data - Last 15 days",
+			"baseline_condition":          "WITHIN_BASELINE",
+			"baseline_unit":               "PERCENTAGE",
+			"compare_value":               7.5,
 		},
 	}
 
@@ -114,17 +114,17 @@ func TestAccAppDHealthRule_basicSingleMetricAllBtsSingleCrit(t *testing.T) {
 	businessTransactionScope := "ALL_BUSINESS_TRANSACTIONS"
 
 	criticalConditionAggregationType := "ANY"
-	criticalCriteria := []map[string]interface{} {
+	criticalCriteria := []map[string]interface{}{
 		{
-			"name": acctest.RandStringFromCharSet(11, acctest.CharSetAlphaNum),
-			"shortname": strings.ToUpper(acctest.RandStringFromCharSet(2, acctest.CharSetAlpha)),
+			"name":                        acctest.RandStringFromCharSet(11, acctest.CharSetAlphaNum),
+			"shortname":                   strings.ToUpper(acctest.RandStringFromCharSet(2, acctest.CharSetAlpha)),
 			"evaluate_to_true_on_no_data": false,
-			"eval_detail_type": "SINGLE_METRIC",
+			"eval_detail_type":            "SINGLE_METRIC",
 			"metric_aggregation_function": "VALUE",
-			"metric_path": "95th Percentile Response Time (ms)",
-			"metric_eval_detail_type": "SPECIFIC_TYPE",
-			"compare_condition": "GREATER_THAN_SPECIFIC_VALUE",
-			"compare_value": 1.8,
+			"metric_path":                 "95th Percentile Response Time (ms)",
+			"metric_eval_detail_type":     "SPECIFIC_TYPE",
+			"compare_condition":           "GREATER_THAN_SPECIFIC_VALUE",
+			"compare_value":               1.8,
 		},
 	}
 
@@ -153,7 +153,101 @@ func TestAccAppDHealthRule_basicSingleMetricAllBtsSingleCrit(t *testing.T) {
 		},
 		CheckDestroy: RetryCheck(CheckHealthRuleDoesNotExist(resourceName)),
 	})
+}
 
+func TestAccAppDHealthRule_tierNodeHealthRuleNodesMatch(t *testing.T) {
+
+	name := acctest.RandStringFromCharSet(11, acctest.CharSetAlphaNum)
+
+	resourceName := "appdynamics_health_rule.test_nodes_matching_criteria"
+	affectedEntityType := "TIER_NODE_TRANSACTION_PERFORMANCE"
+
+	affectedEntityConfig := fmt.Sprintf(`
+		tier_or_node = "NODE_AFFECTED_ENTITIES"
+		type_of_node = "JAVA_NODES"
+		affected_node_scope = "NODES_MATCHING_PATTERN"
+		nodes_match = "STARTS_WITH"
+		nodes_match_value = "test"
+		nodes_match_negation = false
+	`)
+
+	criteria := fmt.Sprintf(`
+		critical_criteria {
+			name                        = "errors per minute"
+			shortname                   = "EPM"
+			evaluate_to_true_on_no_data = false
+			eval_detail_type            = "SINGLE_METRIC"
+			metric_aggregation_function = "VALUE"
+			metric_path                 = "Errors per minute"
+			metric_eval_detail_type     = "SPECIFIC_TYPE"
+			compare_condition           = "GREATER_THAN_SPECIFIC_VALUE"
+			compare_value               = 11
+		}
+	`)
+
+	resource.Test(t, resource.TestCase{
+		Providers: map[string]terraform.ResourceProvider{
+			"appdynamics": Provider(),
+		},
+		Steps: []resource.TestStep{
+			{
+				Config: healthRuleTemplate(strings.Split(resourceName, ".")[1], name, affectedEntityType, affectedEntityConfig, criteria),
+				Check: resource.ComposeAggregateTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "name", name),
+					resource.TestCheckResourceAttr(resourceName, "affected_entity_type", affectedEntityType),
+					resource.TestCheckResourceAttr(resourceName, "nodes_match", "STARTS_WITH"),
+					RetryCheck(CheckHealthRuleExists(resourceName)),
+				),
+			},
+		},
+		CheckDestroy: RetryCheck(CheckHealthRuleDoesNotExist(resourceName)),
+	})
+}
+
+func TestAccAppDHealthRule_tierNodeHealthRuleSpecificTiers(t *testing.T) {
+
+	name := acctest.RandStringFromCharSet(11, acctest.CharSetAlphaNum)
+
+	resourceName := "appdynamics_health_rule.test_nodes_specific_tiers"
+	affectedEntityType := "TIER_NODE_HARDWARE"
+
+	affectedEntityConfig := fmt.Sprintf(`
+		tier_or_node         = "TIER_AFFECTED_ENTITIES"
+		affected_tier_scope  = "SPECIFIC_TIERS"
+		tiers                = ["aml-etl", "airtime-purchase"]
+	`)
+
+	criteria := fmt.Sprintf(`
+		critical_criteria {
+			name                        = "jvm gc allocated objects"
+			shortname                   = "EPM"
+			evaluate_to_true_on_no_data = false
+			eval_detail_type            = "SINGLE_METRIC"
+			metric_aggregation_function = "VALUE"
+			metric_path                 = "JVM|Garbage Collection|Allocated-Objects (MB)"
+			metric_eval_detail_type     = "SPECIFIC_TYPE"
+			compare_condition           = "GREATER_THAN_SPECIFIC_VALUE"
+			compare_value               = 11
+		}
+	`)
+
+	resource.Test(t, resource.TestCase{
+		Providers: map[string]terraform.ResourceProvider{
+			"appdynamics": Provider(),
+		},
+		Steps: []resource.TestStep{
+			{
+				Config: healthRuleTemplate(strings.Split(resourceName, ".")[1], name, affectedEntityType, affectedEntityConfig, criteria),
+				Check: resource.ComposeAggregateTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "name", name),
+					resource.TestCheckResourceAttr(resourceName, "affected_entity_type", affectedEntityType),
+					resource.TestCheckResourceAttr(resourceName, "affected_tier_scope", "SPECIFIC_TIERS"),
+					RetryCheck(CheckHealthRuleExists(resourceName)),
+				),
+			},
+		},
+		CheckDestroy: RetryCheck(CheckHealthRuleDoesNotExist(resourceName)),
+	})
 }
 
 func CheckHealthRuleExists(resourceName string) func(state *terraform.State) error {
@@ -267,7 +361,25 @@ resource "appdynamics_health_rule" "%s" {
 	warning_condition_aggregation_type = "%s"
 	%s
 	%s
-}`, configureConfig(), resourceName, name, entityType, businessTransactionScope, criticalConditionAggregationType, warningConditionAggregationType, strings.Join(criticalCriteriaData,"\n"), strings.Join(warningCriteriaData, "\n"))
+}`, configureConfig(), resourceName, name, entityType, businessTransactionScope, criticalConditionAggregationType, warningConditionAggregationType, strings.Join(criticalCriteriaData, "\n"), strings.Join(warningCriteriaData, "\n"))
+
+	return criteriaData
+}
+
+func healthRuleTemplate(resourceName string, name string, affectedEntityType string, affectedEntityConfig string, criteria string) string {
+
+	criteriaData := fmt.Sprintf(`
+%s
+
+resource "appdynamics_health_rule" "%s" {
+	name = "%s"
+	application_id = var.application_id
+	affected_entity_type = "%s"
+	%s
+	critical_condition_aggregation_type = "ALL"
+	warning_condition_aggregation_type = "ALL"
+	%s
+}`, configureConfig(), resourceName, name, affectedEntityType, affectedEntityConfig, criteria)
 
 	return criteriaData
 }
