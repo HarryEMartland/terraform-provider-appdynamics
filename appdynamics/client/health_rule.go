@@ -133,12 +133,39 @@ type MetricEvalDetail struct {
 }
 
 type Affects struct {
-	AffectedEntityType           string       `json:"affectedEntityType"`
-	AffectedBusinessTransactions *Transaction `json:"affectedBusinessTransactions"`
+	AffectedEntityType           string                        `json:"affectedEntityType"`
+	AffectedEntities             *AffectedEntities             `json:"affectedEntities"`
+	AffectedBusinessTransactions *AffectedBusinessTransactions `json:"affectedBusinessTransactions"`
 }
 
-type Transaction struct {
-	BusinessTransactionScope string         `json:"businessTransactionScope"`
-	BusinessTransactions     *[]interface{} `json:"businessTransactions"`
-	SpecificTiers            *[]interface{} `json:"specificTiers"`
+type AffectedEntities struct {
+	TierOrNode    *string        `json:"tierOrNode"`
+	TypeOfNode    *string        `json:"typeofNode"`
+	AffectedTiers *AffectedTiers `json:"affectedTiers"`
+	AffectedNodes *AffectedNodes `json:"affectedNodes"`
+}
+
+type AffectedTiers struct {
+	AffectedTierScope *string        `json:"affectedTierScope"`
+	Tiers             *[]interface{} `json:"tiers"`
+}
+
+type AffectedNodes struct {
+	AffectedNodeScope *string         `json:"affectedNodeScope"`
+	SpecificTiers     *[]interface{}  `json:"specificTiers"`
+	Nodes             *[]interface{}  `json:"nodes"`
+	PatternMatcher    *PatternMatcher `json:"patternMatcher"`
+}
+
+type AffectedBusinessTransactions struct {
+	BusinessTransactionScope *string         `json:"businessTransactionScope"`
+	BusinessTransactions     *[]interface{}  `json:"businessTransactions"`
+	SpecificTiers            *[]interface{}  `json:"specificTiers"`
+	PatternMatcher           *PatternMatcher `json:"patternMatcher"`
+}
+
+type PatternMatcher struct {
+	MatchTo    *string `json:"matchTo"`
+	MatchValue *string `json:"matchValue"`
+	ShouldNot  *bool   `json:"shouldNot"`
 }

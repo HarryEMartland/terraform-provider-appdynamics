@@ -28,12 +28,12 @@ func resourceHealthRule() *schema.Resource {
 				Optional: true,
 				Default:  "Always",
 			},
-			"evaluation_minutes": {
+			"use_data_from_last_n_minutes": {
 				Type:     schema.TypeInt,
 				Default:  30,
 				Optional: true,
 			},
-			"violation_length_minutes": {
+			"wait_time_after_violation": {
 				Type:     schema.TypeInt,
 				Default:  5,
 				Optional: true,
@@ -56,17 +56,64 @@ func resourceHealthRule() *schema.Resource {
 					"SERVERS",
 				}),
 			},
-			"business_transaction_scope": {
+			"tier_or_node": {
 				Type:     schema.TypeString,
 				Optional: true,
 				ValidateFunc: validateList([]string{
-					"ALL_BUSINESS_TRANSACTIONS",
-					"SPECIFIC_BUSINESS_TRANSACTIONS",
-					"BUSINESS_TRANSACTIONS_IN_SPECIFIC_TIERS",
-					"BUSINESS_TRANSACTIONS_MATCHING_PATTERN",
+					"TIER_AFFECTED_ENTITIES",
+					"NODE_AFFECTED_ENTITIES",
 				}),
 			},
-			"business_transaction_scope_match": {
+			"type_of_node": {
+				Type:     schema.TypeString,
+				Optional: true,
+				ValidateFunc: validateList([]string{
+					"ALL_NODES",
+					"JAVA_NODES",
+					"DOT_NET_NODES",
+					"PHP_NODES",
+				}),
+			},
+			"affected_tier_scope": {
+				Type:     schema.TypeString,
+				Optional: true,
+				ValidateFunc: validateList([]string{
+					"ALL_TIERS",
+					"SPECIFIC_TIERS",
+				}),
+			},
+			"tiers": {
+				Type:     schema.TypeSet,
+				Optional: true,
+				Elem: &schema.Schema{
+					Type: schema.TypeString,
+				},
+			},
+			"affected_node_scope": {
+				Type:     schema.TypeString,
+				Optional: true,
+				ValidateFunc: validateList([]string{
+					"ALL_NODES",
+					"SPECIFIC_NODES",
+					"NODES_OF_SPECIFIC_TIERS",
+					"NODES_MATCHING_PATTERN",
+				}),
+			},
+			"nodes_specific_tiers": {
+				Type:     schema.TypeSet,
+				Optional: true,
+				Elem: &schema.Schema{
+					Type: schema.TypeString,
+				},
+			},
+			"nodes": {
+				Type:     schema.TypeSet,
+				Optional: true,
+				Elem: &schema.Schema{
+					Type: schema.TypeString,
+				},
+			},
+			"nodes_match": {
 				Type:     schema.TypeString,
 				Optional: true,
 				ValidateFunc: validateList([]string{
@@ -77,11 +124,41 @@ func resourceHealthRule() *schema.Resource {
 					"MATCH_REG_EX",
 				}),
 			},
-			"business_transaction_scope_match_value": {
+			"nodes_match_value": {
 				Type:     schema.TypeString,
 				Optional: true,
 			},
-			"business_transaction_scope_match_negation": {
+			"nodes_match_negation": {
+				Type:     schema.TypeBool,
+				Optional: true,
+				Default:  false,
+			},
+			"business_transaction_scope": {
+				Type:     schema.TypeString,
+				Optional: true,
+				ValidateFunc: validateList([]string{
+					"ALL_BUSINESS_TRANSACTIONS",
+					"SPECIFIC_BUSINESS_TRANSACTIONS",
+					"BUSINESS_TRANSACTIONS_IN_SPECIFIC_TIERS",
+					"BUSINESS_TRANSACTIONS_MATCHING_PATTERN",
+				}),
+			},
+			"business_transaction_match": {
+				Type:     schema.TypeString,
+				Optional: true,
+				ValidateFunc: validateList([]string{
+					"STARTS_WITH",
+					"ENDS_WITH",
+					"CONTAINS",
+					"EQUALS",
+					"MATCH_REG_EX",
+				}),
+			},
+			"business_transaction_match_value": {
+				Type:     schema.TypeString,
+				Optional: true,
+			},
+			"business_transaction_match_negation": {
 				Type:     schema.TypeBool,
 				Optional: true,
 				Default:  false,
@@ -93,7 +170,7 @@ func resourceHealthRule() *schema.Resource {
 					Type: schema.TypeString,
 				},
 			},
-			"specific_tiers": {
+			"business_transaction_specific_tiers": {
 				Type:     schema.TypeSet,
 				Optional: true,
 				Elem: &schema.Schema{
@@ -305,6 +382,15 @@ func GetOrNilS(d *schema.ResourceData, key string) *string {
 	return nil
 }
 
+func GetOrNilB(d *schema.ResourceData, key string) *bool {
+	value, set := d.GetOkExists(key)
+	if set {
+		boolValue := value.(bool)
+		return &boolValue
+	}
+	return nil
+}
+
 func GetOrNilL(d *schema.ResourceData, key string) *[]interface{} {
 	value, set := d.GetOk(key)
 	if set {
@@ -361,14 +447,7 @@ func conditionsOrNil(conditions []*client.Condition, conditionAggregationType st
 
 func createHealthRule(d *schema.ResourceData) client.HealthRule {
 
-	name := d.Get("name").(string)
-	scheduleName := d.Get("schedule_name").(string)
-	evaluationMinutes := d.Get("evaluation_minutes").(int)
-	violationLengthMinutes := d.Get("violation_length_minutes").(int)
-
-	affectedEntityType := d.Get("affected_entity_type").(string)
-	businessTransactionScope := d.Get("business_transaction_scope").(string)
-
+	// Criterias
 	criticalCriteria := d.Get("critical_criteria").([]interface{})
 	warningCriteria := d.Get("warning_criteria").([]interface{})
 	criticalConditionAggregationType := d.Get("critical_condition_aggregation_type").(string)
@@ -388,10 +467,10 @@ func createHealthRule(d *schema.ResourceData) client.HealthRule {
 		metricAggregationFunction := criteria["metric_aggregation_function"].(string)
 		metricPath := criteria["metric_path"].(string)
 		metricEvalDetailType := criteria["metric_eval_detail_type"].(string)
-		baselineCondition := GetOrNilS(d,"critical_criteria."+fmt.Sprint(i)+".baseline_condition")
+		baselineCondition := GetOrNilS(d, "critical_criteria."+fmt.Sprint(i)+".baseline_condition")
 		baselineName := GetOrNilS(d, "critical_criteria."+fmt.Sprint(i)+".baseline_name")
 		baselineUnit := GetOrNilS(d, "critical_criteria."+fmt.Sprint(i)+".baseline_unit")
-		compareCondition := GetOrNilS(d,"critical_criteria."+fmt.Sprint(i)+".compare_condition")
+		compareCondition := GetOrNilS(d, "critical_criteria."+fmt.Sprint(i)+".compare_condition")
 		compareValue := criteria["compare_value"].(float64)
 
 		metricEvalDetail := defineMetricEvalDetail(&metricEvalDetailType, baselineCondition, baselineName, baselineUnit, &compareValue, compareCondition)
@@ -412,10 +491,10 @@ func createHealthRule(d *schema.ResourceData) client.HealthRule {
 		metricAggregationFunction := criteria["metric_aggregation_function"].(string)
 		metricPath := criteria["metric_path"].(string)
 		metricEvalDetailType := criteria["metric_eval_detail_type"].(string)
-		baselineCondition := GetOrNilS(d,"warning_criteria."+fmt.Sprint(i)+".baseline_condition")
+		baselineCondition := GetOrNilS(d, "warning_criteria."+fmt.Sprint(i)+".baseline_condition")
 		baselineName := GetOrNilS(d, "warning_criteria."+fmt.Sprint(i)+".baseline_name")
-		baselineUnit := GetOrNilS(d,"warning_criteria."+fmt.Sprint(i)+".baseline_unit")
-		compareCondition := GetOrNilS(d,"warning_criteria."+fmt.Sprint(i)+".compare_condition")
+		baselineUnit := GetOrNilS(d, "warning_criteria."+fmt.Sprint(i)+".baseline_unit")
+		compareCondition := GetOrNilS(d, "warning_criteria."+fmt.Sprint(i)+".compare_condition")
 		compareValue := criteria["compare_value"].(float64)
 
 		metricEvalDetail := defineMetricEvalDetail(&metricEvalDetailType, baselineCondition, baselineName, baselineUnit, &compareValue, compareCondition)
@@ -431,17 +510,40 @@ func createHealthRule(d *schema.ResourceData) client.HealthRule {
 	}
 
 	healthRule := client.HealthRule{
-		Name:                    name,
+		Name:                    d.Get("name").(string),
 		Enabled:                 true,
-		ScheduleName:            scheduleName,
-		UseDataFromLastNMinutes: evaluationMinutes,
-		WaitTimeAfterViolation:  violationLengthMinutes,
+		ScheduleName:            d.Get("schedule_name").(string),
+		UseDataFromLastNMinutes: d.Get("use_data_from_last_n_minutes").(int),
+		WaitTimeAfterViolation:  d.Get("wait_time_after_violation").(int),
 		Affects: &client.Affects{
-			AffectedEntityType: affectedEntityType,
-			AffectedBusinessTransactions: &client.Transaction{
-				BusinessTransactionScope: businessTransactionScope,
+			AffectedEntityType: d.Get("affected_entity_type").(string),
+			AffectedEntities: &client.AffectedEntities{
+				TierOrNode: GetOrNilS(d, "tier_or_node"),
+				TypeOfNode: GetOrNilS(d, "type_of_node"),
+				AffectedTiers: &client.AffectedTiers{
+					AffectedTierScope: GetOrNilS(d, "affected_tier_scope"),
+					Tiers:             GetOrNilL(d, "tiers"),
+				},
+				AffectedNodes: &client.AffectedNodes{
+					AffectedNodeScope: GetOrNilS(d, "affected_node_scope"),
+					SpecificTiers:     GetOrNilL(d, "nodes_specific_tiers"),
+					Nodes:             GetOrNilL(d, "nodes"),
+					PatternMatcher: &client.PatternMatcher{
+						MatchTo:    GetOrNilS(d, "nodes_match"),
+						MatchValue: GetOrNilS(d, "nodes_match_value"),
+						ShouldNot:  GetOrNilB(d, "nodes_match_negation"),
+					},
+				},
+			},
+			AffectedBusinessTransactions: &client.AffectedBusinessTransactions{
+				BusinessTransactionScope: GetOrNilS(d, "business_transaction_scope"),
 				BusinessTransactions:     GetOrNilL(d, "business_transactions"),
-				SpecificTiers:            GetOrNilL(d, "specific_tiers"),
+				SpecificTiers:            GetOrNilL(d, "business_transaction_specific_tiers"),
+				PatternMatcher: &client.PatternMatcher{
+					MatchTo:    GetOrNilS(d, "business_transaction_match"),
+					MatchValue: GetOrNilS(d, "business_transaction_match_value"),
+					ShouldNot:  GetOrNilB(d, "business_transaction_match_negation"),
+				},
 			},
 		},
 		Criterias: &criterias,
@@ -471,31 +573,62 @@ func resourceHealthRuleRead(d *schema.ResourceData, m interface{}) error {
 }
 
 func mapConditionToSchema(condition *client.Condition) map[string]interface{} {
-	return map[string]interface{} {
-		"name": condition.Name,
-		"shortname": condition.ShortName,
+	return map[string]interface{}{
+		"name":                        condition.Name,
+		"shortname":                   condition.ShortName,
 		"evaluate_to_true_on_no_data": condition.EvaluateToTrueOnNoData,
-		"eval_detail_type": condition.EvalDetail.EvalDetailType,
+		"eval_detail_type":            condition.EvalDetail.EvalDetailType,
 		"metric_aggregation_function": condition.EvalDetail.MetricAggregateFunction,
-		"metric_path": condition.EvalDetail.MetricPath,
-		"metric_eval_detail_type": condition.EvalDetail.MetricEvalDetail.MetricEvalDetailType,
-		"baseline_name": condition.EvalDetail.MetricEvalDetail.BaselineName,
-		"baseline_condition": condition.EvalDetail.MetricEvalDetail.BaselineCondition,
-		"baseline_unit": condition.EvalDetail.MetricEvalDetail.BaselineUnit,
-		"compare_condition": condition.EvalDetail.MetricEvalDetail.CompareCondition,
-		"compare_value": condition.EvalDetail.MetricEvalDetail.CompareValue,
+		"metric_path":                 condition.EvalDetail.MetricPath,
+		"metric_eval_detail_type":     condition.EvalDetail.MetricEvalDetail.MetricEvalDetailType,
+		"baseline_name":               condition.EvalDetail.MetricEvalDetail.BaselineName,
+		"baseline_condition":          condition.EvalDetail.MetricEvalDetail.BaselineCondition,
+		"baseline_unit":               condition.EvalDetail.MetricEvalDetail.BaselineUnit,
+		"compare_condition":           condition.EvalDetail.MetricEvalDetail.CompareCondition,
+		"compare_value":               condition.EvalDetail.MetricEvalDetail.CompareValue,
 	}
 }
 
 func updateHealthRule(d *schema.ResourceData, healthRule *client.HealthRule) {
+	//pp.Println(healthRule)
 
 	d.Set("name", healthRule.Name)
 	d.Set("schedule_name", healthRule.ScheduleName)
-	d.Set("evaluation_minutes", healthRule.UseDataFromLastNMinutes)
-	d.Set("violation_length_minutes", healthRule.WaitTimeAfterViolation)
+	d.Set("use_data_from_last_n_minutes", healthRule.UseDataFromLastNMinutes)
+	d.Set("wait_time_after_violation", healthRule.WaitTimeAfterViolation)
+
 	d.Set("affected_entity_type", healthRule.Affects.AffectedEntityType)
-	d.Set("business_transaction_scope", healthRule.Affects.AffectedBusinessTransactions.BusinessTransactionScope)
-	d.Set("business_transaction_scope_match", healthRule.Affects.AffectedBusinessTransactions.SpecificTiers)
+
+	// AffectedEntities
+	if healthRule.Affects.AffectedEntities != nil {
+		d.Set("tier_or_node", healthRule.Affects.AffectedEntities.TierOrNode)
+		d.Set("type_of_node", healthRule.Affects.AffectedEntities.TypeOfNode)
+		if healthRule.Affects.AffectedEntities.AffectedTiers != nil {
+			d.Set("affected_tier_scope", healthRule.Affects.AffectedEntities.AffectedTiers.AffectedTierScope)
+			d.Set("tiers", healthRule.Affects.AffectedEntities.AffectedTiers.Tiers)
+		}
+		if healthRule.Affects.AffectedEntities.AffectedNodes != nil {
+			d.Set("affected_node_scope", healthRule.Affects.AffectedEntities.AffectedNodes.AffectedNodeScope)
+			d.Set("nodes_specific_tiers", healthRule.Affects.AffectedEntities.AffectedNodes.SpecificTiers)
+			d.Set("nodes", healthRule.Affects.AffectedEntities.AffectedNodes.Nodes)
+			if healthRule.Affects.AffectedEntities.AffectedNodes.PatternMatcher != nil {
+				d.Set("nodes_match", healthRule.Affects.AffectedEntities.AffectedNodes.PatternMatcher.MatchTo)
+				d.Set("nodes_match_value", healthRule.Affects.AffectedEntities.AffectedNodes.PatternMatcher.MatchValue)
+				d.Set("nodes_match_negation", healthRule.Affects.AffectedEntities.AffectedNodes.PatternMatcher.ShouldNot)
+			}
+		}
+	}
+	// AffectedBusinessTransactions
+	if healthRule.Affects.AffectedBusinessTransactions != nil {
+		d.Set("business_transaction_scope", healthRule.Affects.AffectedBusinessTransactions.BusinessTransactionScope)
+		d.Set("business_transactions", healthRule.Affects.AffectedBusinessTransactions.BusinessTransactions)
+		d.Set("business_transaction_specific_tiers", healthRule.Affects.AffectedBusinessTransactions.SpecificTiers)
+		if healthRule.Affects.AffectedBusinessTransactions.PatternMatcher != nil {
+			d.Set("business_transaction_match", healthRule.Affects.AffectedBusinessTransactions.PatternMatcher.MatchTo)
+			d.Set("business_transaction_match_value", healthRule.Affects.AffectedBusinessTransactions.PatternMatcher.MatchValue)
+			d.Set("business_transaction_match_negation", healthRule.Affects.AffectedBusinessTransactions.PatternMatcher.ShouldNot)
+		}
+	}
 
 	if healthRule.Criterias.Critical != nil {
 		var criticals []map[string]interface{}
