@@ -1,17 +1,32 @@
 package client
 
 import (
+	"encoding/base64"
 	"fmt"
 	"github.com/imroc/req"
 )
 
 type AppDClient struct {
-	BaseUrl string
-	Secret  string
+	BaseUrl                 string
+	Secret                  string
+	Username                string
+	DashboardClientUsername string
+	DashboardClientPassword string
 }
 
 func (c *AppDClient) createUrl(applicationId int) string {
 	return fmt.Sprintf("%s/controller/alerting/rest/v1/applications/%d", c.BaseUrl, applicationId)
+}
+
+func basicAuth(username string, password string) string {
+	token := fmt.Sprintf("%s:%s", username, password)
+	return "Basic " + base64.StdEncoding.EncodeToString([]byte(token))
+}
+
+func (c *AppDClient) createBasicAuthHeader() req.Header {
+	return req.Header{
+		"Authorization": basicAuth(c.DashboardClientUsername, c.DashboardClientPassword),
+	}
 }
 
 func (c *AppDClient) createAuthHeader() req.Header {

@@ -147,7 +147,7 @@ func (c *AppDClient) exportDashboardUrl(dashboardId int) string {
 
 func (c *AppDClient) ImportDashboard(templateJson string) (*Dashboard, error) {
 	file := io.NopCloser(strings.NewReader(templateJson))
-	resp, err := req.Post(c.importDashboardUrl(), c.createAuthHeader(), req.FileUpload{
+	resp, err := req.Post(c.importDashboardUrl(), c.createBasicAuthHeader(), req.FileUpload{
 		File:      file,
 		FieldName: "fileUpload",    // FieldName is form field name
 		FileName:  "template.json", //Filename is the name of the file that you wish to upload. We use this to guess the mimetype as well as pass it onto the server

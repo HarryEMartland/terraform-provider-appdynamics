@@ -51,7 +51,7 @@ install:
 build-install:
 	make build
 
-	mv terraform-provider-appdynamics ~/.terraform.d/plugins/registry.terraform.io/worldremit/appdynamics/0.1.0-0/linux_amd64/terraform-provider-appdynamics_v0.1.0-0
+	mv terraform-provider-appdynamics ~/.terraform.d/plugins/registry.terraform.io/worldremit/appdynamics/0.1.0-5/linux_amd64/terraform-provider-appdynamics_v0.1.0-5
 
 build-linux:
 	GOOS=linux GOARCH=amd64 $(GOBUILD)

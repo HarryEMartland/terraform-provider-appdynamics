@@ -23,15 +23,20 @@ func Provider() *schema.Provider {
 			"appdynamics_appd_service":     dataSourceAppdService(),
 		},
 		Schema: map[string]*schema.Schema{
-			"secret":              {Type: schema.TypeString, Sensitive: true, Optional: true},
-			"controller_base_url": {Type: schema.TypeString, Required: true},
-			"client_name":         {Type: schema.TypeString, Optional: true},
-			"client_secret":       {Type: schema.TypeString, Sensitive: true, Optional: true},
+			"secret":                    {Type: schema.TypeString, Sensitive: true, Optional: true},
+			"controller_base_url":       {Type: schema.TypeString, Required: true},
+			"client_name":               {Type: schema.TypeString, Optional: true},
+			"client_secret":             {Type: schema.TypeString, Sensitive: true, Optional: true},
+			"dashboard_client_name":     {Type: schema.TypeString, Optional: true},
+			"dashboard_client_password": {Type: schema.TypeString, Sensitive: true, Optional: true},
 		},
 		ConfigureFunc: func(data *schema.ResourceData) (interface{}, error) {
+
 			controllerBaseUrl := data.Get("controller_base_url").(string)
 			clientName := data.Get("client_name").(string)
 			clientSecret := data.Get("client_secret").(string)
+			dashboardClientName := data.Get("dashboard_client_name").(string)
+			dashboardClientPassword := data.Get("dashboard_client_password").(string)
 			token := data.Get("secret").(string)
 
 			if clientName == "" && clientSecret == "" && token == "" {
@@ -47,8 +52,11 @@ func Provider() *schema.Provider {
 			}
 
 			return &client.AppDClient{
-				BaseUrl: controllerBaseUrl,
-				Secret:  token,
+				BaseUrl:                 controllerBaseUrl,
+				Secret:                  token,
+				Username:                clientName,
+				DashboardClientUsername: dashboardClientName,
+				DashboardClientPassword: dashboardClientPassword,
 			}, nil
 		},
 	}
