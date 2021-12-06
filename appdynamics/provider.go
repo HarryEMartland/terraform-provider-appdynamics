@@ -54,7 +54,6 @@ func Provider() *schema.Provider {
 			return &client.AppDClient{
 				BaseUrl:                 controllerBaseUrl,
 				Secret:                  token,
-				Username:                clientName,
 				DashboardClientUsername: dashboardClientName,
 				DashboardClientPassword: dashboardClientPassword,
 			}, nil

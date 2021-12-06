@@ -9,7 +9,6 @@ import (
 type AppDClient struct {
 	BaseUrl                 string
 	Secret                  string
-	Username                string
 	DashboardClientUsername string
 	DashboardClientPassword string
 }
