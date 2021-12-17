@@ -6,7 +6,7 @@ BINARY=terraform-provider-appdynamics
 VERSION=$(shell git describe --tags --dirty)
 PLATFORMS=darwin linux windows
 ARCHITECTURES=amd64
-TEST_VERSION=0.1.0-5
+TEST_VERSION=0.1.0-6
 
 build:
 	$(GOBUILD)
