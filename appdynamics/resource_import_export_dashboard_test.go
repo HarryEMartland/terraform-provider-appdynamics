@@ -11,7 +11,7 @@ import (
 func TestAccImportExportDashboard_CreateAndUpdate(t *testing.T) {
 
 	resourceName := "appdynamics_import_export_dashboard.test_basic"
-	dashboardTemplate, _ := os.ReadFile("./templates/sampleTemplate3.json")
+	dashboardTemplate, _ := os.ReadFile("./templates/sampleTemplate.json")
 	dashboardTemplate2, _ := os.ReadFile("./templates/sampleTemplate2.json")
 	resource.Test(t, resource.TestCase{
 		Providers: map[string]terraform.ResourceProvider{
