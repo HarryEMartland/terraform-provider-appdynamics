@@ -31,7 +31,7 @@ func TestAccImportExportDashboard_CreateAndUpdate(t *testing.T) {
 	})
 }
 
-func configureDashboardConfig2() string {
+func configureDashboardAuth() string {
 	return fmt.Sprintf(`
 					provider "appdynamics" {
 					  secret = "%s"
@@ -57,5 +57,5 @@ func basicImportExportDashboardTemplate(dashboardTemplate string) string {
 					resource "appdynamics_import_export_dashboard" "test_basic" {
 						json = jsonencode(%s)
 					}
-`, configureDashboardConfig2(), dashboardTemplate)
+`, configureDashboardAuth(), dashboardTemplate)
 }
