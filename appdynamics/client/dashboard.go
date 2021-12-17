@@ -9,6 +9,14 @@ import (
 	"strings"
 )
 
+type staticThreshold struct {
+	ID      *int     `json:"id"`
+	Version *int     `json:"version,omitempty"`
+	Value   *float32 `json:"value,omitempty"`
+	Color   *int     `json:"color,omitempty"`
+	Name    *string  `json:"name,omitempty"`
+}
+
 type DashboardWidget struct {
 	GUID                        *string   `json:"guid"`
 	Title                       *string   `json:"title,omitempty"`
@@ -53,34 +61,33 @@ type DashboardWidget struct {
 	IsGlobal                    *bool     `json:"isGlobal,omitempty"`
 	Resolution                  *string   `json:"resolution,omitempty"`
 
-	IsShowLogYAxis           *bool    `json:"isShowLogYAxis,omitempty"`
-	IsStackingEnabled        *bool    `json:"isStackingEnabled,omitempty"`
-	LegendsLayout            *string  `json:"legendsLayout,omitempty"`
-	MaxAllowedYAxisFields    *int     `json:"maxAllowedYAxisFields,omitempty"`
-	MaxAllowedXAxisFields    *int     `json:"maxAllowedXAxisFields,omitempty"`
-	ShowMinExtremes          *bool    `json:"showMinExtremes,omitempty"`
-	ShowMaxExtremes          *bool    `json:"showMaxExtremes,omitempty"`
-	DisplayPercentileMarkers *bool    `json:"displayPercentileMarkers,omitempty"`
-	Unit                     *int     `json:"unit,omitempty"`
-	IsRawQuery               *bool    `json:"isRawQuery,omitempty"`
-	Align                    *string  `json:"align,omitempty"`
-	ShowInverse              *bool    `json:"showInverse,omitempty"`
-	ShowHealth               *bool    `json:"showHealth,omitempty"`
-	IsIncreaseGood           *bool    `json:"isIncreaseGood,omitempty"`
-	ShowUnivariateLabel      *bool    `json:"showUnivariateLabel,omitempty"`
-	Properties               []string `json:"properties,omitempty"`
-	VerticalAxisLabel        *string  `json:"verticalAxisLabel,omitempty"`
-	HideHorizontalAxis       *bool    `json:"hideHorizontalAxis,omitempty"`
-	HorizontalAxisLabel      *string  `json:"horizontalAxisLabel,omitempty"`
-	AxisType                 *string  `json:"axisType,omitempty"`
-	MultipleYAxis            *bool    `json:"multipleYAxis,omitempty"`
-	CustomVerticalAxisMin    *bool    `json:"customVerticalAxisMin,omitempty"`
-	CustomVerticalAxisMax    *bool    `json:"customVerticalAxisMax,omitempty"`
-	ShowEvents               *bool    `json:"showEvents,omitempty"`
-	EventFilter              *bool    `json:"eventFilter,omitempty"`
-	InterpolateDataGaps      *bool    `json:"interpolateDataGaps,omitempty"`
-	ShowAllTooltips          *bool    `json:"showAllTooltips,omitempty"`
-	StaticThresholds         *string  `json:"staticThresholds,omitempty"`
+	IsShowLogYAxis           *bool             `json:"isShowLogYAxis,omitempty"`
+	IsStackingEnabled        *bool             `json:"isStackingEnabled,omitempty"`
+	LegendsLayout            *string           `json:"legendsLayout,omitempty"`
+	MaxAllowedYAxisFields    *int              `json:"maxAllowedYAxisFields,omitempty"`
+	MaxAllowedXAxisFields    *int              `json:"maxAllowedXAxisFields,omitempty"`
+	ShowMinExtremes          *bool             `json:"showMinExtremes,omitempty"`
+	ShowMaxExtremes          *bool             `json:"showMaxExtremes,omitempty"`
+	DisplayPercentileMarkers *bool             `json:"displayPercentileMarkers,omitempty"`
+	Unit                     *int              `json:"unit,omitempty"`
+	IsRawQuery               *bool             `json:"isRawQuery,omitempty"`
+	Align                    *string           `json:"align,omitempty"`
+	ShowInverse              *bool             `json:"showInverse,omitempty"`
+	ShowHealth               *bool             `json:"showHealth,omitempty"`
+	IsIncreaseGood           *bool             `json:"isIncreaseGood,omitempty"`
+	ShowUnivariateLabel      *bool             `json:"showUnivariateLabel,omitempty"`
+	Properties               []string          `json:"properties,omitempty"`
+	VerticalAxisLabel        *string           `json:"verticalAxisLabel,omitempty"`
+	HideHorizontalAxis       *bool             `json:"hideHorizontalAxis,omitempty"`
+	HorizontalAxisLabel      *string           `json:"horizontalAxisLabel,omitempty"`
+	AxisType                 *string           `json:"axisType,omitempty"`
+	MultipleYAxis            *bool             `json:"multipleYAxis,omitempty"`
+	CustomVerticalAxisMin    *bool             `json:"customVerticalAxisMin,omitempty"`
+	CustomVerticalAxisMax    *bool             `json:"customVerticalAxisMax,omitempty"`
+	ShowEvents               *bool             `json:"showEvents,omitempty"`
+	InterpolateDataGaps      *bool             `json:"interpolateDataGaps,omitempty"`
+	ShowAllTooltips          *bool             `json:"showAllTooltips,omitempty"`
+	StaticThresholds         []staticThreshold `json:"staticThresholds,omitempty"`
 
 	Text      *string `json:"text,omitempty"`
 	TextAlign *string `json:"textAlign,omitempty"`
@@ -88,6 +95,8 @@ type DashboardWidget struct {
 	// TODO
 	//WidgetsMetricMatchCriterias null.String `json:"widgetsMetricMatchCriterias"`
 	//MissingEntities     null.String `json:"missingEntities"`
+	//EventFilter              *bool    `json:"eventFilter,omitempty"`
+
 }
 
 type Dashboard struct {

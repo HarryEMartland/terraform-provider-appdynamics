@@ -31,11 +31,31 @@ func TestAccImportExportDashboard_CreateAndUpdate(t *testing.T) {
 	})
 }
 
+func configureDashboardAuth() string {
+	return fmt.Sprintf(`
+					provider "appdynamics" {
+					  secret = "%s"
+					  controller_base_url = "%s"
+					  dashboard_client_name = "%s"
+					  dashboard_client_password = "%s"
+					}
+
+					variable "scope_id" {
+					  type = string
+					  default = "%s"
+					}
+					
+					variable "application_id" {
+					  type = number
+					  default = %s
+					}`, os.Getenv("APPD_SECRET"), os.Getenv("APPD_CONTROLLER_BASE_URL"), os.Getenv("APPD_DASHBOARD_USER"), os.Getenv("APPD_DASHBOARD_PASSWORD"), os.Getenv("APPD_SCOPE_ID"), os.Getenv("APPD_APPLICATION_ID"))
+}
+
 func basicImportExportDashboardTemplate(dashboardTemplate string) string {
 	return fmt.Sprintf(`
 					%s
 					resource "appdynamics_import_export_dashboard" "test_basic" {
 						json = jsonencode(%s)
 					}
-`, configureConfig(), dashboardTemplate)
+`, configureDashboardAuth(), dashboardTemplate)
 }
