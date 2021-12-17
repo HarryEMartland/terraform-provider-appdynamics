@@ -162,7 +162,6 @@ func (c *AppDClient) ImportDashboard(templateJson string) (*Dashboard, error) {
 		FileName:  "template.json", //Filename is the name of the file that you wish to upload. We use this to guess the mimetype as well as pass it onto the server
 	})
 
-	fmt.Println(resp.Response())
 	if resp.Response().StatusCode != 200 {
 		respString, _ := resp.ToString()
 		return nil, errors.New(fmt.Sprintf("Error during dashboard import: %d, %s", resp.Response().StatusCode, respString))
