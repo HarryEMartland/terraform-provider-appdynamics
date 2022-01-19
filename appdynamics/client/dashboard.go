@@ -52,7 +52,7 @@ type DashboardWidget struct {
 	ShowLegend                  *bool     `json:"showLegend,omitempty"`
 	LegendPosition              *string   `json:"legendPosition,omitempty"`
 	LegendColumnCount           *int      `json:"legendColumnCount,omitempty"`
-	StartTime                   *bool     `json:"startTime,omitempty"`
+	StartTime                   *int      `json:"startTime,omitempty"`
 	EndTime                     *int      `json:"endTime,omitempty"`
 	CustomTimeRange             *int      `json:"customTimeRange,omitempty"`
 	MinutesBeforeAnchorTime     *int      `json:"minutesBeforeAnchorTime,omitempty"`
